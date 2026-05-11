@@ -1,0 +1,147 @@
+<!-- <?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Home -->
+  <url>
+    <loc>https://ecohotelsamawe.com/es</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://ecohotelsamawe.com/es"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ecohotelsamawe.com/en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ecohotelsamawe.com/"/>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://ecohotelsamawe.com/en</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://ecohotelsamawe.com/es"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ecohotelsamawe.com/en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ecohotelsamawe.com/"/>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Accommodation -->
+  <url>
+    <loc>https://ecohotelsamawe.com/es/accommodation</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://ecohotelsamawe.com/es/accommodation"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ecohotelsamawe.com/en/accommodation"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ecohotelsamawe.com/es/accommodation"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://ecohotelsamawe.com/en/accommodation</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://ecohotelsamawe.com/es/accommodation"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ecohotelsamawe.com/en/accommodation"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ecohotelsamawe.com/es/accommodation"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- About Us -->
+  <url>
+    <loc>https://ecohotelsamawe.com/es/about-us</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://ecohotelsamawe.com/es/about-us"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ecohotelsamawe.com/en/about-us"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ecohotelsamawe.com/es/about-us"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ecohotelsamawe.com/en/about-us</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://ecohotelsamawe.com/es/about-us"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ecohotelsamawe.com/en/about-us"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ecohotelsamawe.com/es/about-us"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Gastronomy -->
+  <url>
+    <loc>https://ecohotelsamawe.com/es/gastronomy</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://ecohotelsamawe.com/es/gastronomy"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ecohotelsamawe.com/en/gastronomy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ecohotelsamawe.com/es/gastronomy"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ecohotelsamawe.com/en/gastronomy</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://ecohotelsamawe.com/es/gastronomy"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ecohotelsamawe.com/en/gastronomy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ecohotelsamawe.com/es/gastronomy"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- How to Arrive -->
+  <url>
+    <loc>https://ecohotelsamawe.com/es/how-to-arrive</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://ecohotelsamawe.com/es/how-to-arrive"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ecohotelsamawe.com/en/how-to-arrive"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ecohotelsamawe.com/es/how-to-arrive"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ecohotelsamawe.com/en/how-to-arrive</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://ecohotelsamawe.com/es/how-to-arrive"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ecohotelsamawe.com/en/how-to-arrive"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ecohotelsamawe.com/es/how-to-arrive"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Blog -->
+  <url>
+    <loc>https://ecohotelsamawe.com/es/blog</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://ecohotelsamawe.com/es/blog"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ecohotelsamawe.com/en/blog"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ecohotelsamawe.com/es/blog"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ecohotelsamawe.com/en/blog</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://ecohotelsamawe.com/es/blog"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ecohotelsamawe.com/en/blog"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ecohotelsamawe.com/es/blog"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Legal -->
+  <url>
+    <loc>https://ecohotelsamawe.com/es/legal/privacity</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://ecohotelsamawe.com/es/legal/privacity"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ecohotelsamawe.com/en/legal/privacity"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ecohotelsamawe.com/es/legal/privacity"/>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://ecohotelsamawe.com/en/legal/privacity</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://ecohotelsamawe.com/es/legal/privacity"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ecohotelsamawe.com/en/legal/privacity"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ecohotelsamawe.com/es/legal/privacity"/>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://ecohotelsamawe.com/es/legal/terms</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://ecohotelsamawe.com/es/legal/terms"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ecohotelsamawe.com/en/legal/terms"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ecohotelsamawe.com/es/legal/terms"/>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://ecohotelsamawe.com/en/legal/terms</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://ecohotelsamawe.com/es/legal/terms"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ecohotelsamawe.com/en/legal/terms"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ecohotelsamawe.com/es/legal/terms"/>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+</urlset> -->
