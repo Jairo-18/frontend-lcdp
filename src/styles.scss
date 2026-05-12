@@ -1,17 +1,21 @@
-/* Global styles */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+@use 'variables' as *;
+@use 'breakpoints.scss';
+@use 'global.scss';
+@use 'animations.scss';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 html,
 body {
-  height: 100%;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 16px;
-  background-color: #fafafa;
-  color: #333;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  font-family: var(--f-body);
+  background: var(--paper);
+  color: var(--ink);
 }

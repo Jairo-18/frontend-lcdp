@@ -1,0 +1,37 @@
+@use 'variables' as *;
+
+@mixin media-phone {
+  @media (max-width: $max-width-phone) { @content; }
+}
+
+@mixin media-tablet {
+  @media (max-width: $max-width-tablet) { @content; }
+}
+
+@mixin media-desktop {
+  @media (min-width: $min-width-desktop) { @content; }
+}
+
+@mixin padding-responsive {
+  padding: $spacing-lg;
+  @include media-phone { padding: $spacing-md; }
+}
+
+@mixin padding-y-responsive {
+  padding-top: $spacing-xl;
+  padding-bottom: $spacing-xl;
+  @include media-phone {
+    padding-top: $spacing-lg;
+    padding-bottom: $spacing-lg;
+  }
+}
+
+@mixin display-desktop {
+  display: block;
+  @include media-phone { display: none; }
+}
+
+@mixin display-phone {
+  display: none;
+  @include media-phone { display: block; }
+}

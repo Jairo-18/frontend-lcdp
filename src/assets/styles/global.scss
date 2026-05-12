@@ -1,0 +1,96 @@
+@use 'variables' as *;
+
+// ── Layout shell ──────────────────────────────────────────────
+
+.layout-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  background: var(--paper);
+
+  &.layout-admin {
+    flex-direction: row;
+
+    .layout-main {
+      flex: 1;
+      padding: 32px 36px 60px;
+      overflow-x: auto;
+      background: $paper-alt;
+
+      @media (max-width: $max-width-tablet) {
+        padding: $spacing-md;
+      }
+    }
+  }
+
+  .layout-main {
+    flex: 1;
+  }
+}
+
+// ── Brand navbar ──────────────────────────────────────────────
+
+.brand-navbar {
+  width: 100%;
+  z-index: 100;
+  height: $height-navbar;
+  position: sticky;
+  top: 0;
+}
+
+// ── Page containers ───────────────────────────────────────────
+
+.page-container {
+  max-width: $max-width-layout;
+  margin: 0 auto;
+  padding: $spacing-xl $spacing-lg;
+
+  @media (max-width: $max-width-phone) {
+    padding: $spacing-lg $spacing-md;
+  }
+}
+
+.content-center {
+  min-height: 100svh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// ── Scrollbar ─────────────────────────────────────────────────
+
+::-webkit-scrollbar       { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: $rule-soft; }
+::-webkit-scrollbar-thumb {
+  background: $ink-mute;
+  border-radius: $radius-lg;
+
+  &:hover { background: $ink-soft; }
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: $ink-mute $rule-soft;
+}
+
+// ── Typography ────────────────────────────────────────────────
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--f-display);
+  color: var(--ink);
+}
+
+body, p, span, li, a, button, input, textarea, select, label {
+  font-family: var(--f-body);
+}
+
+// ── Utilities ─────────────────────────────────────────────────
+
+.text-right  { text-align: right !important; }
+.text-center { text-align: center !important; }
+
+.brand-gradient-text {
+  @apply text-transparent bg-clip-text;
+  background-image: linear-gradient(135deg, $yellow, $coral);
+}

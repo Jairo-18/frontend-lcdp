@@ -1,0 +1,20 @@
+<div class="layout-shell" [class.layout-admin]="isAdmin">
+
+  <!-- Admin: sidebar izquierdo -->
+  <ng-container *ngIf="isAdmin">
+    <app-admin-sidebar
+      (exitAdmin)="onExitAdmin()"
+    />
+  </ng-container>
+
+  <!-- Catalogo/tienda: navbar superior -->
+  <ng-container *ngIf="!isAdmin">
+    <app-catalog-navbar />
+  </ng-container>
+
+  <!-- Contenido de la ruta activa -->
+  <main class="layout-main">
+    <router-outlet />
+  </main>
+
+</div>
