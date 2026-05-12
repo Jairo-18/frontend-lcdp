@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, Router } from '@angular/router';
 import { AdminSidebarComponent } from '../../components/admin-sidebar/admin-sidebar.component';
-import { CatalogNavbarComponent } from '../../components/catalog-navbar/catalog-navbar.component';
+import { NavBarComponent } from '../../components/nav-bar/nav-bar.component';
 
 @Component({
   selector: 'app-default-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, AdminSidebarComponent, CatalogNavbarComponent],
+  imports: [CommonModule, RouterOutlet, AdminSidebarComponent, NavBarComponent],
   templateUrl: './default-layout.component.html',
   styleUrls: ['./default-layout.component.scss'],
 })

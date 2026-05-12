@@ -2,14 +2,12 @@
 
   <!-- Admin: sidebar izquierdo -->
   <ng-container *ngIf="isAdmin">
-    <app-admin-sidebar
-      (exitAdmin)="onExitAdmin()"
-    />
+    <app-admin-sidebar (exitAdmin)="onExitAdmin()" />
   </ng-container>
 
   <!-- Catalogo/tienda: navbar superior -->
-  <ng-container *ngIf="!isAdmin">
-    <app-catalog-navbar />
+  <ng-container *ngIf="!isAdmin" class="hidden md:flex">
+    <app-nav-bar />
   </ng-container>
 
   <!-- Contenido de la ruta activa -->

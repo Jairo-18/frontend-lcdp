@@ -11,6 +11,9 @@ RUN npx ng build --configuration production && node scripts/fix-ssr-manifest.mjs
 FROM deps AS builder-development
 WORKDIR /app
 COPY . .
+ARG API_URL=http://localhost:3000
+RUN printf "export const environment = {\n  production: false,\n  apiUrl: '%s',\n  apiKey: 'sk_dev',\n};\n" "$API_URL" \
+    > src/environments/environment.development.ts
 RUN npx ng build --configuration development && node scripts/fix-ssr-manifest.mjs
 
 FROM node:22-alpine AS prod-deps

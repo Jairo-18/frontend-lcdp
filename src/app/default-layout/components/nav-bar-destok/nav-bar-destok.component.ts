@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
@@ -10,13 +10,13 @@ export interface CategoryPill {
 }
 
 @Component({
-  selector: 'app-catalog-navbar',
+  selector: 'app-nav-bar-destok',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
-  templateUrl: './catalog-navbar.component.html',
-  styleUrls: ['./catalog-navbar.component.scss'],
+  imports: [CommonModule, RouterModule, FormsModule,],
+  templateUrl: './nav-bar-destok.component.html',
+  styleUrl: './nav-bar-destok.component.scss'
 })
-export class CatalogNavbarComponent {
+export class NavBarDestokComponent {
   @Input() cartCount = 0;
   @Input() categories: CategoryPill[] = [];
   @Input() activeCategory: string | null = null;

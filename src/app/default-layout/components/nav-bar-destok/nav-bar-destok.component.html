@@ -1,0 +1,78 @@
+<header
+    class="sticky top-0 z-[100] bg-paper/90 backdrop-blur-[14px] backdrop-saturate-[1.6] border-b border-rule-soft hidden md:flex">
+    <div class="flex items-center gap-6 px-6 py-3.5 max-w-[1240px] mx-auto">
+
+        <!-- Brand -->
+        <button class="flex items-center gap-3 bg-transparent border-0 cursor-pointer p-0" (click)="goHome.emit()">
+            <div class="w-11 h-11 rounded-xl bg-yellow grid place-items-center overflow-hidden shadow-sm shrink-0">
+                <img class="w-full h-full object-cover" src="assets/images/logo.jpg" alt="Logo" />
+            </div>
+            <div class="font-display font-extrabold text-[17px] leading-none tracking-tight text-ink">
+                La Casa del
+                <em
+                    class="not-italic font-hand text-coral text-[22px] font-semibold block leading-none mt-0.5">Pintor</em>
+            </div>
+        </button>
+
+        <!-- Search -->
+        <div
+            class="flex-1 max-w-[480px] hidden sm:flex items-center gap-2.5 px-4 py-2.5 bg-white border border-rule rounded-xl transition-all focus-within:border-ink focus-within:shadow-[0_0_0_3px_rgba(26,28,44,0.08)]">
+            <svg class="text-ink-mute shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+            </svg>
+            <input class="border-0 outline-none bg-transparent flex-1 font-body text-sm text-ink" type="text"
+                placeholder="Buscar productos, marcas…" [(ngModel)]="searchQuery" (ngModelChange)="onSearch()" />
+        </div>
+
+        <!-- Actions -->
+        <div class="ml-auto flex gap-1.5 items-center">
+            <button
+                class="bg-transparent border-0 px-3.5 py-2.5 rounded-lg inline-flex items-center gap-2 text-sm font-medium text-ink-soft cursor-pointer transition-all hover:bg-[rgba(26,28,44,0.06)] hover:text-ink"
+                (click)="goAdmin.emit()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z" />
+                    <path d="M12 8v4l3 3" />
+                </svg>
+                Admin
+            </button>
+
+            <button
+                class="bg-ink text-white px-[18px] py-2.5 rounded-lg inline-flex items-center gap-2 text-sm font-medium cursor-pointer border-0 transition-all hover:bg-black"
+                (click)="openCart.emit()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <path d="M16 10a4 4 0 0 1-8 0" />
+                </svg>
+                Carrito
+                <span *ngIf="cartCount > 0"
+                    class="bg-yellow text-ink font-mono font-bold text-[11px] min-w-[20px] h-5 rounded-full inline-grid place-items-center px-1.5">
+                    {{ cartCount }}
+                </span>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Category subnav -->
+    <nav *ngIf="categories.length > 0" class="border-b border-rule-soft bg-paper">
+        <div class="max-w-[1240px] mx-auto px-6 py-3 flex gap-1 flex-wrap overflow-x-auto">
+            <button
+                class="border border-transparent px-3.5 py-1.5 rounded-full text-[13px] whitespace-nowrap inline-flex items-center gap-1.5 cursor-pointer font-body transition-all hover:bg-[rgba(26,28,44,0.06)] hover:text-ink"
+                [ngClass]="{'bg-ink text-yellow': activeCategory === null, 'bg-transparent text-ink-soft': activeCategory !== null}"
+                (click)="selectCategory.emit(null)">
+                Todos
+            </button>
+            <button *ngFor="let cat of categories"
+                class="border border-transparent px-3.5 py-1.5 rounded-full text-[13px] whitespace-nowrap inline-flex items-center gap-1.5 cursor-pointer font-body transition-all hover:bg-[rgba(26,28,44,0.06)] hover:text-ink"
+                [ngClass]="{'bg-ink text-yellow': activeCategory === cat.id, 'bg-transparent text-ink-soft': activeCategory !== cat.id}"
+                (click)="selectCategory.emit(cat.id)">
+                <span class="text-sm">{{ cat.icon }}</span>
+                {{ cat.name }}
+            </button>
+        </div>
+    </nav>
+
+</header>
