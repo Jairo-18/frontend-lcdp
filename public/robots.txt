@@ -1,11 +1,6 @@
 User-agent: *
 Allow: /
-Disallow: /*/auth/
-Disallow: /*/user/
-Disallow: /organizational/
-Disallow: /service-and-product/
-Disallow: /invoice/
-Disallow: /sales/
-Disallow: /server-config
+Disallow: /admin
+Disallow: /admin/
 
-Sitemap: https://ecohotelsamawe.com/sitemap.xml
+Sitemap: https://lacasadelpintormocoa.com/sitemap.xml
