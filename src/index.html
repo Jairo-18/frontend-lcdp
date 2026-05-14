@@ -36,8 +36,65 @@
       href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Caveat:wght@400;600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
       rel="stylesheet"
     />
+
+    <style>
+      #app-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: #faf8f3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 20px;
+        transition: opacity 0.35s ease;
+      }
+      #app-loader.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+      #app-loader-logo {
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      #app-loader-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      #app-loader-spinner {
+        width: 28px;
+        height: 28px;
+        border: 2.5px solid #e5dec8;
+        border-top-color: #1a1c2c;
+        border-radius: 50%;
+        animation: lcdp-spin 0.75s linear infinite;
+      }
+      @keyframes lcdp-spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
   </head>
   <body>
+    <div id="app-loader">
+      <div id="app-loader-logo">
+        <img src="assets/images/logo.jpg" alt="La Casa del Pintor" />
+      </div>
+      <div id="app-loader-spinner"></div>
+    </div>
+
     <app-root></app-root>
+
+    <script>
+      document.fonts.ready.then(function () {
+        var loader = document.getElementById('app-loader');
+        if (!loader) return;
+        loader.classList.add('fade-out');
+        setTimeout(function () { loader.remove(); }, 380);
+      });
+    </script>
   </body>
 </html>
