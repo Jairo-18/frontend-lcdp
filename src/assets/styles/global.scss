@@ -1,5 +1,13 @@
 @use 'variables' as *;
 
+/* Oculta iconos hasta que Material Symbols cargue — evita flash de texto */
+.material-symbols-outlined {
+  visibility: hidden;
+}
+html.fonts-loaded .material-symbols-outlined {
+  visibility: visible;
+}
+
 .app-container {
   transition:
     margin-left 0.3s ease,
