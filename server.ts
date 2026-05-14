@@ -1,4 +1,9 @@
-import { AngularNodeAppEngine, createNodeRequestHandler, isMainModule, writeResponseToNodeResponse } from '@angular/ssr/node';
+import {
+  AngularNodeAppEngine,
+  createNodeRequestHandler,
+  isMainModule,
+  writeResponseToNodeResponse,
+} from '@angular/ssr/node';
 import express from 'express';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -8,7 +13,13 @@ const browserDistFolder = resolve(serverDistFolder, '../browser');
 
 const app = express();
 app.disable('x-powered-by');
-const angularApp = new AngularNodeAppEngine();
+
+// Trust reverse proxy (nginx) — allows x-forwarded-* headers and real host
+app.set('trust proxy', true);
+
+const angularApp = new AngularNodeAppEngine({
+  allowedHosts: ['lacasadelpintormocoa.com', 'www.lacasadelpintormocoa.com', 'localhost'],
+});
 
 app.use(
   express.static(browserDistFolder, {
