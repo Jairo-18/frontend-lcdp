@@ -44,12 +44,8 @@ export class AdminSidebarComponent implements OnDestroy {
   private _isOpen: boolean = false;
 
   readonly navItems: NavItem[] = [
-    { label: 'Dashboard',       icon: 'dashboard',        route: '/admin/dashboard' },
-    { label: 'Productos',       icon: 'inventory_2',      route: '/admin/productos' },
-    { label: 'Categorías',      icon: 'category',         route: '/admin/categorias' },
-    { label: 'Marcas',          icon: 'label',            route: '/admin/marcas' },
-    { label: 'Videos',          icon: 'smart_display',    route: '/admin/videos' },
-    { label: 'Aplicación',      icon: 'app_settings_alt', route: '/admin/aplication' },
+    { label: 'Dashboard',  icon: 'dashboard',        route: '/admin/dashboard'  },
+    { label: 'Aplicación', icon: 'app_settings_alt', route: '/admin/aplication' },
   ];
 
   ngOnDestroy(): void {
