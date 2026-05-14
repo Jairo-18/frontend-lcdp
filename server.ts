@@ -19,6 +19,7 @@ app.set('trust proxy', true);
 
 const angularApp = new AngularNodeAppEngine({
   allowedHosts: ['lacasadelpintormocoa.com', 'www.lacasadelpintormocoa.com', 'localhost'],
+  trustProxyHeaders: true,
 });
 
 app.use(
