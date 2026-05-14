@@ -1,31 +1,38 @@
-<aside class="admin-sidebar">
+<aside class="admin-sidebar" [class.is-open]="isOpen">
 
   <!-- Brand -->
   <div class="admin-brand">
     <div class="admin-logo">
-      <img src="assets/logo.jpg" alt="La Casa del Pintor" />
+      <img src="assets/images/logo.jpg" alt="La Casa del Pintor" />
     </div>
     <div>
       <div class="admin-brand-name">La Casa del Pintor</div>
       <div class="admin-brand-sub">Panel administrativo</div>
     </div>
+    <!-- Close (mobile only) -->
+    <button class="admin-close" (click)="close.emit()" aria-label="Cerrar menú">
+      <span class="material-symbols-outlined text-[20px] leading-none">close</span>
+    </button>
   </div>
 
   <!-- Nav -->
   <nav class="admin-nav">
-    <a
-      *ngFor="let item of navItems"
-      [routerLink]="item.route"
-      routerLinkActive="active"
-      class="admin-nav-item"
-    >
-      <span class="ic">{{ item.icon }}</span>
-      {{ item.label }}
-      <span *ngIf="item.count !== undefined" class="ct">{{ item.count }}</span>
-    </a>
+    @for (item of navItems; track item.route) {
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        class="admin-nav-item"
+      >
+        <span class="material-symbols-outlined text-[20px] leading-none shrink-0">{{ item.icon }}</span>
+        {{ item.label }}
+        @if (item.count !== undefined) {
+          <span class="ct">{{ item.count }}</span>
+        }
+      </a>
+    }
   </nav>
 
-  <!-- Footer usuario -->
+  <!-- Footer -->
   <div class="admin-foot">
     <div class="admin-user">
       <div class="admin-avatar">{{ userInitials }}</div>
@@ -35,7 +42,8 @@
       </div>
     </div>
     <button class="admin-exit" (click)="exitAdmin.emit()">
-      ← Volver a la tienda
+      <span class="material-symbols-outlined text-[20px] leading-none shrink-0">logout</span>
+      Cerrar sesión
     </button>
   </div>
 

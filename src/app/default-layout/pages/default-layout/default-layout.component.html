@@ -13,7 +13,7 @@
     </main>
 
     @if (!isAdmin) {
-      <app-footer />
+      <app-footer [org]="_org()" />
     }
   </div>
 </article>

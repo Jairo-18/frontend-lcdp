@@ -4,7 +4,14 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 import { inject, Injector, runInInjectionContext } from '@angular/core';
-import { BehaviorSubject, catchError, filter, switchMap, take, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  filter,
+  switchMap,
+  take,
+  throwError,
+} from 'rxjs';
 import { AuthService } from '@app/auth/services/auth.service';
 import { NotificationsService } from '@shared/services/notifications.service';
 import { ApiResponseInterface } from '@shared/interfaces/api-response.interface';
@@ -13,67 +20,89 @@ import { environment } from '@env/environment';
 
 const tokenSubject = new BehaviorSubject<string>('');
 
+const buildRequest = (
+  req: HttpRequest<unknown>,
+  token: string,
+): HttpRequest<unknown> =>
+  req.clone({
+    setHeaders: {
+      Authorization: `Bearer ${token}`,
+      'X-Client-Key': environment.apiKey,
+    },
+  });
+
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService);
-  const notificationsService = inject(NotificationsService);
+  const _authService: AuthService = inject(AuthService);
+  const _notificationsService: NotificationsService =
+    inject(NotificationsService);
   const injector = inject(Injector);
 
-  const authReq = addTokenToRequest(req);
+  const authReq = buildRequest(req, _authService.getAccessToken() ?? '');
 
   return next(authReq).pipe(
     catchError((err: HttpErrorResponse) => {
-      const refreshToken = authService.getRefreshToken();
+      const refreshToken = _authService.getRefreshToken();
 
       switch (err.status) {
         case 401: {
-          if (refreshToken && !authService.isRefreshing) {
-            authService.isRefreshing = true;
+          if (refreshToken && !_authService.isRefreshing) {
+            _authService.isRefreshing = true;
             tokenSubject.next('');
 
-            return authService.refreshToken(refreshToken).pipe(
+            return _authService.refreshToken(refreshToken).pipe(
               switchMap((res: ApiResponseInterface<LoginSuccessInterface>) => {
-                authService.isRefreshing = false;
+                _authService.isRefreshing = false;
                 const newToken = res.data?.tokens?.accessToken ?? '';
                 tokenSubject.next(newToken);
                 return next(
                   runInInjectionContext(injector, () =>
-                    addTokenToRequest(authReq, newToken),
+                    buildRequest(authReq, newToken),
                   ),
                 );
               }),
               catchError((refreshErr) => {
-                authService.isRefreshing = false;
-                notificationsService.error('Tu sesión ha expirado. Por favor inicia sesión nuevamente.');
-                authService.clearSessionAndRedirect();
+                _authService.isRefreshing = false;
+                _notificationsService.error(
+                  'Tu sesión ha expirado. Por favor inicia sesión nuevamente.',
+                );
+                _authService.clearSessionAndRedirect();
                 return throwError(() => refreshErr);
               }),
             );
           }
 
-          if (refreshToken && authService.isRefreshing && !req.url.includes('refresh-token')) {
+          if (
+            refreshToken &&
+            _authService.isRefreshing &&
+            !req.url.includes('refresh-token')
+          ) {
             return tokenSubject.pipe(
               filter((token) => token !== ''),
               take(1),
               switchMap((token) =>
                 next(
                   runInInjectionContext(injector, () =>
-                    addTokenToRequest(authReq, token),
+                    buildRequest(authReq, token),
                   ),
                 ),
               ),
             );
           }
 
-          const hadSession = !!authService.getAccessToken() || !!refreshToken;
+          const hadSession = !!_authService.getAccessToken() || !!refreshToken;
           if (hadSession) {
-            notificationsService.error('Tu sesión ha expirado. Por favor inicia sesión nuevamente.');
-            authService.clearSessionAndRedirect();
+            _notificationsService.error(
+              'Tu sesión ha expirado. Por favor inicia sesión nuevamente.',
+            );
+            _authService.clearSessionAndRedirect();
           }
           return throwError(() => err);
         }
 
         case 403:
-          notificationsService.error('No tienes permisos para realizar esta acción.');
+          _notificationsService.error(
+            'No tienes permisos para realizar esta acción.',
+          );
           return throwError(() => err);
 
         default:
@@ -81,19 +110,4 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       }
     }),
   );
-};
-
-const addTokenToRequest = (
-  req: HttpRequest<unknown>,
-  token?: string,
-): HttpRequest<unknown> => {
-  const authService = inject(AuthService);
-  const accessToken = token ?? authService.getAccessToken() ?? '';
-
-  return req.clone({
-    setHeaders: {
-      Authorization: `Bearer ${accessToken}`,
-      'X-Api-Key': environment.apiKey,
-    },
-  });
 };

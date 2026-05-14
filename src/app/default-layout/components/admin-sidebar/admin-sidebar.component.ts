@@ -1,5 +1,13 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnDestroy,
+  Output,
+  PLATFORM_ID,
+} from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { RouterModule, RouterLinkActive } from '@angular/router';
 
 interface NavItem {
@@ -12,21 +20,41 @@ interface NavItem {
 @Component({
   selector: 'app-admin-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterModule, RouterLinkActive],
+  imports: [RouterModule, RouterLinkActive],
   templateUrl: './admin-sidebar.component.html',
   styleUrls: ['./admin-sidebar.component.scss'],
 })
-export class AdminSidebarComponent {
-  @Input() userName = 'Admin';
-  @Input() userRole = 'Administrador';
-  @Input() userInitials = 'AD';
-  @Output() exitAdmin = new EventEmitter<void>();
+export class AdminSidebarComponent implements OnDestroy {
+  private readonly _platformId: object = inject(PLATFORM_ID);
 
-  navItems: NavItem[] = [
-    { label: 'Dashboard',  icon: '▤',  route: '/admin/dashboard' },
-    { label: 'Productos',  icon: '🪣', route: '/admin/productos' },
-    { label: 'Categorías', icon: '📂', route: '/admin/categorias' },
-    { label: 'Marcas',     icon: '🏷️', route: '/admin/marcas' },
-    { label: 'Videos',     icon: '▶',  route: '/admin/videos' },
+  @Input() userName: string = 'Admin';
+  @Input() userRole: string = 'Administrador';
+  @Input() userInitials: string = 'AD';
+  @Input() set isOpen(value: boolean) {
+    this._isOpen = value;
+    if (isPlatformBrowser(this._platformId)) {
+      document.body.style.overflow = value ? 'hidden' : '';
+    }
+  }
+  get isOpen(): boolean { return this._isOpen; }
+
+  @Output() exitAdmin: EventEmitter<void> = new EventEmitter<void>();
+  @Output() close: EventEmitter<void> = new EventEmitter<void>();
+
+  private _isOpen: boolean = false;
+
+  readonly navItems: NavItem[] = [
+    { label: 'Dashboard',       icon: 'dashboard',        route: '/admin/dashboard' },
+    { label: 'Productos',       icon: 'inventory_2',      route: '/admin/productos' },
+    { label: 'Categorías',      icon: 'category',         route: '/admin/categorias' },
+    { label: 'Marcas',          icon: 'label',            route: '/admin/marcas' },
+    { label: 'Videos',          icon: 'smart_display',    route: '/admin/videos' },
+    { label: 'Aplicación',      icon: 'app_settings_alt', route: '/admin/aplication' },
   ];
+
+  ngOnDestroy(): void {
+    if (isPlatformBrowser(this._platformId)) {
+      document.body.style.overflow = '';
+    }
+  }
 }

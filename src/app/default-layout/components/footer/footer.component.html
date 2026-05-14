@@ -1,6 +1,149 @@
-<footer class="border-t border-rule-soft bg-paper mt-auto py-6 px-6">
-  <div class="max-w-[1240px] mx-auto flex items-center justify-between gap-4 text-sm text-ink-mute font-body">
-    <span>© {{ year }} La Casa del Pintor</span>
-    <span>Pinturas · Herramientas · Revestimientos</span>
+<footer class="footer">
+  <!-- ── Main grid ── -->
+  <div class="footer-grid">
+    <!-- Brand -->
+    <div>
+      <p class="footer-brand-name">{{ org?.name }}</p>
+      <p class="footer-brand-desc">
+        {{ org?.description }}
+      </p>
+
+      @if (socialLinks.length) {
+        <div class="footer-social">
+          @for (s of socialLinks; track s.url) {
+            <a
+              [href]="s.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="footer-social-btn"
+              [title]="s.label"
+            >
+              <span class="material-symbols-outlined">{{ s.icon }}</span>
+            </a>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Tienda -->
+    <div>
+      <p class="footer-heading">Tienda</p>
+      <ul class="footer-links">
+        @for (link of tiendaLinks; track link.route) {
+          <li>
+            <a [routerLink]="link.route">{{ link.label }}</a>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <!-- Ayuda -->
+    <div>
+      <p class="footer-heading">Ayuda</p>
+      <ul class="footer-links">
+        @for (link of ayudaLinks; track link.route) {
+          <li>
+            <a [routerLink]="link.route">{{ link.label }}</a>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <!-- Contacto -->
+    <div>
+      <p class="footer-heading">Contacto</p>
+      <ul class="footer-contact-list">
+        @if (org?.phone) {
+          <li>
+            <span class="footer-contact-item">
+              <span class="material-symbols-outlined">call</span>
+              {{ org!.phone }}
+            </span>
+          </li>
+        }
+
+        @if (org?.address) {
+          <li>
+            <span class="footer-contact-item">
+              <span class="material-symbols-outlined">home_pin</span>
+              {{ org!.address }}
+            </span>
+          </li>
+        }
+
+        @if (org?.city) {
+          <li>
+            <span class="footer-contact-item">
+              <span class="material-symbols-outlined">location_on</span>
+              {{ org!.city }}{{ org?.department ? ', ' + org!.department : '' }}
+            </span>
+          </li>
+        }
+
+        @if (org?.email) {
+          <li>
+            <a [href]="'mailto:' + org!.email" class="footer-contact-item">
+              <span class="material-symbols-outlined">mail</span>
+              {{ org!.email }}
+            </a>
+          </li>
+        }
+
+        @if (org?.whatsappNumber) {
+          <li>
+            <a
+              [href]="whatsappHref"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="footer-contact-item"
+            >
+              <span class="material-symbols-outlined">chat</span>
+              WhatsApp 24/7 — {{ org!.whatsappNumber }}
+            </a>
+          </li>
+        }
+
+        @if (org?.website) {
+          <li>
+            <a
+              [href]="org!.website"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="footer-contact-item"
+            >
+              <span class="material-symbols-outlined">language</span>
+              {{ org!.website }}
+            </a>
+          </li>
+        }
+
+        @if (org?.mapsUrl) {
+          <li>
+            <a
+              [href]="org!.mapsUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="footer-contact-item"
+            >
+              <span class="material-symbols-outlined">map</span>
+              Ver en Google Maps
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── Bottom bar ── -->
+  <div class="footer-bottom">
+    <div class="footer-bottom-inner">
+      <span>© {{ year }} {{ org?.name }} · Todos los derechos reservados</span>
+      <span
+        >Diseñado y desarrollado por
+        <span class="footer-credits-highlight"
+          >Jhon Jairo Legarda Erazo</span
+        ></span
+      >
+    </div>
   </div>
 </footer>

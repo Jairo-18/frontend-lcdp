@@ -190,54 +190,42 @@
   font-size: 12px !important;
 }
 
-::-webkit-scrollbar {
-  width: 16px !important;
-  height: 16px !important;
-  display: block !important;
-}
+/* Scrollbar personalizado — solo en dispositivos con puntero fino (desktop) */
+@media (pointer: fine) {
+  ::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+  }
 
-::-webkit-scrollbar-track {
-  background-color: #f1f1f1 !important;
-}
+  ::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+  }
 
-::-webkit-scrollbar-thumb {
-  background-color: var(--primary-color) !important;
-  border: 2px solid #f1f1f1 !important;
-  min-height: 60px !important;
-}
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border: 2px solid #f1f1f1;
+    min-height: 60px;
+  }
 
-::-webkit-scrollbar-thumb:hover {
-  background-color: #047d03 !important;
-}
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #047d03;
+  }
 
-::-webkit-scrollbar-button {
-  display: block !important;
-  background-color: var(--primary-color) !important;
-  height: 16px !important;
-  width: 16px !important;
-}
+  ::-webkit-scrollbar-button {
+    display: block;
+    background-color: var(--primary-color);
+    height: 16px;
+    width: 16px;
+  }
 
-::-webkit-scrollbar-corner {
-  background-color: #f1f1f1 !important;
-}
+  ::-webkit-scrollbar-corner {
+    background-color: #f1f1f1;
+  }
 
-.main::-webkit-scrollbar {
-  width: 16px !important;
-}
-
-.main::-webkit-scrollbar-track {
-  background-color: #f1f1f1 !important;
-}
-
-.main::-webkit-scrollbar-thumb {
-  background-color: var(--primary-color) !important;
-  min-height: 60px !important;
-  border: 2px solid #f1f1f1 !important;
-}
-
-* {
-  scrollbar-width: auto !important;
-  scrollbar-color: var(--primary-color) #f1f1f1 !important;
+  * {
+    scrollbar-width: auto;
+    scrollbar-color: var(--primary-color) #f1f1f1;
+  }
 }
 
 /* ── Tipografía global dinámica ──────────────────────────────

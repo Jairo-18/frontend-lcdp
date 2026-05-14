@@ -1,0 +1,61 @@
+<div class="flex min-h-dvh bg-paper">
+  <!-- ── Mobile top bar ── -->
+  <header
+    class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-[#0f1014] text-white flex items-center gap-3 px-4 py-3"
+  >
+    <button
+      (click)="toggleSidebar()"
+      class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition-colors border-0 cursor-pointer text-white"
+      aria-label="Abrir menú"
+    >
+      <span class="material-symbols-outlined text-[20px] leading-none"
+        >menu</span
+      >
+    </button>
+
+    <div class="flex items-center gap-2 flex-1">
+      <div class="w-7 h-7 rounded-lg overflow-hidden shrink-0">
+        <img
+          src="assets/images/logo.jpg"
+          alt="Logo"
+          class="w-full h-full object-cover"
+        />
+      </div>
+      <span class="font-display font-bold text-sm leading-none"
+        >La Casa del Pintor</span
+      >
+    </div>
+
+    <button
+      (click)="_authService.logout()"
+      class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition-colors border-0 cursor-pointer text-white"
+      aria-label="Cerrar sesión"
+    >
+      <span class="material-symbols-outlined text-[20px] leading-none"
+        >logout</span
+      >
+    </button>
+  </header>
+
+  <!-- ── Overlay (mobile) ── -->
+  @if (_isSidebarOpen()) {
+    <div
+      class="fixed inset-0 z-[110] bg-black/50 backdrop-blur-[2px] md:hidden"
+      (click)="closeSidebar()"
+    ></div>
+  }
+
+  <!-- ── Sidebar ── -->
+  <app-admin-sidebar
+    [userName]="_userName"
+    [userInitials]="_initials"
+    [isOpen]="_isSidebarOpen()"
+    (close)="closeSidebar()"
+    (exitAdmin)="_authService.logout()"
+  />
+
+  <!-- ── Main content ── -->
+  <main class="flex-1 overflow-auto pt-[52px] md:pt-0 md:ml-0">
+    <router-outlet />
+  </main>
+</div>

@@ -2,6 +2,7 @@
   "name": "frontend-lcdp",
   "version": "0.0.1",
   "private": true,
+  "packageManager": "pnpm@10.25.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -31,6 +32,14 @@
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "esbuild",
+      "lmdb",
+      "msgpackr-extract"
+    ]
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^19.2.20",

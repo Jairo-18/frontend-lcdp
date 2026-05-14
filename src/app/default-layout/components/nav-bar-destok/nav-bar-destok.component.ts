@@ -2,12 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-
-export interface CategoryPill {
-  id: string;
-  name: string;
-  icon: string;
-}
+import { CategoryPill } from '@shared/interfaces/category.interface';
 
 @Component({
   selector: 'app-nav-bar-destok',

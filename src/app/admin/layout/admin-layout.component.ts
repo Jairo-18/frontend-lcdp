@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, WritableSignal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AdminSidebarComponent } from '../../default-layout/components/admin-sidebar/admin-sidebar.component';
 import { AuthService } from '@app/auth/services/auth.service';
@@ -7,32 +7,31 @@ import { AuthService } from '@app/auth/services/auth.service';
   selector: 'app-admin-layout',
   standalone: true,
   imports: [RouterOutlet, AdminSidebarComponent],
-  template: `
-    <div class="flex min-h-screen bg-paper">
-      <app-admin-sidebar
-        [userName]="userName"
-        [userInitials]="initials"
-        (exitAdmin)="auth.logout()"
-      />
-      <main class="flex-1 overflow-auto">
-        <router-outlet />
-      </main>
-    </div>
-  `,
+  templateUrl: './admin-layout.component.html',
 })
 export class AdminLayoutComponent {
-  protected auth = inject(AuthService);
+  protected readonly _authService: AuthService = inject(AuthService);
 
-  get userName(): string {
-    return this.auth.getCurrentUser()?.fullName ?? 'Admin';
+  readonly _isSidebarOpen: WritableSignal<boolean> = signal(false);
+
+  get _userName(): string {
+    return this._authService.getCurrentUser()?.fullName ?? 'Admin';
   }
 
-  get initials(): string {
-    return (this.auth.getCurrentUser()?.fullName ?? 'AD')
+  get _initials(): string {
+    return (this._authService.getCurrentUser()?.fullName ?? 'AD')
       .split(' ')
-      .map((w) => w[0])
+      .map((w: string): string => w[0])
       .join('')
       .slice(0, 2)
       .toUpperCase();
+  }
+
+  toggleSidebar(): void {
+    this._isSidebarOpen.update((v: boolean): boolean => !v);
+  }
+
+  closeSidebar(): void {
+    this._isSidebarOpen.set(false);
   }
 }

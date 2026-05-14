@@ -1,58 +1,110 @@
+<!-- ── Top bar ── -->
 <header
   class="sticky top-0 z-[100] bg-paper/90 backdrop-blur-[14px] backdrop-saturate-[1.6] border-b border-rule-soft flex lg:hidden w-full"
 >
   <div class="flex items-center justify-between w-full px-4 py-3">
-    <div class="flex content-between gap-5">
+    <div class="flex items-center gap-3">
+
       <!-- Hamburger -->
       <button
+        (click)="toggleMenu()"
         class="bg-transparent border-0 p-2 rounded-lg cursor-pointer text-ink-soft hover:bg-[rgba(26,28,44,0.06)] hover:text-ink transition-all flex items-center justify-center"
-        (click)="openMenu.emit()"
+        aria-label="Abrir menú"
       >
-        <span class="material-symbols-outlined text-[22px] block leading-none"
-          >menu</span
-        >
+        <span class="material-symbols-outlined text-[22px] leading-none">menu</span>
       </button>
 
       <!-- Brand -->
       <button
-        class="flex items-center gap-2 bg-transparent border-0 cursor-pointer p-0"
         (click)="goHome.emit()"
+        class="flex items-center gap-2 bg-transparent border-0 cursor-pointer p-0"
       >
-        <div
-          class="w-8 h-8 rounded-lg bg-yellow grid place-items-center overflow-hidden shadow-sm shrink-0"
-        >
-          <img
-            class="w-full h-full object-cover"
-            src="assets/images/logo.jpg"
-            alt="Logo"
-          />
+        <div class="w-8 h-8 rounded-lg bg-yellow grid place-items-center overflow-hidden shadow-sm shrink-0">
+          <img class="w-full h-full object-cover" src="assets/images/logo.jpg" alt="Logo" />
         </div>
-        <div
-          class="font-display font-extrabold text-[14px] leading-none tracking-tight text-ink"
-        >
+        <div class="font-display font-extrabold text-[14px] leading-none tracking-tight text-ink">
           La Casa del
-          <em
-            class="not-italic font-hand text-coral text-[18px] font-semibold block leading-none mt-0.5"
-            >Pintor</em
-          >
+          <em class="not-italic font-hand text-coral text-[18px] font-semibold block leading-none mt-0.5">Pintor</em>
         </div>
       </button>
+
     </div>
 
     <!-- Cart -->
     <button
-      class="bg-ink text-white p-2 rounded-lg inline-flex items-center gap-1.5 cursor-pointer border-0 transition-all hover:bg-black relative"
       (click)="openCart.emit()"
+      class="bg-ink text-white p-2 rounded-lg inline-flex items-center gap-1.5 cursor-pointer border-0 transition-all hover:bg-black relative"
+      aria-label="Carrito"
     >
-      <span class="material-symbols-outlined text-[22px] leading-none"
-        >shopping_bag</span
-      >
-      <span
-        *ngIf="cartCount > 0"
-        class="absolute -top-1.5 -right-1.5 bg-yellow text-ink font-mono font-bold text-[10px] min-w-[18px] h-[18px] rounded-full inline-grid place-items-center px-1"
-      >
-        {{ cartCount }}
-      </span>
+      <span class="material-symbols-outlined text-[22px] leading-none">shopping_bag</span>
+      @if (cartCount > 0) {
+        <span class="absolute -top-1.5 -right-1.5 bg-yellow text-ink font-mono font-bold text-[10px] min-w-[18px] h-[18px] rounded-full inline-grid place-items-center px-1">
+          {{ cartCount }}
+        </span>
+      }
     </button>
   </div>
 </header>
+
+<!-- ── Overlay ── -->
+@if (_isMenuOpen()) {
+  <div
+    class="fixed inset-0 z-[110] bg-ink/40 backdrop-blur-[2px]"
+    (click)="closeMenu()"
+  ></div>
+}
+
+<!-- ── Drawer ── -->
+<nav
+  class="fixed top-0 left-0 z-[120] h-dvh w-[78%] max-w-[300px] bg-paper flex flex-col shadow-2xl transition-transform duration-300 ease-out lg:hidden"
+  [class.-translate-x-full]="!_isMenuOpen()"
+  [class.translate-x-0]="_isMenuOpen()"
+>
+  <!-- Drawer header -->
+  <div class="flex items-center justify-between px-5 py-4 border-b border-rule">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-lg overflow-hidden shadow-sm shrink-0">
+        <img class="w-full h-full object-cover" src="assets/images/logo.jpg" alt="Logo" />
+      </div>
+      <div class="font-display font-extrabold text-[13px] leading-none tracking-tight text-ink">
+        La Casa del
+        <em class="not-italic font-hand text-coral text-[17px] font-semibold block leading-none mt-0.5">Pintor</em>
+      </div>
+    </div>
+    <button
+      (click)="closeMenu()"
+      class="p-1.5 rounded-lg text-ink-mute hover:text-ink hover:bg-[rgba(26,28,44,0.06)] transition-all border-0 bg-transparent cursor-pointer"
+      aria-label="Cerrar menú"
+    >
+      <span class="material-symbols-outlined text-[20px] leading-none">close</span>
+    </button>
+  </div>
+
+  <!-- Nav links -->
+  <ul class="flex-1 overflow-y-auto py-3 px-3 space-y-0.5">
+    @for (link of navLinks; track link.route) {
+      <li>
+        <a
+          [routerLink]="link.route"
+          routerLinkActive="bg-yellow/30 text-ink font-semibold"
+          [routerLinkActiveOptions]="{ exact: link.route === '/' }"
+          class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm text-ink-soft hover:bg-[rgba(26,28,44,0.05)] hover:text-ink transition-colors"
+        >
+          <span class="material-symbols-outlined text-[20px] leading-none shrink-0">{{ link.icon }}</span>
+          {{ link.label }}
+        </a>
+      </li>
+    }
+  </ul>
+
+  <!-- Drawer footer: Admin -->
+  <div class="px-3 pb-6 pt-3 border-t border-rule">
+    <a
+      routerLink="/auth/login"
+      class="flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-ink text-white text-sm font-medium hover:bg-black transition-colors"
+    >
+      <span class="material-symbols-outlined text-[20px] leading-none">manage_accounts</span>
+      Acceder al panel
+    </a>
+  </div>
+</nav>

@@ -1,45 +1,59 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  signal,
+  Signal,
+  WritableSignal,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { NotificationsService } from '@shared/services/notifications.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
 export class LoginComponent {
-  private fb = inject(FormBuilder);
-  private auth = inject(AuthService);
-  private router = inject(Router);
+  private readonly _formBuilder: FormBuilder = inject(FormBuilder);
+  private readonly _authService: AuthService = inject(AuthService);
+  private readonly _router: Router = inject(Router);
+  private readonly _notificationsService: NotificationsService =
+    inject(NotificationsService);
 
-  loading = signal(false);
-  error = signal<string | null>(null);
-  showPassword = signal(false);
+  readonly _loading: WritableSignal<boolean> = signal(false);
+  readonly _showPassword: WritableSignal<boolean> = signal(false);
 
-  readonly greeting = computed(() => this.auth.getCurrentUser()?.fullName?.split(' ')[0] ?? '');
+  readonly _greeting: Signal<string> = computed(
+    () => this._authService.getCurrentUser()?.fullName?.split(' ')[0] ?? '',
+  );
 
-  form = this.fb.group({
+  readonly form = this._formBuilder.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
     remember: [false],
   });
 
   onSubmit(): void {
-    if (this.form.invalid || this.loading()) return;
+    if (this.form.invalid || this._loading()) return;
 
     const { email, password, remember } = this.form.getRawValue();
-    this.loading.set(true);
-    this.error.set(null);
+    this._loading.set(true);
 
-    this.auth.login({ email: email!, password: password! }, remember!).subscribe({
-      next: () => this.router.navigate(['/admin/dashboard']),
-      error: (err) => {
-        this.error.set(err.error?.message ?? 'Credenciales incorrectas.');
-        this.loading.set(false);
-      },
-    });
+    this._authService
+      .login({ email: email!, password: password! }, remember!)
+      .subscribe({
+        next: () => this._router.navigate(['/admin/dashboard']),
+        error: (err: { error?: { message?: string } }) => {
+          this._notificationsService.error(
+            err.error?.message ?? 'Credenciales incorrectas.',
+          );
+          this._loading.set(false);
+        },
+      });
   }
 }

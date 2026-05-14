@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  //apiUrl: 'https://apidev.ecohotelsamawe.com/',
-  apiUrl: 'http://localhost:3000',
-  apiKey: 'sk_local_lcdp_REEMPLAZAR',
+  apiUrl: 'https://apidev.lacasadelpintormocoa.com',
+  //apiUrl: 'http://localhost:3000',
+  apiKey: 'sk_dev_lcdp_REEMPLAZAR',
 };

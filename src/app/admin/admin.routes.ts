@@ -11,6 +11,11 @@ export const adminRoutes: Routes = [
         loadComponent: () =>
           import('./pages/dashboard/dashboard.component').then((m) => m.DashboardComponent),
       },
+      {
+        path: 'aplication',
+        loadComponent: () =>
+          import('./pages/aplication/aplication.component').then((m) => m.AplicationComponent),
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
