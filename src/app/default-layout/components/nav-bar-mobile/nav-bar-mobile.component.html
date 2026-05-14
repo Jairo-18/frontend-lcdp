@@ -1,18 +1,58 @@
 <header
-    class="sticky top-0 z-[100] bg-paper/90 backdrop-blur-[14px] backdrop-saturate-[1.6] border-b border-rule-soft flex md:hidden">
-    <div class="flex items-center gap-6 px-6 py-3.5 max-w-[1240px] mx-auto">
+  class="sticky top-0 z-[100] bg-paper/90 backdrop-blur-[14px] backdrop-saturate-[1.6] border-b border-rule-soft flex lg:hidden w-full"
+>
+  <div class="flex items-center justify-between w-full px-4 py-3">
+    <div class="flex content-between gap-5">
+      <!-- Hamburger -->
+      <button
+        class="bg-transparent border-0 p-2 rounded-lg cursor-pointer text-ink-soft hover:bg-[rgba(26,28,44,0.06)] hover:text-ink transition-all flex items-center justify-center"
+        (click)="openMenu.emit()"
+      >
+        <span class="material-symbols-outlined text-[22px] block leading-none"
+          >menu</span
+        >
+      </button>
 
-        <!-- Brand -->
-
-        <button class="flex items-center gap-3 bg-transparent border-0 cursor-pointer p-0">
-            <div class=" w-11 h-11 rounded-xl bg-yellow grid place-items-center overflow-hidden shadow-sm shrink-0">
-                <img class="w-full h-full object-cover" src="assets/images/logo.jpg" alt="Logo" />
-            </div>
-            <div class="font-display font-extrabold text-[17px] leading-none tracking-tight text-ink">
-                La Casa del
-                <em
-                    class="not-italic font-hand text-coral text-[22px] font-semibold block leading-none mt-0.5">Pintor</em>
-            </div>
-        </button>
+      <!-- Brand -->
+      <button
+        class="flex items-center gap-2 bg-transparent border-0 cursor-pointer p-0"
+        (click)="goHome.emit()"
+      >
+        <div
+          class="w-8 h-8 rounded-lg bg-yellow grid place-items-center overflow-hidden shadow-sm shrink-0"
+        >
+          <img
+            class="w-full h-full object-cover"
+            src="assets/images/logo.jpg"
+            alt="Logo"
+          />
+        </div>
+        <div
+          class="font-display font-extrabold text-[14px] leading-none tracking-tight text-ink"
+        >
+          La Casa del
+          <em
+            class="not-italic font-hand text-coral text-[18px] font-semibold block leading-none mt-0.5"
+            >Pintor</em
+          >
+        </div>
+      </button>
     </div>
+
+    <!-- Cart -->
+    <button
+      class="bg-ink text-white p-2 rounded-lg inline-flex items-center gap-1.5 cursor-pointer border-0 transition-all hover:bg-black relative"
+      (click)="openCart.emit()"
+    >
+      <span class="material-symbols-outlined text-[22px] leading-none"
+        >shopping_bag</span
+      >
+      <span
+        *ngIf="cartCount > 0"
+        class="absolute -top-1.5 -right-1.5 bg-yellow text-ink font-mono font-bold text-[10px] min-w-[18px] h-[18px] rounded-full inline-grid place-items-center px-1"
+      >
+        {{ cartCount }}
+      </span>
+    </button>
+  </div>
 </header>

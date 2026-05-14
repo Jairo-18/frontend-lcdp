@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterOutlet, Router } from '@angular/router';
 import { AdminSidebarComponent } from '../../components/admin-sidebar/admin-sidebar.component';
 import { NavBarComponent } from '../../components/nav-bar/nav-bar.component';
+import { FooterComponent } from '../../components/footer/footer.component';
 
 @Component({
   selector: 'app-default-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, AdminSidebarComponent, NavBarComponent],
+  imports: [RouterOutlet, AdminSidebarComponent, NavBarComponent, FooterComponent],
   templateUrl: './default-layout.component.html',
   styleUrls: ['./default-layout.component.scss'],
 })

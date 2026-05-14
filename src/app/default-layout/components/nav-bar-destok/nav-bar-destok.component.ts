@@ -12,9 +12,9 @@ export interface CategoryPill {
 @Component({
   selector: 'app-nav-bar-destok',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule,],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './nav-bar-destok.component.html',
-  styleUrl: './nav-bar-destok.component.scss'
+  styleUrl: './nav-bar-destok.component.scss',
 })
 export class NavBarDestokComponent {
   @Input() cartCount = 0;

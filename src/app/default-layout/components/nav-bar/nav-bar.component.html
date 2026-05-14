@@ -1,1 +1,11 @@
-<app-nav-bar-destok></app-nav-bar-destok><app-nav-bar-mobile></app-nav-bar-mobile>
+<app-nav-bar-destok
+  [cartCount]="cartCount"
+  (openCart)="openCart.emit()"
+  (goHome)="goHome.emit()"
+/>
+<app-nav-bar-mobile
+  [cartCount]="cartCount"
+  (openMenu)="openMenu.emit()"
+  (openCart)="openCart.emit()"
+  (goHome)="goHome.emit()"
+/>

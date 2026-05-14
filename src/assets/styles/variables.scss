@@ -1,76 +1,98 @@
 // ── Brand tokens ─────────────────────────────────────────────
 :root {
   // Colors
-  --paper:          #faf8f3;
-  --paper-alt:      #f4f1e8;
-  --rule:           #e5dec8;
-  --rule-soft:      #efe9d6;
+  --primary-color: #486e2b;
 
-  --ink:            #1a1c2c;
-  --ink-soft:       #3a3d52;
-  --ink-mute:       #6b6e85;
+  --paper: #faf8f3;
+  --paper-alt: #f4f1e8;
+  --rule: #e5dec8;
+  --rule-soft: #efe9d6;
 
-  --yellow:         #ffcb05;
-  --yellow-dark:    #e6b700;
-  --coral:          #e23e57;
-  --coral-dark:     #c4293f;
+  --ink: #1a1c2c;
+  --ink-soft: #3a3d52;
+  --ink-mute: #6b6e85;
 
-  --success:        #2e7d32;
-  --warning:        #f57c00;
-  --error:          #c62828;
-  --info:           #1565c0;
+  --yellow: #ffcb05;
+  --yellow-dark: #e6b700;
+  --coral: #e23e57;
+  --coral-dark: #c4293f;
+
+  --success: #2e7d32;
+  --warning: #f57c00;
+  --error: #c62828;
+  --info: #1565c0;
 
   // Typography
-  --f-display:      'Bricolage Grotesque', sans-serif;
-  --f-hand:         'Caveat', cursive;
-  --f-mono:         'JetBrains Mono', monospace;
-  --f-body:         'Inter', system-ui, sans-serif;
+  --f-display: 'Bricolage Grotesque', sans-serif;
+  --f-hand: 'Caveat', cursive;
+  --f-mono: 'JetBrains Mono', monospace;
+  --f-body: 'Inter', system-ui, sans-serif;
 }
 
 // ── SCSS variables ────────────────────────────────────────────
 
 // Palette
-$ink:             #1a1c2c;
-$ink-soft:        #3a3d52;
-$ink-mute:        #6b6e85;
-$yellow:          #ffcb05;
-$yellow-dark:     #e6b700;
-$coral:           #e23e57;
-$coral-dark:      #c4293f;
-$paper:           #faf8f3;
-$paper-alt:       #f4f1e8;
-$rule:            #e5dec8;
-$rule-soft:       #efe9d6;
+$ink: #1a1c2c;
+$ink-soft: #3a3d52;
+$ink-mute: #6b6e85;
+$yellow: #ffcb05;
+$yellow-dark: #e6b700;
+$coral: #e23e57;
+$coral-dark: #c4293f;
+$paper: #faf8f3;
+$paper-alt: #f4f1e8;
+$rule: #e5dec8;
+$rule-soft: #efe9d6;
 
 // Layout
-$height-navbar:   68px;
-$width-sidebar:   260px;
+$heigth-nav-bar: 73px;
+$heigth-footer: 245px;
+$width-sidebar: 260px;
+
+$nav-bar-background: var(--primary-color);
+$footer-background: var(--primary-color);
 
 // Breakpoints
-$max-width-phone:   575.98px;
-$max-width-tablet:  899.98px;
+$max-width-phone: 575.98px;
+$max-width-tablet: 899.98px;
 $min-width-desktop: 576px;
-$max-width-layout:  1240px;
+$max-width-layout: 1240px;
 
 // Spacing
-$spacing-xs:  4px;
-$spacing-sm:  8px;
-$spacing-md:  16px;
-$spacing-lg:  24px;
-$spacing-xl:  40px;
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 40px;
 
 // Borders
-$radius-sm:   8px;
-$radius-md:   12px;
-$radius-lg:   999px;
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 999px;
 $radius-card: 16px;
 
 // Transitions
-$transition-fast:  0.12s ease;
-$transition-base:  0.2s ease;
-$transition-slow:  0.3s ease;
+$transition-fast: 0.12s ease;
+$transition-base: 0.2s ease;
+$transition-slow: 0.3s ease;
 
 // Shadows
-$shadow-sm:  0 1px 2px rgba(26, 28, 44, 0.06);
-$shadow-md:  0 4px 12px rgba(26, 28, 44, 0.10);
-$shadow-lg:  0 8px 24px rgba(26, 28, 44, 0.12);
+$shadow-sm: 0 1px 2px rgba(26, 28, 44, 0.06);
+$shadow-md: 0 4px 12px rgba(26, 28, 44, 0.1);
+$shadow-lg: 0 8px 24px rgba(26, 28, 44, 0.12);
+
+/* toast variables */
+$toast-success-border: #06a606;
+$toast-warning-border: #ffeeba;
+$toast-error-border: #e42b2b;
+$toast-info-border: #b8daff;
+
+$toast-success-color: #2b753c;
+$toast-warning-color: #856404;
+$toast-error-color: #7a1b25;
+$toast-info-color: #004085;
+
+$toast-success-icon: '\f058';
+$toast-warning-icon: '\f071';
+$toast-error-icon: '\f06a';
+$toast-info-icon: '\f05a';

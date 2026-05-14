@@ -1,18 +1,19 @@
-<div class="layout-shell" [class.layout-admin]="isAdmin">
-
-  <!-- Admin: sidebar izquierdo -->
-  <ng-container *ngIf="isAdmin">
+<article class="flex relative min-h-dvh">
+  @if (isAdmin) {
     <app-admin-sidebar (exitAdmin)="onExitAdmin()" />
-  </ng-container>
+  }
 
-  <!-- Catalogo/tienda: navbar superior -->
-  <ng-container *ngIf="!isAdmin" class="hidden md:flex">
-    <app-nav-bar />
-  </ng-container>
+  <div class="app-container flex-1 relative">
+    @if (!isAdmin) {
+      <app-nav-bar class="brand-nav-bar" />
+    }
 
-  <!-- Contenido de la ruta activa -->
-  <main class="layout-main">
-    <router-outlet />
-  </main>
+    <main class="main w-full">
+      <router-outlet />
+    </main>
 
-</div>
+    @if (!isAdmin) {
+      <app-footer />
+    }
+  </div>
+</article>
