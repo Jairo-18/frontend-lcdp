@@ -1,0 +1,277 @@
+<div class="p-6 max-w-7xl mx-auto">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="font-display font-bold text-ink text-2xl">Productos</h1>
+      <p class="text-ink-mute text-sm mt-1">Gestiona el catálogo de productos de la tienda.</p>
+    </div>
+    <button type="button" (click)="openCreate()"
+      class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-ink text-white text-sm font-semibold hover:bg-black transition-colors cursor-pointer border-0">
+      <span class="material-symbols-outlined text-[18px] leading-none">add</span>
+      Nuevo producto
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="flex flex-wrap gap-3 mb-4">
+    <div class="relative flex-1 min-w-[200px]">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-ink-mute leading-none pointer-events-none">search</span>
+      <input type="text" placeholder="Buscar por nombre..."
+        (input)="onSearch($any($event.target).value)"
+        class="w-full pl-9 pr-3 py-2 rounded-xl border border-rule text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" />
+    </div>
+
+    <select (change)="onCategoryFilter($any($event.target).value)"
+      class="rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 cursor-pointer">
+      <option value="">Todas las categorías</option>
+      @for (cat of _categories(); track cat.id) {
+        <option [value]="cat.id">{{ cat.name }}</option>
+      }
+    </select>
+
+    <select (change)="onBrandFilter($any($event.target).value)"
+      class="rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 cursor-pointer">
+      <option value="">Todas las marcas</option>
+      @for (brand of _brands(); track brand.id) {
+        <option [value]="brand.id">{{ brand.name }}</option>
+      }
+    </select>
+
+    <select (change)="onLimitChange($any($event.target).value)"
+      class="rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 cursor-pointer">
+      <option value="10">10 por página</option>
+      <option value="25">25 por página</option>
+      <option value="50">50 por página</option>
+    </select>
+  </div>
+
+  <!-- Table -->
+  <div class="bg-white border border-rule rounded-2xl overflow-hidden">
+    @if (_loading()) {
+      <div class="flex items-center justify-center py-20 text-ink-mute gap-3">
+        <span class="material-symbols-outlined text-[28px] leading-none animate-spin">progress_activity</span>
+        Cargando...
+      </div>
+    } @else if (_products().length === 0) {
+      <div class="flex flex-col items-center justify-center py-20 text-ink-mute gap-3">
+        <span class="material-symbols-outlined text-[48px] leading-none opacity-30">inventory_2</span>
+        <p class="text-sm">No se encontraron productos.</p>
+      </div>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-rule text-left">
+              <th class="px-6 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Producto</th>
+              <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Categoría</th>
+              <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Marca</th>
+              <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide text-center">Presentaciones</th>
+              <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (product of _products(); track product.id) {
+              <tr class="border-b border-rule last:border-0 hover:bg-[rgba(26,28,44,0.02)] transition-colors">
+                <td class="px-6 py-4">
+                  <p class="font-medium text-ink leading-tight">{{ product.name }}</p>
+                  @if (product.description) {
+                    <p class="text-ink-mute text-xs mt-0.5 line-clamp-1">{{ product.description }}</p>
+                  }
+                </td>
+                <td class="px-4 py-4 text-ink-mute">{{ product.category.name }}</td>
+                <td class="px-4 py-4 text-ink-mute">{{ product.brand.name }}</td>
+                <td class="px-4 py-4 text-center">
+                  <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[rgba(26,28,44,0.06)] text-xs font-semibold text-ink">
+                    {{ product.presentations.length }}
+                  </span>
+                </td>
+                <td class="px-4 py-4">
+                  @if (_deletingId() === product.id) {
+                    <div class="flex items-center justify-end gap-2">
+                      <span class="text-xs text-ink-mute">¿Eliminar?</span>
+                      <button type="button" (click)="doDelete(product.id)"
+                        class="px-3 py-1 rounded-lg bg-red-500 text-white text-xs font-semibold hover:bg-red-600 transition-colors cursor-pointer border-0">
+                        Sí
+                      </button>
+                      <button type="button" (click)="cancelDelete()"
+                        class="px-3 py-1 rounded-lg border border-rule text-xs font-semibold text-ink hover:bg-[rgba(26,28,44,0.04)] transition-colors cursor-pointer">
+                        No
+                      </button>
+                    </div>
+                  } @else {
+                    <div class="flex items-center justify-end gap-1">
+                      <button type="button" (click)="openEdit(product)"
+                        class="p-1.5 rounded-lg hover:bg-[rgba(26,28,44,0.06)] text-ink-mute hover:text-ink transition-colors cursor-pointer border-0 bg-transparent"
+                        title="Editar">
+                        <span class="material-symbols-outlined text-[18px] leading-none">edit</span>
+                      </button>
+                      <button type="button" (click)="confirmDelete(product.id)"
+                        class="p-1.5 rounded-lg hover:bg-red-50 text-ink-mute hover:text-red-500 transition-colors cursor-pointer border-0 bg-transparent"
+                        title="Eliminar">
+                        <span class="material-symbols-outlined text-[18px] leading-none">delete</span>
+                      </button>
+                    </div>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="flex items-center justify-between px-6 py-4 border-t border-rule">
+        <p class="text-sm text-ink-mute">
+          {{ _from() }}–{{ _to() }} de {{ _total() }} productos
+        </p>
+        <div class="flex items-center gap-2">
+          <button type="button" (click)="prevPage()" [disabled]="_page() <= 1"
+            class="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-rule text-sm text-ink hover:bg-[rgba(26,28,44,0.04)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer bg-white">
+            <span class="material-symbols-outlined text-[16px] leading-none">chevron_left</span>
+            Anterior
+          </button>
+          <span class="text-sm text-ink-mute px-2">{{ _page() }} / {{ _totalPages() }}</span>
+          <button type="button" (click)="nextPage()" [disabled]="_page() >= _totalPages()"
+            class="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-rule text-sm text-ink hover:bg-[rgba(26,28,44,0.04)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer bg-white">
+            Siguiente
+            <span class="material-symbols-outlined text-[16px] leading-none">chevron_right</span>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+
+</div>
+
+<!-- ── Panel overlay ──────────────────────────────────────────────────────────── -->
+@if (_panelOpen()) {
+  <div class="fixed inset-0 bg-black/40 z-40" (click)="closePanel()"></div>
+
+  <div class="fixed inset-y-0 right-0 w-full max-w-xl bg-white z-50 flex flex-col shadow-2xl">
+
+    <!-- Panel header -->
+    <div class="flex items-center justify-between px-6 py-5 border-b border-rule shrink-0">
+      <h2 class="font-semibold text-ink text-base">
+        {{ _editingId() ? 'Editar producto' : 'Nuevo producto' }}
+      </h2>
+      <button type="button" (click)="closePanel()"
+        class="p-1.5 rounded-lg hover:bg-[rgba(26,28,44,0.06)] text-ink-mute transition-colors cursor-pointer border-0 bg-transparent">
+        <span class="material-symbols-outlined text-[20px] leading-none">close</span>
+      </button>
+    </div>
+
+    <!-- Panel body -->
+    @if (_loadingProduct()) {
+      <div class="flex-1 flex items-center justify-center text-ink-mute gap-3">
+        <span class="material-symbols-outlined text-[28px] leading-none animate-spin">progress_activity</span>
+        Cargando...
+      </div>
+    } @else {
+      <form [formGroup]="form" (ngSubmit)="save()" class="flex-1 overflow-y-auto px-6 py-5 space-y-5">
+
+        <!-- Nombre -->
+        <div>
+          <label class="block text-sm font-medium text-ink mb-1">Nombre *</label>
+          <input formControlName="name"
+            class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10"
+            placeholder="Vinilo Tipo 1 Koraza Blanco" />
+        </div>
+
+        <!-- Descripción -->
+        <div>
+          <label class="block text-sm font-medium text-ink mb-1">Descripción</label>
+          <textarea formControlName="description" rows="3"
+            class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 resize-none"
+            placeholder="Descripción del producto..."></textarea>
+        </div>
+
+        <!-- Categoría y Marca -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-ink mb-1">Categoría *</label>
+            <select formControlName="categoryId"
+              class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 cursor-pointer">
+              <option value="">Seleccionar...</option>
+              @for (cat of _categories(); track cat.id) {
+                <option [value]="cat.id">{{ cat.name }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-ink mb-1">Marca *</label>
+            <select formControlName="brandId"
+              class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 cursor-pointer">
+              <option value="">Seleccionar...</option>
+              @for (brand of _brands(); track brand.id) {
+                <option [value]="brand.id">{{ brand.name }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <!-- Video URL -->
+        <div>
+          <label class="block text-sm font-medium text-ink mb-1">URL de video</label>
+          <input formControlName="videoUrl"
+            class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10"
+            placeholder="https://youtube.com/..." />
+        </div>
+
+        <!-- Presentaciones -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-sm font-medium text-ink">Presentaciones</label>
+            <button type="button" (click)="addPresentation()"
+              class="flex items-center gap-1 text-xs font-medium text-ink-mute hover:text-ink transition-colors cursor-pointer border-0 bg-transparent">
+              <span class="material-symbols-outlined text-[16px] leading-none">add_circle</span>
+              Agregar
+            </button>
+          </div>
+
+          <div formArrayName="presentations" class="space-y-2">
+            @for (pres of presentationsArray.controls; track $index) {
+              <div [formGroupName]="$index" class="flex gap-2 items-center p-3 rounded-xl border border-rule bg-[rgba(26,28,44,0.02)]">
+                <select formControlName="unitOfMeasureId"
+                  class="flex-1 rounded-lg border border-rule px-2 py-1.5 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 cursor-pointer">
+                  <option value="">Unidad...</option>
+                  @for (unit of _units(); track unit.id) {
+                    <option [value]="unit.id">{{ unit.name }}</option>
+                  }
+                </select>
+                <input formControlName="sku" placeholder="SKU"
+                  class="w-28 rounded-lg border border-rule px-2 py-1.5 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" />
+                <button type="button" (click)="removePresentation($index)"
+                  class="p-1 rounded-lg hover:bg-red-50 text-ink-mute hover:text-red-500 transition-colors cursor-pointer border-0 bg-transparent shrink-0">
+                  <span class="material-symbols-outlined text-[18px] leading-none">remove_circle</span>
+                </button>
+              </div>
+            }
+            @if (presentationsArray.length === 0) {
+              <p class="text-xs text-ink-mute py-2 text-center">Sin presentaciones. Agrega al menos una.</p>
+            }
+          </div>
+        </div>
+
+      </form>
+    }
+
+    <!-- Panel footer -->
+    <div class="flex items-center justify-end gap-3 px-6 py-5 border-t border-rule shrink-0">
+      <button type="button" (click)="closePanel()"
+        class="px-4 py-2 rounded-xl border border-rule text-sm font-semibold text-ink hover:bg-[rgba(26,28,44,0.04)] transition-colors cursor-pointer bg-white">
+        Cancelar
+      </button>
+      <button type="button" (click)="save()" [disabled]="_saving() || form.invalid"
+        class="flex items-center gap-2 px-5 py-2 rounded-xl bg-ink text-white text-sm font-semibold hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer border-0">
+        @if (_saving()) {
+          <span class="material-symbols-outlined text-[16px] leading-none animate-spin">progress_activity</span>
+        } @else {
+          <span class="material-symbols-outlined text-[16px] leading-none">save</span>
+        }
+        {{ _editingId() ? 'Guardar cambios' : 'Crear producto' }}
+      </button>
+    </div>
+
+  </div>
+}

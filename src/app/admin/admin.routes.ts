@@ -16,6 +16,11 @@ export const adminRoutes: Routes = [
         loadComponent: () =>
           import('./pages/aplication/aplication.component').then((m) => m.AplicationComponent),
       },
+      {
+        path: 'products',
+        loadComponent: () =>
+          import('./pages/products/products.component').then((m) => m.ProductsComponent),
+      },
       { path: '',   redirectTo: 'dashboard', pathMatch: 'full' },
       { path: '**', redirectTo: '/'         },
     ],

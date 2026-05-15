@@ -38,8 +38,11 @@ export interface Organizational {
 export type UpdateOrganizationalDto = Partial<Omit<Organizational, 'id' | 'status'>>;
 export type CreateOrganizationalDto = UpdateOrganizationalDto & { name: string };
 
+import { Category } from './category.interface';
+import { UnitOfMeasure } from './product.interface';
+
 export interface BootstrapData {
   org: Organizational | null;
-  categories: unknown[];
-  units: unknown[];
+  categories: Category[];
+  units: UnitOfMeasure[];
 }
