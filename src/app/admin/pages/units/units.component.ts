@@ -1,11 +1,19 @@
 import {
-  Component, OnDestroy, OnInit, computed, inject, signal,
+  Component,
+  OnDestroy,
+  OnInit,
+  computed,
+  inject,
+  signal,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
-import { UnitOfMeasureService, UnitOfMeasureDto } from '@shared/services/unit-of-measure.service';
-import { UnitOfMeasure } from '@shared/interfaces/product.interface';
+import { UnitOfMeasureService } from '@shared/services/unit-of-measure.service';
+import {
+  UnitOfMeasure,
+  UnitOfMeasureDto,
+} from '@shared/interfaces/product.interface';
 
 @Component({
   selector: 'app-units',
@@ -14,30 +22,30 @@ import { UnitOfMeasure } from '@shared/interfaces/product.interface';
   templateUrl: './units.component.html',
 })
 export class UnitsComponent implements OnInit, OnDestroy {
-  private readonly _unitService = inject(UnitOfMeasureService);
-  private readonly _fb = inject(FormBuilder);
-  private readonly _destroy$ = new Subject<void>();
-  private readonly _search$ = new Subject<string>();
+  private readonly _unitOfMeasureService: UnitOfMeasureService =
+    inject(UnitOfMeasureService);
+  private readonly _fb: FormBuilder = inject(FormBuilder);
+  private readonly _destroy$: Subject<void> = new Subject<void>();
+  private readonly _search$: Subject<string> = new Subject<string>();
 
-  // ── List ──────────────────────────────────────────────────────────────────
-  readonly _loading    = signal(false);
-  readonly _units      = signal<UnitOfMeasure[]>([]);
-  readonly _search     = signal('');
+  readonly _loading = signal(false);
+  readonly _units = signal<UnitOfMeasure[]>([]);
+  readonly _search = signal('');
   readonly _deletingId = signal<string | null>(null);
 
   readonly _filtered = computed(() => {
     const q = this._search().toLowerCase().trim();
     if (!q) return this._units();
     return this._units().filter(
-      (u) => u.name.toLowerCase().includes(q) || u.code.toLowerCase().includes(q),
+      (u) =>
+        u.name.toLowerCase().includes(q) || u.code.toLowerCase().includes(q),
     );
   });
 
   readonly _total = computed(() => this._filtered().length);
 
-  // ── Panel ─────────────────────────────────────────────────────────────────
   readonly _panelOpen = signal(false);
-  readonly _saving    = signal(false);
+  readonly _saving = signal(false);
   readonly _editingId = signal<string | null>(null);
 
   readonly form = this._fb.nonNullable.group({
@@ -46,11 +54,13 @@ export class UnitsComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
-    this._search$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      takeUntil(this._destroy$),
-    ).subscribe((val) => this._search.set(val));
+    this._search$
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntil(this._destroy$),
+      )
+      .subscribe((val) => this._search.set(val));
     this._load();
   }
 
@@ -61,18 +71,22 @@ export class UnitsComponent implements OnInit, OnDestroy {
 
   private _load(): void {
     this._loading.set(true);
-    this._unitService.getAll().pipe(takeUntil(this._destroy$)).subscribe({
-      next: (units) => {
-        this._units.set(units);
-        this._loading.set(false);
-      },
-      error: () => this._loading.set(false),
-    });
+    this._unitOfMeasureService
+      .getAll()
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (units) => {
+          this._units.set(units);
+          this._loading.set(false);
+        },
+        error: () => this._loading.set(false),
+      });
   }
 
-  onSearch(value: string): void { this._search$.next(value); }
+  onSearch(value: string): void {
+    this._search$.next(value);
+  }
 
-  // ── Panel ─────────────────────────────────────────────────────────────────
   openCreate(): void {
     this._editingId.set(null);
     this.form.reset();
@@ -105,23 +119,35 @@ export class UnitsComponent implements OnInit, OnDestroy {
 
     const editingId = this._editingId();
     if (editingId) {
-      this._unitService.update(editingId, dto).pipe(takeUntil(this._destroy$)).subscribe({ next: onSuccess, error: onError });
+      this._unitOfMeasureService
+        .update(editingId, dto)
+        .pipe(takeUntil(this._destroy$))
+        .subscribe({ next: onSuccess, error: onError });
     } else {
-      this._unitService.create(dto).pipe(takeUntil(this._destroy$)).subscribe({ next: onSuccess, error: onError });
+      this._unitOfMeasureService
+        .create(dto)
+        .pipe(takeUntil(this._destroy$))
+        .subscribe({ next: onSuccess, error: onError });
     }
   }
 
-  // ── Delete ────────────────────────────────────────────────────────────────
-  confirmDelete(id: string): void { this._deletingId.set(id); }
-  cancelDelete(): void            { this._deletingId.set(null); }
+  confirmDelete(id: string): void {
+    this._deletingId.set(id);
+  }
+  cancelDelete(): void {
+    this._deletingId.set(null);
+  }
 
   doDelete(id: string): void {
-    this._unitService.remove(id).pipe(takeUntil(this._destroy$)).subscribe({
-      next: () => {
-        this._deletingId.set(null);
-        this._load();
-      },
-      error: () => this._deletingId.set(null),
-    });
+    this._unitOfMeasureService
+      .remove(id)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: () => {
+          this._deletingId.set(null);
+          this._load();
+        },
+        error: () => this._deletingId.set(null),
+      });
   }
 }

@@ -1,5 +1,33 @@
 import { Category } from './category.interface';
 import { Brand } from './brand.interface';
+import { PaginationParams } from './pagination.interface';
+
+export interface UnitOfMeasureDto {
+  name: string;
+  code: string;
+}
+
+export interface CreatePresentationDto {
+  unitOfMeasureId: string;
+  sku?: string;
+}
+
+export interface CreateProductDto {
+  name: string;
+  description?: string;
+  categoryId: string;
+  brandId: string;
+  videoUrl?: string;
+  technicalSheet?: Record<string, string | number | boolean>;
+  presentations?: CreatePresentationDto[];
+}
+
+export type UpdateProductDto = Partial<CreateProductDto>;
+
+export interface ProductParams extends PaginationParams {
+  categoryId?: string;
+  brandId?: string;
+}
 
 export interface UnitOfMeasure {
   id: string;

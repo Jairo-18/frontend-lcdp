@@ -1,12 +1,19 @@
 import {
-  Component, ElementRef, OnDestroy, OnInit, ViewChild, computed, inject, signal,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  computed,
+  inject,
+  signal,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
-import { CategoryService, CategoryDto } from '@shared/services/category.service';
+import { CategoryService } from '@shared/services/category.service';
 import { UploadService } from '@shared/services/upload.service';
-import { Category } from '@shared/interfaces/category.interface';
+import { Category, CategoryDto } from '@shared/interfaces/category.interface';
 import { ImageVariant } from '@shared/interfaces/image-variant.interface';
 import { environment } from '@env/environment';
 
@@ -17,34 +24,36 @@ import { environment } from '@env/environment';
   templateUrl: './categories.component.html',
 })
 export class CategoriesComponent implements OnInit, OnDestroy {
-  private readonly _categoryService = inject(CategoryService);
-  private readonly _uploadService   = inject(UploadService);
-  private readonly _fb              = inject(FormBuilder);
-  private readonly _destroy$        = new Subject<void>();
-  private readonly _search$         = new Subject<string>();
+  private readonly _categoryService: CategoryService = inject(CategoryService);
+  private readonly _uploadService: UploadService = inject(UploadService);
+  private readonly _fb: FormBuilder = inject(FormBuilder);
+  private readonly _destroy$: Subject<void> = new Subject<void>();
+  private readonly _search$: Subject<string> = new Subject<string>();
 
   @ViewChild('fileInput') fileInputRef!: ElementRef<HTMLInputElement>;
 
   readonly apiUrl = environment.apiUrl;
 
-  // ── List ──────────────────────────────────────────────────────────────────
-  readonly _loading     = signal(false);
-  readonly _categories  = signal<Category[]>([]);
-  readonly _total       = signal(0);
-  readonly _totalPages  = signal(0);
-  readonly _page        = signal(1);
-  readonly _limit       = signal(10);
-  readonly _search      = signal('');
+  readonly _loading = signal(false);
+  readonly _categories = signal<Category[]>([]);
+  readonly _total = signal(0);
+  readonly _totalPages = signal(0);
+  readonly _page = signal(1);
+  readonly _limit = signal(10);
+  readonly _search = signal('');
 
-  readonly _from = computed(() => this._total() === 0 ? 0 : (this._page() - 1) * this._limit() + 1);
-  readonly _to   = computed(() => Math.min(this._page() * this._limit(), this._total()));
+  readonly _from = computed(() =>
+    this._total() === 0 ? 0 : (this._page() - 1) * this._limit() + 1,
+  );
+  readonly _to = computed(() =>
+    Math.min(this._page() * this._limit(), this._total()),
+  );
 
-  // ── Panel ─────────────────────────────────────────────────────────────────
-  readonly _panelOpen   = signal(false);
-  readonly _saving      = signal(false);
-  readonly _uploading   = signal(false);
-  readonly _editingId   = signal<string | null>(null);
-  readonly _deletingId  = signal<string | null>(null);
+  readonly _panelOpen = signal(false);
+  readonly _saving = signal(false);
+  readonly _uploading = signal(false);
+  readonly _editingId = signal<string | null>(null);
+  readonly _deletingId = signal<string | null>(null);
   readonly _panelImages = signal<ImageVariant[]>([]);
 
   readonly form = this._fb.nonNullable.group({
@@ -53,15 +62,17 @@ export class CategoriesComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
-    this._search$.pipe(
-      debounceTime(400),
-      distinctUntilChanged(),
-      takeUntil(this._destroy$),
-    ).subscribe((val) => {
-      this._search.set(val);
-      this._page.set(1);
-      this._load();
-    });
+    this._search$
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged(),
+        takeUntil(this._destroy$),
+      )
+      .subscribe((val) => {
+        this._search.set(val);
+        this._page.set(1);
+        this._load();
+      });
     this._load();
   }
 
@@ -72,20 +83,27 @@ export class CategoriesComponent implements OnInit, OnDestroy {
 
   private _load(): void {
     this._loading.set(true);
-    this._categoryService.getPaginated({
-      page: this._page(), limit: this._limit(), search: this._search() || undefined,
-    }).pipe(takeUntil(this._destroy$)).subscribe({
-      next: (res) => {
-        this._categories.set(res.items);
-        this._total.set(res.total);
-        this._totalPages.set(res.totalPages);
-        this._loading.set(false);
-      },
-      error: () => this._loading.set(false),
-    });
+    this._categoryService
+      .getPaginated({
+        page: this._page(),
+        limit: this._limit(),
+        search: this._search() || undefined,
+      })
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (res) => {
+          this._categories.set(res.items);
+          this._total.set(res.total);
+          this._totalPages.set(res.totalPages);
+          this._loading.set(false);
+        },
+        error: () => this._loading.set(false),
+      });
   }
 
-  onSearch(value: string): void { this._search$.next(value); }
+  onSearch(value: string): void {
+    this._search$.next(value);
+  }
 
   onLimitChange(value: string): void {
     this._limit.set(Number(value));
@@ -105,7 +123,6 @@ export class CategoriesComponent implements OnInit, OnDestroy {
     this._load();
   }
 
-  // ── Panel ─────────────────────────────────────────────────────────────────
   openCreate(): void {
     this._editingId.set(null);
     this._panelImages.set([]);
@@ -144,28 +161,40 @@ export class CategoriesComponent implements OnInit, OnDestroy {
 
     const editingId = this._editingId();
     if (editingId) {
-      this._categoryService.update(editingId, dto).pipe(takeUntil(this._destroy$)).subscribe({ next: onSuccess, error: onError });
+      this._categoryService
+        .update(editingId, dto)
+        .pipe(takeUntil(this._destroy$))
+        .subscribe({ next: onSuccess, error: onError });
     } else {
-      this._categoryService.create(dto).pipe(takeUntil(this._destroy$)).subscribe({ next: onSuccess, error: onError });
+      this._categoryService
+        .create(dto)
+        .pipe(takeUntil(this._destroy$))
+        .subscribe({ next: onSuccess, error: onError });
     }
   }
 
-  // ── Delete ────────────────────────────────────────────────────────────────
-  confirmDelete(id: string): void { this._deletingId.set(id); }
-  cancelDelete(): void            { this._deletingId.set(null); }
-
-  doDelete(id: string): void {
-    this._categoryService.remove(id).pipe(takeUntil(this._destroy$)).subscribe({
-      next: () => {
-        this._deletingId.set(null);
-        if (this._categories().length === 1 && this._page() > 1) this._page.update((p) => p - 1);
-        this._load();
-      },
-      error: () => this._deletingId.set(null),
-    });
+  confirmDelete(id: string): void {
+    this._deletingId.set(id);
+  }
+  cancelDelete(): void {
+    this._deletingId.set(null);
   }
 
-  // ── Images ────────────────────────────────────────────────────────────────
+  doDelete(id: string): void {
+    this._categoryService
+      .remove(id)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: () => {
+          this._deletingId.set(null);
+          if (this._categories().length === 1 && this._page() > 1)
+            this._page.update((p) => p - 1);
+          this._load();
+        },
+        error: () => this._deletingId.set(null),
+      });
+  }
+
   triggerFileInput(): void {
     this.fileInputRef.nativeElement.value = '';
     this.fileInputRef.nativeElement.click();
@@ -176,13 +205,16 @@ export class CategoriesComponent implements OnInit, OnDestroy {
     if (!input.files?.length) return;
     const files = Array.from(input.files);
     this._uploading.set(true);
-    this._uploadService.uploadImages('categories', files).pipe(takeUntil(this._destroy$)).subscribe({
-      next: (variants) => {
-        this._panelImages.update((curr) => [...curr, ...variants]);
-        this._uploading.set(false);
-      },
-      error: () => this._uploading.set(false),
-    });
+    this._uploadService
+      .uploadImages('categories', files)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (variants) => {
+          this._panelImages.update((curr) => [...curr, ...variants]);
+          this._uploading.set(false);
+        },
+        error: () => this._uploading.set(false),
+      });
   }
 
   removeImage(index: number): void {

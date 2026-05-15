@@ -8,10 +8,8 @@ import {
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Subscription } from 'rxjs';
-import {
-  NotificationsService,
-  Notification,
-} from '@shared/services/notifications.service';
+import { NotificationsService } from '@shared/services/notifications.service';
+import { Notification } from '@shared/interfaces/notification.interface';
 
 interface ActiveToast extends Notification {
   removing: boolean;

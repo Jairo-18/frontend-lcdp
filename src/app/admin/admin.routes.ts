@@ -18,21 +18,25 @@ export const adminRoutes: Routes = [
       },
       {
         path: 'products',
+        data: { reuse: true },
         loadComponent: () =>
           import('./pages/products/products.component').then((m) => m.ProductsComponent),
       },
       {
         path: 'brands',
+        data: { reuse: true },
         loadComponent: () =>
           import('./pages/brands/brands.component').then((m) => m.BrandsComponent),
       },
       {
         path: 'categories',
+        data: { reuse: true },
         loadComponent: () =>
           import('./pages/categories/categories.component').then((m) => m.CategoriesComponent),
       },
       {
         path: 'units',
+        data: { reuse: true },
         loadComponent: () =>
           import('./pages/units/units.component').then((m) => m.UnitsComponent),
       },

@@ -18,7 +18,7 @@ app.disable('x-powered-by');
 app.set('trust proxy', true);
 
 const angularApp = new AngularNodeAppEngine({
-  allowedHosts: ['lacasadelpintormocoa.com', 'www.lacasadelpintormocoa.com', 'localhost'],
+  allowedHosts: ['lacasadelpintormocoa.com', 'www.lacasadelpintormocoa.com', 'testfrontend.lacasadelpintormocoa.com', 'localhost'],
   trustProxyHeaders: true,
 });
 

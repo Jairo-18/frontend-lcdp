@@ -1,14 +1,10 @@
 import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Subject } from 'rxjs';
-
-export type NotificationType = 'success' | 'error' | 'warning' | 'info';
-
-export interface Notification {
-  id: number;
-  type: NotificationType;
-  message: string;
-}
+import {
+  Notification,
+  NotificationType,
+} from '@shared/interfaces/notification.interface';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationsService {

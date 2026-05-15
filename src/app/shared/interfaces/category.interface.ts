@@ -1,5 +1,11 @@
 import { ImageVariant } from './image-variant.interface';
 
+export interface CategoryDto {
+  name: string;
+  code: string;
+  images?: ImageVariant[];
+}
+
 export interface Category {
   id: string;
   name: string;
