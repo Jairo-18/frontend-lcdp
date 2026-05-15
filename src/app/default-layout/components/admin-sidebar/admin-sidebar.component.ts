@@ -46,6 +46,9 @@ export class AdminSidebarComponent implements OnDestroy {
   readonly navItems: NavItem[] = [
     { label: 'Dashboard',  icon: 'dashboard',        route: '/admin/dashboard'  },
     { label: 'Productos',  icon: 'inventory_2',      route: '/admin/products'   },
+    { label: 'Marcas',     icon: 'label',            route: '/admin/brands'     },
+    { label: 'Categorías', icon: 'category',         route: '/admin/categories' },
+    { label: 'Unidades',   icon: 'straighten',       route: '/admin/units'      },
     { label: 'Aplicación', icon: 'app_settings_alt', route: '/admin/aplication' },
   ];
 

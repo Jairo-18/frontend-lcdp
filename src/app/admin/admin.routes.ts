@@ -21,6 +21,21 @@ export const adminRoutes: Routes = [
         loadComponent: () =>
           import('./pages/products/products.component').then((m) => m.ProductsComponent),
       },
+      {
+        path: 'brands',
+        loadComponent: () =>
+          import('./pages/brands/brands.component').then((m) => m.BrandsComponent),
+      },
+      {
+        path: 'categories',
+        loadComponent: () =>
+          import('./pages/categories/categories.component').then((m) => m.CategoriesComponent),
+      },
+      {
+        path: 'units',
+        loadComponent: () =>
+          import('./pages/units/units.component').then((m) => m.UnitsComponent),
+      },
       { path: '',   redirectTo: 'dashboard', pathMatch: 'full' },
       { path: '**', redirectTo: '/'         },
     ],
