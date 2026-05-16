@@ -1,0 +1,106 @@
+<!-- ── Lo más nuevo ── -->
+<section class="px-6 pb-12 md:px-10">
+  <div class="max-w-[1240px] mx-auto">
+
+    <!-- Header -->
+    <div class="flex items-end justify-between mb-6 gap-4">
+      <div>
+        <h2 class="font-display font-bold text-ink text-[clamp(22px,3vw,32px)] leading-tight mb-1">
+          Lo más nuevo
+        </h2>
+        <p class="text-ink-mute text-sm">
+          Recién llegados: colores de temporada y líneas premium.
+        </p>
+      </div>
+      <a routerLink="/catalogo"
+        class="shrink-0 text-sm font-semibold text-ink underline-offset-2 hover:underline whitespace-nowrap">
+        Ver todo →
+      </a>
+    </div>
+
+    <!-- Grid -->
+    <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+
+      <!-- Skeletons mientras carga -->
+      @if (loading()) {
+        @for (s of skeletons; track $index) {
+          <div class="bg-white border border-rule rounded-2xl overflow-hidden animate-pulse">
+            <div class="bg-paper-alt aspect-[4/3]"></div>
+            <div class="p-4 flex flex-col gap-2">
+              <div class="h-2.5 w-16 bg-rule rounded-full"></div>
+              <div class="h-4 w-full bg-rule rounded-full"></div>
+              <div class="h-3 w-24 bg-rule rounded-full"></div>
+            </div>
+          </div>
+        }
+      }
+
+      <!-- Productos -->
+      @if (!loading()) {
+        @for (product of products(); track product.id; let i = $index) {
+          <a
+            routerLink="/catalogo"
+            [queryParams]="{ producto: product.id }"
+            class="bg-white border border-rule rounded-2xl overflow-hidden group hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 no-underline flex flex-col"
+          >
+
+            <!-- Imagen / ilustración -->
+            <div class="relative bg-paper-alt aspect-[4/3] overflow-hidden flex items-center justify-center">
+
+              <!-- Badge -->
+              <span class="absolute top-3 left-3 z-10 bg-coral text-white text-[10px] font-extrabold tracking-widest uppercase px-2.5 py-1 rounded-md leading-none">
+                Nuevo
+              </span>
+
+              @if (firstImage(product)) {
+                <img
+                  [src]="firstImage(product)!"
+                  [alt]="product.name"
+                  class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  loading="lazy"
+                />
+              } @else {
+                <!-- Clipboard placeholder -->
+                <div
+                  class="relative w-[90px] h-[118px] rounded-[8px_8px_13px_13px] shadow-2xl flex flex-col items-center transition-transform duration-300 group-hover:scale-105"
+                  [style.background-color]="clipboardColor(i)"
+                >
+                  <!-- clip -->
+                  <div class="absolute -top-2.5 w-9 h-4 bg-ink/75 rounded-sm"></div>
+                  <!-- inner card -->
+                  <div class="mt-7 mx-2.5 bg-white/95 rounded-md p-2 w-[calc(100%-20px)] flex flex-col gap-1.5">
+                    <p class="text-[7px] font-extrabold tracking-wider text-ink/60 uppercase leading-none">
+                      {{ product.brand.name }}
+                    </p>
+                    <div class="h-4 rounded" [style.background-color]="clipboardColor(i)"></div>
+                    <p class="text-[6px] font-mono text-ink/40 leading-none">
+                      {{ firstSku(product) }}
+                    </p>
+                    <div class="h-1.5 rounded" [style.background-color]="clipboardColor(i)" style="opacity:.35"></div>
+                    <div class="h-1.5 rounded" [style.background-color]="clipboardColor(i)" style="opacity:.18"></div>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- Info -->
+            <div class="p-4 flex flex-col gap-1 flex-1">
+              <p class="text-[10px] font-extrabold tracking-[0.1em] uppercase text-ink-mute leading-none">
+                {{ product.brand.name }}
+              </p>
+              <p class="font-display font-bold text-ink text-[13px] leading-tight line-clamp-2 group-hover:text-coral transition-colors">
+                {{ product.name }}
+              </p>
+              <p class="text-[11px] text-ink-mute mt-0.5">
+                {{ product.category.name }}
+              </p>
+            </div>
+
+          </a>
+        }
+      }
+
+    </div>
+
+  </div>
+</section>

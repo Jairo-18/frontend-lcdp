@@ -1,0 +1,155 @@
+<div class="p-8">
+
+  <!-- Header -->
+  <div class="mb-6">
+    <h1 class="font-display font-bold text-ink text-2xl">Gestionar aplicación</h1>
+    <p class="text-ink-mute text-sm mt-1">Configura la información, branding y contenido de la tienda.</p>
+  </div>
+
+  @if (_loading()) {
+    <div class="flex items-center justify-center py-20 text-ink-mute gap-3">
+      <span class="material-symbols-outlined text-[28px] leading-none animate-spin">progress_activity</span>
+      Cargando...
+    </div>
+  } @else {
+
+    <!-- Tabs -->
+    <div class="flex gap-1 bg-[rgba(26,28,44,0.04)] border border-rule rounded-xl p-1 mb-6 overflow-x-auto">
+      @for (tab of tabs; track tab.id) {
+        <button
+          type="button"
+          (click)="setTab(tab.id)"
+          class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors cursor-pointer border-0"
+          [class.bg-white]="_tab() === tab.id"
+          [class.shadow-sm]="_tab() === tab.id"
+          [class.text-ink]="_tab() === tab.id"
+          [class.bg-transparent]="_tab() !== tab.id"
+          [class.text-ink-mute]="_tab() !== tab.id"
+        >
+          <span class="material-symbols-outlined text-[18px] leading-none">{{ tab.icon }}</span>
+          {{ tab.label }}
+        </button>
+      }
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="save()">
+
+      <!-- ── General ── -->
+      @if (_tab() === 'general') {
+        <div class="bg-white border border-rule rounded-2xl p-6">
+          <h2 class="font-semibold text-ink text-base mb-5">Información general</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="md:col-span-2">
+              <app-input-field formControlName="name" label="Nombre del negocio" placeholder="La Casa del Pintor" [required]="true" [control]="form.get('name')" />
+            </div>
+            <app-input-field formControlName="legalName" label="Razón social" placeholder="Nombre legal" />
+            <app-input-field formControlName="nit" label="NIT / RUT" placeholder="900.000.000-0" />
+            <app-input-field formControlName="email" type="email" label="Correo electrónico" placeholder="contacto@empresa.com" />
+            <app-input-field formControlName="phone" label="Teléfono" placeholder="+57 300 000 0000" />
+            <app-input-field formControlName="whatsappNumber" label="WhatsApp" placeholder="+57 300 000 0000" />
+            <app-input-field formControlName="website" label="Sitio web" placeholder="https://www.empresa.com" />
+            <div class="md:col-span-2">
+              <app-input-field formControlName="address" label="Dirección" placeholder="Calle 10 # 5-20" />
+            </div>
+            <app-input-field formControlName="city" label="Ciudad" placeholder="Mocoa" />
+            <app-input-field formControlName="department" label="Departamento" placeholder="Putumayo" />
+          </div>
+        </div>
+      }
+
+      <!-- ── Branding ── -->
+      @if (_tab() === 'branding') {
+        <div class="bg-white border border-rule rounded-2xl p-6">
+          <h2 class="font-semibold text-ink text-base mb-5">Branding</h2>
+          <div class="space-y-4">
+            <app-input-field formControlName="logoUrl" label="URL del logo" placeholder="https://..." />
+            <app-input-field formControlName="faviconUrl" label="URL del favicon" placeholder="https://..." />
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-6">
+            @for (color of colorFields; track color.key) {
+              <div>
+                <label class="block text-sm font-medium text-ink mb-1">{{ color.label }}</label>
+                <div class="flex gap-2 items-center">
+                  <input
+                    type="color"
+                    [value]="form.get(color.key)?.value || '#000000'"
+                    (input)="form.get(color.key)?.setValue($any($event.target).value)"
+                    class="w-9 h-9 rounded-lg border border-rule cursor-pointer p-0.5 bg-white shrink-0"
+                  />
+                  <input
+                    [formControlName]="color.key"
+                    class="w-full rounded-xl border border-rule px-2 py-2 text-xs text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 font-mono"
+                    placeholder="#000000"
+                  />
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- ── Redes ── -->
+      @if (_tab() === 'redes') {
+        <div class="bg-white border border-rule rounded-2xl p-6">
+          <h2 class="font-semibold text-ink text-base mb-5">Redes sociales</h2>
+          <div class="space-y-4">
+            @for (red of socialFields; track red.key) {
+              <app-input-field
+                [formControlName]="red.key"
+                [label]="red.label"
+                [placeholder]="red.placeholder"
+              />
+            }
+          </div>
+        </div>
+      }
+
+      <!-- ── Contenido ── -->
+      @if (_tab() === 'contenido') {
+        <div class="bg-white border border-rule rounded-2xl p-6 space-y-4">
+          <h2 class="font-semibold text-ink text-base mb-1">Contenido</h2>
+          <app-textarea-field formControlName="description" label="Descripción general" placeholder="Descripción breve del negocio..." [rows]="3" />
+          <app-input-field formControlName="aboutTitle" label="Título — Quiénes somos" placeholder="Quiénes somos" />
+          <app-textarea-field formControlName="aboutDescription" label="Descripción — Quiénes somos" [rows]="3" />
+          <app-input-field formControlName="missionTitle" label="Título — Misión" placeholder="Nuestra misión" />
+          <app-textarea-field formControlName="missionDescription" label="Descripción — Misión" [rows]="3" />
+          <app-input-field formControlName="visionTitle" label="Título — Visión" placeholder="Nuestra visión" />
+          <app-textarea-field formControlName="visionDescription" label="Descripción — Visión" [rows]="3" />
+        </div>
+      }
+
+      <!-- ── SEO ── -->
+      @if (_tab() === 'seo') {
+        <div class="bg-white border border-rule rounded-2xl p-6 space-y-4">
+          <h2 class="font-semibold text-ink text-base mb-1">SEO</h2>
+          <app-input-field
+            formControlName="metaTitle"
+            label="Meta título"
+            placeholder="La Casa del Pintor — Pinturas y suministros"
+            hint="Máx. 200 caracteres. Aparece en el título del navegador y resultados de búsqueda."
+          />
+          <app-textarea-field formControlName="metaDescription" label="Meta descripción" placeholder="Encuentra las mejores pinturas..." [rows]="3" />
+          <app-input-field formControlName="metaKeywords" label="Palabras clave" placeholder="pintura, esmalte, laca, Mocoa" hint="Separadas por coma." />
+        </div>
+      }
+
+      <!-- Save -->
+      <div class="flex justify-end mt-6">
+        <button
+          type="submit"
+          [disabled]="_saving() || form.invalid"
+          class="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-ink text-white text-sm font-semibold transition-colors hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer border-0"
+        >
+          @if (_saving()) {
+            <span class="material-symbols-outlined text-[18px] leading-none animate-spin">progress_activity</span>
+          } @else {
+            <span class="material-symbols-outlined text-[18px] leading-none">save</span>
+          }
+          Guardar cambios
+        </button>
+      </div>
+
+    </form>
+  }
+
+</div>

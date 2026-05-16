@@ -6,6 +6,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+<<<<<<< HEAD
 import {
   FormArray,
   FormBuilder,
@@ -18,18 +19,25 @@ import { InputFieldComponent } from '@shared/components';
 import { TextareaFieldComponent } from '@shared/components';
 import { SelectFieldComponent } from '@shared/components';
 import { SelectOption } from '@shared/interfaces/forms.interface';
+=======
+import { Router } from '@angular/router';
+>>>>>>> b77ce14b0751561e90110639c8f7b48bec0588a9
 import { ConfirmDialogService } from '@shared/services/confirm-dialog.service';
 import { Subject, forkJoin } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { ProductService } from '@shared/services/product.service';
 import { BrandService } from '@shared/services/brand.service';
 import { OrganizationalService } from '@shared/services/organizational.service';
+<<<<<<< HEAD
 import { TaxTypeService } from '@shared/services/tax-type.service';
 import {
   Product,
   UnitOfMeasure,
   CreateProductDto,
 } from '@shared/interfaces/product.interface';
+=======
+import { Product } from '@shared/interfaces/product.interface';
+>>>>>>> b77ce14b0751561e90110639c8f7b48bec0588a9
 import { Category } from '@shared/interfaces/category.interface';
 import { Brand } from '@shared/interfaces/brand.interface';
 import { TaxType } from '@shared/interfaces/tax-type.interface';
@@ -37,18 +45,26 @@ import { TaxType } from '@shared/interfaces/tax-type.interface';
 @Component({
   selector: 'app-products',
   standalone: true,
+<<<<<<< HEAD
   imports: [ReactiveFormsModule, DecimalPipe, InputFieldComponent, TextareaFieldComponent, SelectFieldComponent],
+=======
+  imports: [],
+>>>>>>> b77ce14b0751561e90110639c8f7b48bec0588a9
   templateUrl: './products.component.html',
 })
 export class ProductsComponent implements OnInit, OnDestroy {
   private readonly _productService: ProductService = inject(ProductService);
   private readonly _brandService: BrandService = inject(BrandService);
   private readonly _organizationalService: OrganizationalService = inject(OrganizationalService);
+<<<<<<< HEAD
   private readonly _taxTypeService: TaxTypeService = inject(TaxTypeService);
   private readonly _fb: FormBuilder = inject(FormBuilder);
+=======
+>>>>>>> b77ce14b0751561e90110639c8f7b48bec0588a9
   private readonly _confirmDialog: ConfirmDialogService = inject(ConfirmDialogService);
-  private readonly _destroy$ = new Subject<void>();
-  private readonly _search$ = new Subject<string>();
+  private readonly _router: Router = inject(Router);
+  private readonly _destroy$: Subject<void> = new Subject<void>();
+  private readonly _search$: Subject<string> = new Subject<string>();
 
   readonly _loading = signal(false);
   readonly _products = signal<Product[]>([]);
@@ -69,6 +85,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   readonly _categories = signal<Category[]>([]);
   readonly _brands = signal<Brand[]>([]);
+<<<<<<< HEAD
   readonly _units = signal<UnitOfMeasure[]>([]);
   readonly _taxTypes = signal<TaxType[]>([]);
 
@@ -105,6 +122,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
   get presentationsArray(): FormArray<FormGroup> {
     return this.form.get('presentations') as FormArray<FormGroup>;
   }
+=======
+>>>>>>> b77ce14b0751561e90110639c8f7b48bec0588a9
 
   ngOnInit(): void {
     this._search$
@@ -127,7 +146,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this._destroy$))
       .subscribe(({ bootstrap, brands, taxTypes }) => {
         this._categories.set(bootstrap.categories);
-        this._units.set(bootstrap.units);
         this._brands.set(brands);
         this._taxTypes.set(taxTypes);
         this._loadProducts();
@@ -196,13 +214,11 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   openCreate(): void {
-    this._editingId.set(null);
-    this.form.reset();
-    this.presentationsArray.clear();
-    this._panelOpen.set(true);
+    this._router.navigate(['/admin/products/create-or-edit-products']);
   }
 
   openEdit(product: Product): void {
+<<<<<<< HEAD
     this._editingId.set(product.id);
     this._loadingProduct.set(true);
     this._panelOpen.set(true);
@@ -275,6 +291,9 @@ export class ProductsComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this._destroy$))
         .subscribe({ next: onSuccess, error: onError });
     }
+=======
+    this._router.navigate(['/admin/products/create-or-edit-products', product.id]);
+>>>>>>> b77ce14b0751561e90110639c8f7b48bec0588a9
   }
 
   confirmDelete(id: number, name: string): void {
@@ -295,22 +314,5 @@ export class ProductsComponent implements OnInit, OnDestroy {
           this._loadProducts();
         },
       });
-  }
-
-  addPresentation(): void {
-    this._addPresentationRow('', '');
-  }
-
-  removePresentation(index: number): void {
-    this.presentationsArray.removeAt(index);
-  }
-
-  private _addPresentationRow(unitOfMeasureId: string, sku: string): void {
-    this.presentationsArray.push(
-      this._fb.nonNullable.group({
-        unitOfMeasureId: [unitOfMeasureId, Validators.required],
-        sku: [sku],
-      }),
-    );
   }
 }

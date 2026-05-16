@@ -1,0 +1,49 @@
+<!-- ── Asesoría WhatsApp ── -->
+<section class="px-6 pb-12 md:px-10">
+  <div class="max-w-[1240px] mx-auto">
+    <div class="bg-ink rounded-3xl px-10 py-12 md:px-14 flex items-center justify-between gap-10 overflow-hidden relative max-md:flex-col max-md:items-start">
+
+      <!-- Content -->
+      <div class="max-w-[520px] z-10">
+        <h2 class="font-display font-bold text-white text-[clamp(22px,3vw,34px)] leading-tight mb-2">
+          ¿Necesitas asesoría para tu proyecto?
+        </h2>
+        <p class="font-hand text-yellow text-[clamp(22px,2.5vw,30px)] leading-none mb-5">
+          Estamos aquí.
+        </p>
+        <p class="text-white/60 text-[15px] leading-relaxed mb-8 max-w-[420px]">
+          Mándanos una foto del espacio y te recomendamos cantidad, color y producto. Sin compromiso.
+        </p>
+        <a [href]="whatsappHref()" target="_blank" rel="noopener noreferrer"
+          class="inline-flex items-center gap-2.5 bg-[#25D366] hover:bg-[#1fba58] text-white font-display font-bold text-[15px] px-7 py-3.5 rounded-full no-underline transition-all hover:-translate-y-px">
+          <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+            <path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.562 4.14 1.532 5.875L0 24l6.302-1.513A11.947 11.947 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.001-1.364l-.36-.214-3.732.895.942-3.631-.236-.374A9.818 9.818 0 1112 21.818z"/>
+          </svg>
+          Escribir por WhatsApp
+        </a>
+      </div>
+
+      <!-- Illustration: paint chips -->
+      <div class="shrink-0 flex items-end gap-3 h-[160px] max-md:hidden" aria-hidden="true">
+        <!-- Chip 1 — salmon -->
+        <div class="w-[110px] bg-[#e8b4a0] rounded-2xl p-3 flex flex-col gap-2 -rotate-[6deg] translate-y-4 shadow-xl">
+          <p class="text-[9px] font-extrabold tracking-wider text-[#c0614a]">PINTUCO</p>
+          <div class="h-8 rounded-lg bg-[#d97060]"></div>
+          <p class="text-[8px] font-mono text-[#8b4030] opacity-80">VK-SAL</p>
+          <div class="h-2 rounded bg-[#d97060]/40"></div>
+          <div class="h-2 rounded bg-[#d97060]/20"></div>
+        </div>
+        <!-- Chip 2 — olive -->
+        <div class="w-[110px] bg-[#9db89a] rounded-2xl p-3 flex flex-col gap-2 rotate-[4deg] shadow-xl">
+          <p class="text-[9px] font-extrabold tracking-wider text-[#3d6b38]">CORONA</p>
+          <div class="h-8 rounded-lg bg-[#5a8c54]"></div>
+          <p class="text-[8px] font-mono text-[#2d4d28] opacity-80">AVS</p>
+          <div class="h-2 rounded bg-[#5a8c54]/40"></div>
+          <div class="h-2 rounded bg-[#5a8c54]/20"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>

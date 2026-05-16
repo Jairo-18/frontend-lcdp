@@ -1,0 +1,127 @@
+<div class="p-8">
+
+  <!-- Header -->
+  <div class="flex items-center gap-4 mb-6">
+    <button type="button" (click)="goBack()"
+      class="p-1.5 rounded-lg hover:bg-[rgba(26,28,44,0.06)] text-ink-mute transition-colors cursor-pointer border-0 bg-transparent">
+      <span class="material-symbols-outlined text-[22px] leading-none">arrow_back</span>
+    </button>
+    <div>
+      <h1 class="font-display font-bold text-ink text-2xl">
+        {{ _editingId() ? 'Editar producto' : 'Nuevo producto' }}
+      </h1>
+      <p class="text-ink-mute text-sm mt-0.5">Productos</p>
+    </div>
+  </div>
+
+  @if (_loading()) {
+    <div class="flex items-center justify-center py-20 text-ink-mute gap-3">
+      <span class="material-symbols-outlined text-[28px] leading-none animate-spin">progress_activity</span>
+      Cargando...
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="save()" class="space-y-5">
+
+      <div class="bg-white border border-rule rounded-2xl p-6 space-y-5">
+        <app-input-field
+          formControlName="name"
+          label="Nombre"
+          placeholder="Vinilo Tipo 1 Koraza Blanco"
+          [required]="true"
+          [control]="form.get('name')"
+        />
+
+        <app-textarea-field
+          formControlName="description"
+          label="Descripción"
+          placeholder="Descripción del producto..."
+          [rows]="3"
+        />
+
+        <div class="grid grid-cols-2 gap-4">
+          <app-select-field
+            formControlName="categoryId"
+            label="Categoría"
+            placeholder="Seleccionar..."
+            [required]="true"
+            [options]="categoryOptions()"
+            [control]="form.get('categoryId')"
+          />
+          <app-select-field
+            formControlName="brandId"
+            label="Marca"
+            placeholder="Seleccionar..."
+            [required]="true"
+            [options]="brandOptions()"
+            [control]="form.get('brandId')"
+          />
+        </div>
+
+        <app-input-field
+          formControlName="videoUrl"
+          label="URL de video"
+          placeholder="https://youtube.com/..."
+          type="url"
+        />
+      </div>
+
+      <!-- Presentaciones -->
+      <div class="bg-white border border-rule rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-semibold text-ink text-base">Presentaciones</h2>
+          <button type="button" (click)="addPresentation()"
+            class="flex items-center gap-1 text-sm font-medium text-ink-mute hover:text-ink transition-colors cursor-pointer border-0 bg-transparent">
+            <span class="material-symbols-outlined text-[18px] leading-none">add_circle</span>
+            Agregar
+          </button>
+        </div>
+
+        <div formArrayName="presentations" class="space-y-2">
+          @for (pres of presentationsArray.controls; track $index) {
+            <div [formGroupName]="$index" class="flex gap-2 items-center p-3 rounded-xl border border-rule bg-[rgba(26,28,44,0.02)]">
+              <div class="flex-1">
+                <app-select-field
+                  formControlName="unitOfMeasureId"
+                  placeholder="Unidad..."
+                  [options]="unitOptions()"
+                />
+              </div>
+              <div class="w-28">
+                <app-input-field
+                  formControlName="sku"
+                  placeholder="SKU"
+                />
+              </div>
+              <button type="button" (click)="removePresentation($index)"
+                class="p-1 rounded-lg hover:bg-red-50 text-ink-mute hover:text-red-500 transition-colors cursor-pointer border-0 bg-transparent shrink-0">
+                <span class="material-symbols-outlined text-[18px] leading-none">remove_circle</span>
+              </button>
+            </div>
+          }
+          @if (presentationsArray.length === 0) {
+            <p class="text-xs text-ink-mute py-2 text-center">Sin presentaciones. Agrega al menos una.</p>
+          }
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end gap-3">
+        <button type="button" (click)="goBack()"
+          class="px-4 py-2 rounded-xl border border-rule text-sm font-semibold text-ink hover:bg-[rgba(26,28,44,0.04)] transition-colors cursor-pointer bg-white">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="_saving() || form.invalid"
+          class="flex items-center gap-2 px-5 py-2 rounded-xl bg-ink text-white text-sm font-semibold hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer border-0">
+          @if (_saving()) {
+            <span class="material-symbols-outlined text-[16px] leading-none animate-spin">progress_activity</span>
+          } @else {
+            <span class="material-symbols-outlined text-[16px] leading-none">save</span>
+          }
+          {{ _editingId() ? 'Guardar cambios' : 'Crear producto' }}
+        </button>
+      </div>
+
+    </form>
+  }
+
+</div>

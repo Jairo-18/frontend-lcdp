@@ -1,0 +1,105 @@
+<div class="p-8">
+
+  <!-- Header -->
+  <div class="flex items-center gap-4 mb-6">
+    <button type="button" (click)="goBack()"
+      class="p-1.5 rounded-lg hover:bg-[rgba(26,28,44,0.06)] text-ink-mute transition-colors cursor-pointer border-0 bg-transparent">
+      <span class="material-symbols-outlined text-[22px] leading-none">arrow_back</span>
+    </button>
+    <div>
+      <h1 class="font-display font-bold text-ink text-2xl">
+        {{ _editingId() ? 'Editar marca' : 'Nueva marca' }}
+      </h1>
+      <p class="text-ink-mute text-sm mt-0.5">Marcas</p>
+    </div>
+  </div>
+
+  <!-- Hidden file input -->
+  <input #fileInput type="file" multiple accept="image/*" class="hidden" (change)="onFilesSelected($event)" />
+
+  @if (_loading()) {
+    <div class="flex items-center justify-center py-20 text-ink-mute gap-3">
+      <span class="material-symbols-outlined text-[28px] leading-none animate-spin">progress_activity</span>
+      Cargando...
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="save()" class="space-y-5">
+
+      <div class="bg-white border border-rule rounded-2xl p-6 space-y-5">
+        <app-input-field
+          formControlName="name"
+          label="Nombre"
+          placeholder="Pintuco"
+          [required]="true"
+          [control]="form.get('name')"
+        />
+
+        <app-input-field
+          formControlName="code"
+          label="Código (único, sin espacios)"
+          placeholder="pintuco"
+          [required]="true"
+          [mono]="true"
+          [control]="form.get('code')"
+        />
+
+        <!-- Images -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-sm font-medium text-ink">Imágenes</label>
+            <button type="button" (click)="triggerFileInput()" [disabled]="_uploading()"
+              class="flex items-center gap-1 text-xs font-medium text-ink-mute hover:text-ink disabled:opacity-50 transition-colors cursor-pointer border-0 bg-transparent">
+              @if (_uploading()) {
+                <span class="material-symbols-outlined text-[16px] leading-none animate-spin">progress_activity</span>
+                Subiendo...
+              } @else {
+                <span class="material-symbols-outlined text-[16px] leading-none">upload</span>
+                Subir imágenes
+              }
+            </button>
+          </div>
+
+          @if (_images().length > 0) {
+            <div class="grid grid-cols-4 gap-2">
+              @for (img of _images(); track $index) {
+                <div class="relative group aspect-square">
+                  <img [src]="apiUrl + img.thumb" alt="imagen"
+                    class="w-full h-full object-cover rounded-xl border border-rule" />
+                  <button type="button" (click)="removeImage($index)"
+                    class="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center border-0 cursor-pointer">
+                    <span class="material-symbols-outlined text-[12px] leading-none">close</span>
+                  </button>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="border-2 border-dashed border-rule rounded-xl p-6 text-center text-ink-mute text-sm cursor-pointer hover:border-ink/30 transition-colors"
+              (click)="triggerFileInput()">
+              <span class="material-symbols-outlined text-[32px] leading-none block mb-1 opacity-40">add_photo_alternate</span>
+              Haz clic para subir imágenes
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end gap-3">
+        <button type="button" (click)="goBack()"
+          class="px-4 py-2 rounded-xl border border-rule text-sm font-semibold text-ink hover:bg-[rgba(26,28,44,0.04)] transition-colors cursor-pointer bg-white">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="_saving() || form.invalid"
+          class="flex items-center gap-2 px-5 py-2 rounded-xl bg-ink text-white text-sm font-semibold hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer border-0">
+          @if (_saving()) {
+            <span class="material-symbols-outlined text-[16px] leading-none animate-spin">progress_activity</span>
+          } @else {
+            <span class="material-symbols-outlined text-[16px] leading-none">save</span>
+          }
+          {{ _editingId() ? 'Guardar cambios' : 'Crear marca' }}
+        </button>
+      </div>
+
+    </form>
+  }
+
+</div>
