@@ -6,45 +6,31 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import {
-  FormArray,
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { InputFieldComponent } from '@shared/components';
-import { TextareaFieldComponent } from '@shared/components';
-import { SelectFieldComponent } from '@shared/components';
-import { SelectOption } from '@shared/interfaces/forms.interface';
+import { Router } from '@angular/router';
 import { ConfirmDialogService } from '@shared/services/confirm-dialog.service';
 import { Subject, forkJoin } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { ProductService } from '@shared/services/product.service';
 import { BrandService } from '@shared/services/brand.service';
 import { OrganizationalService } from '@shared/services/organizational.service';
-import {
-  Product,
-  UnitOfMeasure,
-  CreateProductDto,
-} from '@shared/interfaces/product.interface';
+import { Product } from '@shared/interfaces/product.interface';
 import { Category } from '@shared/interfaces/category.interface';
 import { Brand } from '@shared/interfaces/brand.interface';
 
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [ReactiveFormsModule, InputFieldComponent, TextareaFieldComponent, SelectFieldComponent],
+  imports: [],
   templateUrl: './products.component.html',
 })
 export class ProductsComponent implements OnInit, OnDestroy {
   private readonly _productService: ProductService = inject(ProductService);
   private readonly _brandService: BrandService = inject(BrandService);
   private readonly _organizationalService: OrganizationalService = inject(OrganizationalService);
-  private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _confirmDialog: ConfirmDialogService = inject(ConfirmDialogService);
-  private readonly _destroy$ = new Subject<void>();
-  private readonly _search$ = new Subject<string>();
+  private readonly _router: Router = inject(Router);
+  private readonly _destroy$: Subject<void> = new Subject<void>();
+  private readonly _search$: Subject<string> = new Subject<string>();
 
   readonly _loading = signal(false);
   readonly _products = signal<Product[]>([]);
@@ -65,35 +51,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   readonly _categories = signal<Category[]>([]);
   readonly _brands = signal<Brand[]>([]);
-  readonly _units = signal<UnitOfMeasure[]>([]);
-
-  readonly categoryOptions = computed<SelectOption[]>(() =>
-    this._categories().map((c) => ({ value: c.id, label: c.name })),
-  );
-  readonly brandOptions = computed<SelectOption[]>(() =>
-    this._brands().map((b) => ({ value: b.id, label: b.name })),
-  );
-  readonly unitOptions = computed<SelectOption[]>(() =>
-    this._units().map((u) => ({ value: u.id, label: u.name })),
-  );
-
-  readonly _panelOpen = signal(false);
-  readonly _saving = signal(false);
-  readonly _editingId = signal<string | null>(null);
-  readonly _loadingProduct = signal(false);
-
-  readonly form = this._fb.nonNullable.group({
-    name: ['', [Validators.required, Validators.maxLength(200)]],
-    description: [''],
-    categoryId: ['', Validators.required],
-    brandId: ['', Validators.required],
-    videoUrl: [''],
-    presentations: this._fb.array([]),
-  });
-
-  get presentationsArray(): FormArray<FormGroup> {
-    return this.form.get('presentations') as FormArray<FormGroup>;
-  }
 
   ngOnInit(): void {
     this._search$
@@ -115,7 +72,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this._destroy$))
       .subscribe(({ bootstrap, brands }) => {
         this._categories.set(bootstrap.categories);
-        this._units.set(bootstrap.units);
         this._brands.set(brands);
         this._loadProducts();
       });
@@ -183,79 +139,11 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   openCreate(): void {
-    this._editingId.set(null);
-    this.form.reset();
-    this.presentationsArray.clear();
-    this._panelOpen.set(true);
+    this._router.navigate(['/admin/products/create-or-edit-products']);
   }
 
   openEdit(product: Product): void {
-    this._editingId.set(product.id);
-    this._loadingProduct.set(true);
-    this._panelOpen.set(true);
-
-    this._productService
-      .getOne(product.id)
-      .pipe(takeUntil(this._destroy$))
-      .subscribe((p) => {
-        this.presentationsArray.clear();
-        this.form.patchValue({
-          name: p.name,
-          description: p.description ?? '',
-          categoryId: p.categoryId,
-          brandId: p.brandId,
-          videoUrl: p.videoUrl ?? '',
-        });
-        (p.presentations ?? []).forEach((pres) =>
-          this._addPresentationRow(pres.unitOfMeasureId, pres.sku ?? ''),
-        );
-        this._loadingProduct.set(false);
-      });
-  }
-
-  closePanel(): void {
-    this._panelOpen.set(false);
-    this._editingId.set(null);
-  }
-
-  save(): void {
-    if (this.form.invalid || this._saving()) return;
-    this._saving.set(true);
-
-    const raw = this.form.getRawValue();
-    type PresentationRaw = { unitOfMeasureId: string; sku: string };
-    const dto: CreateProductDto = {
-      name: raw.name,
-      description: raw.description || undefined,
-      categoryId: raw.categoryId,
-      brandId: raw.brandId,
-      videoUrl: raw.videoUrl || undefined,
-      presentations: (raw.presentations as PresentationRaw[]).map((p) => ({
-        unitOfMeasureId: p.unitOfMeasureId,
-        sku: p.sku || undefined,
-      })),
-    };
-
-    const onSuccess = (): void => {
-      this._saving.set(false);
-      this.closePanel();
-      this._page.set(1);
-      this._loadProducts();
-    };
-    const onError = (): void => this._saving.set(false);
-
-    const editingId = this._editingId();
-    if (editingId) {
-      this._productService
-        .update(editingId, dto)
-        .pipe(takeUntil(this._destroy$))
-        .subscribe({ next: onSuccess, error: onError });
-    } else {
-      this._productService
-        .create(dto)
-        .pipe(takeUntil(this._destroy$))
-        .subscribe({ next: onSuccess, error: onError });
-    }
+    this._router.navigate(['/admin/products/create-or-edit-products', product.id]);
   }
 
   confirmDelete(id: string, name: string): void {
@@ -276,22 +164,5 @@ export class ProductsComponent implements OnInit, OnDestroy {
           this._loadProducts();
         },
       });
-  }
-
-  addPresentation(): void {
-    this._addPresentationRow('', '');
-  }
-
-  removePresentation(index: number): void {
-    this.presentationsArray.removeAt(index);
-  }
-
-  private _addPresentationRow(unitOfMeasureId: string, sku: string): void {
-    this.presentationsArray.push(
-      this._fb.nonNullable.group({
-        unitOfMeasureId: [unitOfMeasureId, Validators.required],
-        sku: [sku],
-      }),
-    );
   }
 }

@@ -1,16 +1,19 @@
 import { Component, OnInit, inject, signal, WritableSignal } from '@angular/core';
-import { RouterModule } from '@angular/router';
 import { OrganizationalService } from '@shared/services/organizational.service';
 import { Organizational } from '@shared/interfaces/organizational.interface';
 import { Category } from '@shared/interfaces/category.interface';
 import { environment } from '@env/environment';
+import { HeroComponent } from './components/hero/hero.component';
+import { WhatsappBannerComponent } from './components/whatsapp-banner/whatsapp-banner.component';
+import { CategoryGridComponent } from './components/category-grid/category-grid.component';
+import { NewProductsComponent } from './components/new-products/new-products.component';
 
 interface Stat { value: string; label: string }
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterModule],
+  imports: [HeroComponent, WhatsappBannerComponent, CategoryGridComponent, NewProductsComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })

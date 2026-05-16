@@ -1,7 +1,7 @@
 <div class="flex min-h-dvh bg-paper">
   <!-- ── Mobile top bar ── -->
   <header
-    class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-[#0f1014] text-white flex items-center gap-3 px-4 py-3"
+    class="max-[900px]:flex hidden fixed top-0 left-0 right-0 z-[100] bg-[#0f1014] text-white items-center gap-3 px-4 py-3"
   >
     <button
       (click)="toggleSidebar()"
@@ -40,7 +40,7 @@
   <!-- ── Overlay (mobile) ── -->
   @if (_isSidebarOpen()) {
     <div
-      class="fixed inset-0 z-[110] bg-black/50 backdrop-blur-[2px] md:hidden"
+      class="fixed inset-0 z-[110] bg-black/50 backdrop-blur-[2px] max-[900px]:block hidden"
       (click)="closeSidebar()"
     ></div>
   }
@@ -55,7 +55,7 @@
   />
 
   <!-- ── Main content ── -->
-  <main class="flex-1 overflow-auto pt-[52px] md:pt-0 md:ml-0">
+  <main class="flex-1 overflow-auto pt-[52px] min-[900px]:pt-0">
     <router-outlet />
   </main>
 </div>

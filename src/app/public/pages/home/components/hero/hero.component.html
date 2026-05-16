@@ -1,0 +1,70 @@
+<!-- ── Hero ── -->
+<div class="px-6 py-10 md:px-10 md:py-12">
+  <section class="max-w-[1240px] mx-auto rounded-3xl bg-[radial-gradient(ellipse_80%_100%_at_70%_40%,#ffdf4a_0%,#ffcb05_55%,#f5b800_100%)] flex items-center justify-between gap-10 px-12 py-14 overflow-hidden relative max-lg:flex-col max-lg:justify-center max-lg:px-8 max-lg:py-10">
+
+    <!-- Left -->
+    <div class="max-w-[500px] shrink-0 z-10">
+
+      <!-- Badge -->
+      <span class="inline-block text-[11px] font-semibold tracking-[0.1em] uppercase text-ink border border-ink/25 rounded-full px-4 py-1.5 mb-6">
+        {{ org()?.city || 'Mocoa' }} · Distribuidor autorizado
+      </span>
+
+      <!-- Heading -->
+      <h1 class="font-display font-extrabold text-[clamp(32px,4vw,50px)] leading-[1.1] text-ink m-0 mb-5">
+        Tu obra empieza con el<br>
+        <em class="font-hand not-italic font-semibold text-coral text-[clamp(36px,4.5vw,56px)]">color correcto.</em>
+      </h1>
+
+      <!-- Sub -->
+      <p class="text-[15px] leading-[1.65] text-ink/70 mb-8 max-w-[420px]">
+        Pinturas, esmaltes, brochas y todo lo que necesitas para terminar
+        el trabajo. Pedido directo a WhatsApp, sin filas ni complicaciones.
+      </p>
+
+      <!-- CTAs -->
+      <div class="flex items-center gap-4 flex-wrap mb-10">
+        <a
+          routerLink="/catalogo"
+          class="inline-flex items-center gap-1.5 bg-ink text-white text-sm font-semibold px-6 py-3 rounded-full no-underline transition-all hover:bg-black hover:-translate-y-px"
+        >
+          Ver catálogo completo <span>→</span>
+        </a>
+        <a
+          [href]="whatsappHref()"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 text-ink text-sm font-semibold px-5 py-3 rounded-full border border-ink/30 no-underline transition-all hover:bg-ink/10 hover:border-ink"
+        >
+          <span class="material-symbols-outlined text-[18px] leading-none">chat</span>
+          Pedir por WhatsApp
+        </a>
+      </div>
+
+      <!-- Stats -->
+      <div class="flex items-center gap-8">
+        @for (stat of stats(); track stat.label) {
+          <div class="flex flex-col gap-0.5">
+            <span class="font-display font-extrabold text-[20px] leading-none text-ink">{{ stat.value }}</span>
+            <span class="text-[11px] font-semibold tracking-[0.08em] uppercase text-ink/50">{{ stat.label }}</span>
+          </div>
+        }
+      </div>
+
+    </div>
+
+    <!-- Illustration -->
+    <div class="flex items-end h-[220px] shrink-0 max-lg:hidden" aria-hidden="true">
+      <div class="w-[80px] h-[200px] bg-[#d93025] rounded-[10px_10px_14px_14px] flex items-end justify-center pb-4 shadow-2xl -rotate-[4deg] translate-y-4 relative before:content-[''] before:absolute before:top-0 before:inset-x-0 before:h-6 before:bg-white/15 before:rounded-[10px_10px_0_0]">
+        <span class="text-[9px] font-extrabold tracking-wide text-center text-white/90 leading-tight">PINTUCO</span>
+      </div>
+      <div class="w-[80px] h-[200px] bg-[#1a56db] rounded-[10px_10px_14px_14px] flex items-end justify-center pb-4 shadow-2xl rotate-[2deg] z-10 relative before:content-[''] before:absolute before:top-0 before:inset-x-0 before:h-6 before:bg-white/15 before:rounded-[10px_10px_0_0]">
+        <span class="text-[9px] font-extrabold tracking-wide text-center text-white/90 leading-tight">CORONA</span>
+      </div>
+      <div class="w-[80px] h-[200px] bg-[#1e7e34] rounded-[10px_10px_14px_14px] flex items-end justify-center pb-4 shadow-2xl rotate-[5deg] translate-y-5 relative before:content-[''] before:absolute before:top-0 before:inset-x-0 before:h-6 before:bg-white/15 before:rounded-[10px_10px_0_0]">
+        <span class="text-[9px] font-extrabold tracking-wide text-center text-white/90 leading-tight">SHERWIN<br>WILLIAMS</span>
+      </div>
+    </div>
+
+  </section>
+</div>

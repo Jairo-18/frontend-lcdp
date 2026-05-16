@@ -1,41 +1,33 @@
 import {
   Component,
-  ElementRef,
   OnDestroy,
   OnInit,
-  ViewChild,
   computed,
   inject,
   signal,
 } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { InputFieldComponent } from '@shared/components';
+import { Router } from '@angular/router';
 import { ConfirmDialogService } from '@shared/services/confirm-dialog.service';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { BrandService } from '@shared/services/brand.service';
-import { UploadService } from '@shared/services/upload.service';
-import { Brand, BrandDto } from '@shared/interfaces/brand.interface';
-import { ImageVariant } from '@shared/interfaces/image-variant.interface';
+import { Brand } from '@shared/interfaces/brand.interface';
 import { environment } from '@env/environment';
 
 @Component({
   selector: 'app-brands',
   standalone: true,
-  imports: [ReactiveFormsModule, InputFieldComponent],
+  imports: [],
   templateUrl: './brands.component.html',
 })
 export class BrandsComponent implements OnInit, OnDestroy {
   private readonly _brandService: BrandService = inject(BrandService);
-  private readonly _uploadService: UploadService = inject(UploadService);
-  private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _confirmDialog: ConfirmDialogService = inject(ConfirmDialogService);
+  private readonly _router: Router = inject(Router);
   private readonly _destroy$: Subject<void> = new Subject<void>();
   private readonly _search$: Subject<string> = new Subject<string>();
 
-  @ViewChild('fileInput') fileInputRef!: ElementRef<HTMLInputElement>;
-
-  readonly apiUrl = environment.apiUrl;
+  readonly apiUrl: string = environment.apiUrl;
 
   readonly _loading = signal(false);
   readonly _brands = signal<Brand[]>([]);
@@ -51,17 +43,6 @@ export class BrandsComponent implements OnInit, OnDestroy {
   readonly _to = computed(() =>
     Math.min(this._page() * this._limit(), this._total()),
   );
-
-  readonly _panelOpen = signal(false);
-  readonly _saving = signal(false);
-  readonly _uploading = signal(false);
-  readonly _editingId = signal<string | null>(null);
-  readonly _panelImages = signal<ImageVariant[]>([]);
-
-  readonly form = this._fb.nonNullable.group({
-    name: ['', [Validators.required, Validators.maxLength(100)]],
-    code: ['', [Validators.required, Validators.maxLength(50)]],
-  });
 
   ngOnInit(): void {
     this._search$
@@ -126,53 +107,11 @@ export class BrandsComponent implements OnInit, OnDestroy {
   }
 
   openCreate(): void {
-    this._editingId.set(null);
-    this._panelImages.set([]);
-    this.form.reset();
-    this._panelOpen.set(true);
+    this._router.navigate(['/admin/brands/create-or-edit-brands']);
   }
 
   openEdit(brand: Brand): void {
-    this._editingId.set(brand.id);
-    this._panelImages.set([...(brand.images ?? [])]);
-    this.form.patchValue({ name: brand.name, code: brand.code });
-    this._panelOpen.set(true);
-  }
-
-  closePanel(): void {
-    this._panelOpen.set(false);
-    this._editingId.set(null);
-  }
-
-  save(): void {
-    if (this.form.invalid || this._saving()) return;
-    this._saving.set(true);
-
-    const dto: BrandDto = {
-      ...this.form.getRawValue(),
-      images: this._panelImages(),
-    };
-
-    const onSuccess = (): void => {
-      this._saving.set(false);
-      this.closePanel();
-      this._page.set(1);
-      this._load();
-    };
-    const onError = (): void => this._saving.set(false);
-
-    const editingId = this._editingId();
-    if (editingId) {
-      this._brandService
-        .update(editingId, dto)
-        .pipe(takeUntil(this._destroy$))
-        .subscribe({ next: onSuccess, error: onError });
-    } else {
-      this._brandService
-        .create(dto)
-        .pipe(takeUntil(this._destroy$))
-        .subscribe({ next: onSuccess, error: onError });
-    }
+    this._router.navigate(['/admin/brands/create-or-edit-brands', brand.id]);
   }
 
   confirmDelete(id: string, name: string): void {
@@ -194,29 +133,4 @@ export class BrandsComponent implements OnInit, OnDestroy {
       });
   }
 
-  triggerFileInput(): void {
-    this.fileInputRef.nativeElement.value = '';
-    this.fileInputRef.nativeElement.click();
-  }
-
-  onFilesSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (!input.files?.length) return;
-    const files = Array.from(input.files);
-    this._uploading.set(true);
-    this._uploadService
-      .uploadImages('brands', files)
-      .pipe(takeUntil(this._destroy$))
-      .subscribe({
-        next: (variants) => {
-          this._panelImages.update((curr) => [...curr, ...variants]);
-          this._uploading.set(false);
-        },
-        error: () => this._uploading.set(false),
-      });
-  }
-
-  removeImage(index: number): void {
-    this._panelImages.update((imgs) => imgs.filter((_, i) => i !== index));
-  }
 }

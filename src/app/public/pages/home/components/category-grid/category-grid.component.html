@@ -1,0 +1,51 @@
+<!-- ── Compra por categoría ── -->
+@if (categories().length > 0) {
+  <section class="px-6 pb-12 md:px-10">
+    <div class="max-w-[1240px] mx-auto">
+
+      <!-- Header -->
+      <div class="flex items-end justify-between mb-6 gap-4">
+        <div>
+          <h2 class="font-display font-bold text-ink text-[clamp(22px,3vw,32px)] leading-tight mb-1">
+            Compra por categoría
+          </h2>
+          <p class="text-ink-mute text-sm">
+            Todo organizado para que encuentres lo que necesitas en segundos.
+          </p>
+        </div>
+        <a routerLink="/catalogo"
+          class="shrink-0 text-sm font-semibold text-ink underline-offset-2 hover:underline whitespace-nowrap">
+          Ver todo →
+        </a>
+      </div>
+
+      <!-- Cards -->
+      <div class="flex gap-3 overflow-x-auto pb-2 -mx-6 px-6 md:mx-0 md:px-0 md:grid md:grid-cols-[repeat(auto-fill,minmax(150px,1fr))]">
+        @for (cat of categories(); track cat.id) {
+          <a routerLink="/catalogo" [queryParams]="{ categoria: cat.code }"
+            class="min-w-[140px] md:min-w-0 flex flex-col items-center gap-3 bg-white border border-rule rounded-2xl p-5 cursor-pointer no-underline transition-all hover:shadow-md hover:-translate-y-0.5 group">
+
+            @if (cat.images && cat.images.length > 0) {
+              <img
+                [src]="apiUrl() + cat.images[0].md"
+                [alt]="cat.name"
+                class="w-14 h-14 object-cover rounded-xl"
+                loading="lazy"
+              />
+            } @else {
+              <div class="w-14 h-14 rounded-xl bg-paper-alt flex items-center justify-center">
+                <span class="material-symbols-outlined text-[28px] text-ink-mute leading-none">category</span>
+              </div>
+            }
+
+            <span class="font-display font-bold text-ink text-sm text-center leading-tight group-hover:text-coral transition-colors">
+              {{ cat.name }}
+            </span>
+
+          </a>
+        }
+      </div>
+
+    </div>
+  </section>
+}
