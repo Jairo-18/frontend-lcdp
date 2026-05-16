@@ -55,7 +55,7 @@ export class BrandsComponent implements OnInit, OnDestroy {
   readonly _panelOpen = signal(false);
   readonly _saving = signal(false);
   readonly _uploading = signal(false);
-  readonly _editingId = signal<string | null>(null);
+  readonly _editingId = signal<number | null>(null);
   readonly _panelImages = signal<ImageVariant[]>([]);
 
   readonly form = this._fb.nonNullable.group({
@@ -175,13 +175,13 @@ export class BrandsComponent implements OnInit, OnDestroy {
     }
   }
 
-  confirmDelete(id: string, name: string): void {
+  confirmDelete(id: number, name: string): void {
     this._confirmDialog.confirmDelete(name).subscribe((confirmed) => {
       if (confirmed) this.doDelete(id);
     });
   }
 
-  private doDelete(id: string): void {
+  private doDelete(id: number): void {
     this._brandService
       .remove(id)
       .pipe(takeUntil(this._destroy$))

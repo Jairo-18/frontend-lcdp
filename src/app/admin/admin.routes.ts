@@ -40,6 +40,12 @@ export const adminRoutes: Routes = [
         loadComponent: () =>
           import('./pages/units/units.component').then((m) => m.UnitsComponent),
       },
+      {
+        path: 'tax-types',
+        data: { reuse: true },
+        loadComponent: () =>
+          import('./pages/tax-types/tax-types.component').then((m) => m.TaxTypesComponent),
+      },
       { path: '',   redirectTo: 'dashboard', pathMatch: 'full' },
       { path: '**', redirectTo: '/'         },
     ],

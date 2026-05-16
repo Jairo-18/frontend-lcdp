@@ -22,9 +22,9 @@ export class HomeComponent implements OnInit {
   readonly apiUrl = environment.apiUrl;
 
   readonly stats: Stat[] = [
-    { value: '+1.200', label: 'Productos' },
-    { value: '8',      label: 'Marcas'    },
-    { value: '20+',    label: 'Años'      },
+    { value: '+1000', label: 'Productos' },
+    { value: '30+', label: 'Marcas' },
+    { value: '3+', label: 'Años' },
   ];
 
   ngOnInit(): void {

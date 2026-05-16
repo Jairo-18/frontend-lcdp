@@ -1,0 +1,189 @@
+:host {
+  --ink:       #1a1c2c;
+  --ink-mute:  #6b6e85;
+  --coral:     #e23e57;
+  --paper:     #faf8f3;
+  --paper-alt: #f4f1e8;
+  --rule:      #e5dec8;
+  --white:     #ffffff;
+  display: block;
+  background: var(--paper);
+  min-height: 100vh;
+  padding: 48px 24px 80px;
+}
+
+/* ── Header ── */
+.wrap { max-width: 1200px; margin: 0 auto; }
+
+.header { margin-bottom: 48px; padding-bottom: 20px; border-bottom: 1px solid var(--rule); }
+
+.page-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 13px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink); margin-bottom: 4px;
+}
+
+.page-sub {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 12px; color: var(--ink-mute);
+}
+
+/* ── Scale ── */
+.scale { margin-bottom: 64px; }
+
+.row {
+  display: grid;
+  grid-template-columns: 100px 1fr 1fr;
+  align-items: center;
+  gap: 24px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.tag-label {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.size-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--ink-mute); opacity: .6;
+}
+
+.sample { min-width: 0; }
+
+.muted-label p {
+  color: var(--ink-mute) !important;
+  font-style: italic;
+}
+
+.divider {
+  height: 1px;
+  background: var(--rule);
+  margin: 8px 0;
+  opacity: .4;
+}
+
+/* ── Tipografía actual ── */
+.current h1 {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 800; font-size: clamp(32px, 4vw, 50px);
+  line-height: 1.1; color: var(--ink);
+}
+.current h1 em {
+  font-family: 'Caveat', cursive; font-weight: 600;
+  font-style: normal; color: var(--coral);
+  font-size: clamp(36px, 4.5vw, 56px);
+}
+.current h2 {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 700; font-size: clamp(22px, 3vw, 34px);
+  line-height: 1.25; color: var(--ink);
+}
+.current h3 {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 700; font-size: clamp(16px, 2vw, 22px);
+  line-height: 1.3; color: var(--ink);
+}
+
+/* ── Tipografía candidata ── */
+.candidate h1 {
+  font-family: 'Faster One', sans-serif;
+  font-weight: 400; font-size: clamp(32px, 4vw, 50px);
+  line-height: 1.1; color: var(--ink);
+}
+.candidate h1 em {
+  font-family: 'Caveat', cursive; font-weight: 600;
+  font-style: normal; color: var(--coral);
+  font-size: clamp(36px, 4.5vw, 56px);
+}
+.candidate h2 {
+  font-family: 'Faster One', sans-serif;
+  font-weight: 400; font-size: clamp(22px, 3vw, 34px);
+  line-height: 1.25; color: var(--ink);
+}
+.candidate h3 {
+  font-family: 'Faster One', sans-serif;
+  font-weight: 400; font-size: clamp(16px, 2vw, 22px);
+  line-height: 1.3; color: var(--ink);
+}
+
+/* letra por letra sin gap extra */
+h1.multicolor { display: block; word-spacing: .15em; }
+h1.multicolor span { display: inline; }
+
+/* p y spans de cuerpo — Alegreya */
+p {
+  font-family: 'Alegreya', serif;
+  font-size: 17px; line-height: 1.7;
+  color: rgba(26, 28, 44, .7);
+}
+
+/* spans genéricos de contenido — Alegreya */
+span:not(.tag-label):not(.size-label):not(.ctx-label):not(.badge):not(.material-symbols-outlined) {
+  font-family: 'Alegreya', serif;
+}
+
+/* los spans coloreados dentro de h1 heredan la fuente del h1, no Alegreya */
+.current h1 span,
+.candidate h1 span { font-family: inherit !important; }
+
+/* ── Contexto real ── */
+.section-heading {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 13px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink-mute); margin-bottom: 24px;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.ctx-col { display: flex; flex-direction: column; gap: 8px; }
+
+.ctx-label {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.card {
+  border-radius: 20px; padding: 32px;
+}
+.card > * + * { margin-top: 10px; }
+
+.card-light  { background: var(--paper-alt); border: 1px solid var(--rule); }
+.card-dark   { background: var(--ink); }
+.card-yellow { background: radial-gradient(ellipse 80% 100% at 70% 40%, #ffdf4a 0%, #ffcb05 55%, #f5b800 100%); }
+
+.card-dark h2, .card-dark h3 { color: var(--white); }
+.card-dark p { color: rgba(255, 255, 255, .6); }
+
+.badge {
+  display: inline-block;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  border: 1px solid rgba(26, 28, 44, .25);
+  border-radius: 9999px; padding: 5px 14px;
+  color: var(--ink);
+}
+
+@media (max-width: 720px) {
+  .row { grid-template-columns: 80px 1fr; }
+  .row .sample:last-child { display: none; }
+  .cards-grid { grid-template-columns: 1fr; }
+}

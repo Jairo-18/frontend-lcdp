@@ -13,6 +13,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { DecimalPipe } from '@angular/common';
 import { InputFieldComponent } from '@shared/components';
 import { TextareaFieldComponent } from '@shared/components';
 import { SelectFieldComponent } from '@shared/components';
@@ -23,6 +24,7 @@ import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { ProductService } from '@shared/services/product.service';
 import { BrandService } from '@shared/services/brand.service';
 import { OrganizationalService } from '@shared/services/organizational.service';
+import { TaxTypeService } from '@shared/services/tax-type.service';
 import {
   Product,
   UnitOfMeasure,
@@ -30,17 +32,19 @@ import {
 } from '@shared/interfaces/product.interface';
 import { Category } from '@shared/interfaces/category.interface';
 import { Brand } from '@shared/interfaces/brand.interface';
+import { TaxType } from '@shared/interfaces/tax-type.interface';
 
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [ReactiveFormsModule, InputFieldComponent, TextareaFieldComponent, SelectFieldComponent],
+  imports: [ReactiveFormsModule, DecimalPipe, InputFieldComponent, TextareaFieldComponent, SelectFieldComponent],
   templateUrl: './products.component.html',
 })
 export class ProductsComponent implements OnInit, OnDestroy {
   private readonly _productService: ProductService = inject(ProductService);
   private readonly _brandService: BrandService = inject(BrandService);
   private readonly _organizationalService: OrganizationalService = inject(OrganizationalService);
+  private readonly _taxTypeService: TaxTypeService = inject(TaxTypeService);
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _confirmDialog: ConfirmDialogService = inject(ConfirmDialogService);
   private readonly _destroy$ = new Subject<void>();
@@ -53,8 +57,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
   readonly _page = signal(1);
   readonly _limit = signal(10);
   readonly _search = signal('');
-  readonly _categoryFilter = signal('');
-  readonly _brandFilter = signal('');
+  readonly _categoryFilter = signal<number | undefined>(undefined);
+  readonly _brandFilter = signal<number | undefined>(undefined);
 
   readonly _from = computed(() =>
     this._total() === 0 ? 0 : (this._page() - 1) * this._limit() + 1,
@@ -66,6 +70,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   readonly _categories = signal<Category[]>([]);
   readonly _brands = signal<Brand[]>([]);
   readonly _units = signal<UnitOfMeasure[]>([]);
+  readonly _taxTypes = signal<TaxType[]>([]);
 
   readonly categoryOptions = computed<SelectOption[]>(() =>
     this._categories().map((c) => ({ value: c.id, label: c.name })),
@@ -76,10 +81,13 @@ export class ProductsComponent implements OnInit, OnDestroy {
   readonly unitOptions = computed<SelectOption[]>(() =>
     this._units().map((u) => ({ value: u.id, label: u.name })),
   );
+  readonly taxTypeOptions = computed<SelectOption[]>(() =>
+    this._taxTypes().map((t) => ({ value: t.id, label: t.name })),
+  );
 
   readonly _panelOpen = signal(false);
   readonly _saving = signal(false);
-  readonly _editingId = signal<string | null>(null);
+  readonly _editingId = signal<number | null>(null);
   readonly _loadingProduct = signal(false);
 
   readonly form = this._fb.nonNullable.group({
@@ -87,6 +95,9 @@ export class ProductsComponent implements OnInit, OnDestroy {
     description: [''],
     categoryId: ['', Validators.required],
     brandId: ['', Validators.required],
+    priceSale: [null as number | null],
+    taxTypeId: [''],
+    isActive: [true],
     videoUrl: [''],
     presentations: this._fb.array([]),
   });
@@ -111,12 +122,14 @@ export class ProductsComponent implements OnInit, OnDestroy {
     forkJoin({
       bootstrap: this._organizationalService.bootstrap(),
       brands: this._brandService.getAll(),
+      taxTypes: this._taxTypeService.getAll(),
     })
       .pipe(takeUntil(this._destroy$))
-      .subscribe(({ bootstrap, brands }) => {
+      .subscribe(({ bootstrap, brands, taxTypes }) => {
         this._categories.set(bootstrap.categories);
         this._units.set(bootstrap.units);
         this._brands.set(brands);
+        this._taxTypes.set(taxTypes);
         this._loadProducts();
       });
   }
@@ -133,8 +146,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
         page: this._page(),
         limit: this._limit(),
         search: this._search() || undefined,
-        categoryId: this._categoryFilter() || undefined,
-        brandId: this._brandFilter() || undefined,
+        categoryId: this._categoryFilter(),
+        brandId: this._brandFilter(),
       })
       .pipe(takeUntil(this._destroy$))
       .subscribe({
@@ -153,13 +166,13 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   onCategoryFilter(value: string): void {
-    this._categoryFilter.set(value);
+    this._categoryFilter.set(value ? Number(value) : undefined);
     this._page.set(1);
     this._loadProducts();
   }
 
   onBrandFilter(value: string): void {
-    this._brandFilter.set(value);
+    this._brandFilter.set(value ? Number(value) : undefined);
     this._page.set(1);
     this._loadProducts();
   }
@@ -202,12 +215,15 @@ export class ProductsComponent implements OnInit, OnDestroy {
         this.form.patchValue({
           name: p.name,
           description: p.description ?? '',
-          categoryId: p.categoryId,
-          brandId: p.brandId,
+          categoryId: String(p.categoryId),
+          brandId: String(p.brandId),
+          priceSale: p.priceSale ?? null,
+          taxTypeId: p.taxTypeId ? String(p.taxTypeId) : '',
+          isActive: p.isActive,
           videoUrl: p.videoUrl ?? '',
         });
         (p.presentations ?? []).forEach((pres) =>
-          this._addPresentationRow(pres.unitOfMeasureId, pres.sku ?? ''),
+          this._addPresentationRow(String(pres.unitOfMeasureId), pres.sku ?? ''),
         );
         this._loadingProduct.set(false);
       });
@@ -227,11 +243,14 @@ export class ProductsComponent implements OnInit, OnDestroy {
     const dto: CreateProductDto = {
       name: raw.name,
       description: raw.description || undefined,
-      categoryId: raw.categoryId,
-      brandId: raw.brandId,
+      categoryId: Number(raw.categoryId),
+      brandId: Number(raw.brandId),
+      priceSale: raw.priceSale ?? undefined,
+      taxTypeId: raw.taxTypeId ? Number(raw.taxTypeId) : undefined,
+      isActive: raw.isActive,
       videoUrl: raw.videoUrl || undefined,
       presentations: (raw.presentations as PresentationRaw[]).map((p) => ({
-        unitOfMeasureId: p.unitOfMeasureId,
+        unitOfMeasureId: Number(p.unitOfMeasureId),
         sku: p.sku || undefined,
       })),
     };
@@ -258,13 +277,13 @@ export class ProductsComponent implements OnInit, OnDestroy {
     }
   }
 
-  confirmDelete(id: string, name: string): void {
+  confirmDelete(id: number, name: string): void {
     this._confirmDialog.confirmDelete(name).subscribe((confirmed) => {
       if (confirmed) this.doDelete(id);
     });
   }
 
-  private doDelete(id: string): void {
+  private doDelete(id: number): void {
     this._productService
       .remove(id)
       .pipe(takeUntil(this._destroy$))

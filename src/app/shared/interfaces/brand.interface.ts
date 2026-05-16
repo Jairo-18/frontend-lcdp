@@ -7,7 +7,7 @@ export interface BrandDto {
 }
 
 export interface Brand {
-  id: string;
+  id: number;
   name: string;
   code: string;
   images: ImageVariant[];

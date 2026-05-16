@@ -67,6 +67,7 @@
               <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Categoría</th>
               <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Marca</th>
               <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide text-center">Presentaciones</th>
+              <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide text-center">Estado</th>
               <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide text-right">Acciones</th>
             </tr>
           </thead>
@@ -78,6 +79,9 @@
                   @if (product.description) {
                     <p class="text-ink-mute text-xs mt-0.5 line-clamp-1">{{ product.description }}</p>
                   }
+                  @if (product.priceSale) {
+                    <p class="text-xs text-ink mt-0.5 font-mono">${{ product.priceSale | number:'1.0-0' }}</p>
+                  }
                 </td>
                 <td class="px-4 py-4 text-ink-mute">{{ product.category.name }}</td>
                 <td class="px-4 py-4 text-ink-mute">{{ product.brand.name }}</td>
@@ -85,6 +89,13 @@
                   <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[rgba(26,28,44,0.06)] text-xs font-semibold text-ink">
                     {{ product.presentations.length }}
                   </span>
+                </td>
+                <td class="px-4 py-4 text-center">
+                  @if (product.isActive) {
+                    <span class="inline-block px-2 py-0.5 rounded-full bg-green-50 text-green-600 text-xs font-medium">Activo</span>
+                  } @else {
+                    <span class="inline-block px-2 py-0.5 rounded-full bg-red-50 text-red-500 text-xs font-medium">Inactivo</span>
+                  }
                 </td>
                 <td class="px-4 py-4">
                   <div class="flex items-center justify-end gap-1">
@@ -188,6 +199,39 @@
             [options]="brandOptions()"
             [control]="form.get('brandId')"
           />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <app-input-field
+            formControlName="priceSale"
+            label="Precio de venta"
+            placeholder="45900"
+            type="number"
+          />
+          <app-select-field
+            formControlName="taxTypeId"
+            label="Tipo de impuesto"
+            placeholder="Sin impuesto"
+            [options]="taxTypeOptions()"
+          />
+        </div>
+
+        <!-- Estado activo/inactivo -->
+        <div class="flex items-center justify-between py-2 px-3 rounded-xl border border-rule bg-[rgba(26,28,44,0.02)]">
+          <div>
+            <p class="text-sm font-medium text-ink">Producto activo</p>
+            <p class="text-xs text-ink-mute mt-0.5">Si está inactivo no aparecerá en el catálogo.</p>
+          </div>
+          <button type="button"
+            (click)="form.get('isActive')!.setValue(!form.get('isActive')!.value)"
+            class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none"
+            [class.bg-ink]="form.get('isActive')!.value"
+            [class.bg-[rgba(26,28,44,0.15)]]="!form.get('isActive')!.value">
+            <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+              [class.translate-x-5]="form.get('isActive')!.value"
+              [class.translate-x-0]="!form.get('isActive')!.value">
+            </span>
+          </button>
         </div>
 
         <app-input-field

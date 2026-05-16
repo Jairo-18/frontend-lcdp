@@ -8,5 +8,5 @@ export interface ApiResponseInterface<T> {
 export interface CreatedResponseInterface {
   statusCode: number;
   message: string;
-  data: { rowId: string };
+  data: { rowId: number };
 }

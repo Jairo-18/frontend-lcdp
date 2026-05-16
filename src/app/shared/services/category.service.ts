@@ -31,7 +31,7 @@ export class CategoryService {
       .pipe(map((r) => r.data));
   }
 
-  getOne(id: string): Observable<Category> {
+  getOne(id: number): Observable<Category> {
     return this._http
       .get<
         ApiResponseInterface<Category>
@@ -39,20 +39,20 @@ export class CategoryService {
       .pipe(map((r) => r.data));
   }
 
-  create(dto: CategoryDto): Observable<{ rowId: string }> {
+  create(dto: CategoryDto): Observable<{ rowId: number }> {
     return this._http
       .post<CreatedResponseInterface>(`${environment.apiUrl}/categories`, dto)
       .pipe(map((r) => r.data));
   }
 
-  update(id: string, dto: Partial<CategoryDto>): Observable<void> {
+  update(id: number, dto: Partial<CategoryDto>): Observable<void> {
     return this._http.patch<void>(
       `${environment.apiUrl}/categories/${id}`,
       dto,
     );
   }
 
-  remove(id: string): Observable<void> {
+  remove(id: number): Observable<void> {
     return this._http.delete<void>(`${environment.apiUrl}/categories/${id}`);
   }
 }

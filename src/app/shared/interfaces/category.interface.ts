@@ -7,7 +7,7 @@ export interface CategoryDto {
 }
 
 export interface Category {
-  id: string;
+  id: number;
   name: string;
   code: string;
   images: ImageVariant[];
@@ -16,7 +16,7 @@ export interface Category {
 }
 
 export interface CategoryPill {
-  id: string;
+  id: number;
   name: string;
   icon: string;
 }

@@ -11,35 +11,32 @@ import { InputFieldComponent } from '@shared/components';
 import { ConfirmDialogService } from '@shared/services/confirm-dialog.service';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
-import { UnitOfMeasureService } from '@shared/services/unit-of-measure.service';
-import {
-  UnitOfMeasure,
-  UnitOfMeasureDto,
-} from '@shared/interfaces/product.interface';
+import { TaxTypeService } from '@shared/services/tax-type.service';
+import { TaxType, TaxTypeDto } from '@shared/interfaces/tax-type.interface';
 
 @Component({
-  selector: 'app-units',
+  selector: 'app-tax-types',
   standalone: true,
   imports: [ReactiveFormsModule, InputFieldComponent],
-  templateUrl: './units.component.html',
+  templateUrl: './tax-types.component.html',
 })
-export class UnitsComponent implements OnInit, OnDestroy {
-  private readonly _unitOfMeasureService: UnitOfMeasureService = inject(UnitOfMeasureService);
+export class TaxTypesComponent implements OnInit, OnDestroy {
+  private readonly _taxTypeService: TaxTypeService = inject(TaxTypeService);
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _confirmDialog: ConfirmDialogService = inject(ConfirmDialogService);
   private readonly _destroy$: Subject<void> = new Subject<void>();
   private readonly _search$: Subject<string> = new Subject<string>();
 
   readonly _loading = signal(false);
-  readonly _units = signal<UnitOfMeasure[]>([]);
+  readonly _taxTypes = signal<TaxType[]>([]);
   readonly _search = signal('');
 
   readonly _filtered = computed(() => {
     const q = this._search().toLowerCase().trim();
-    if (!q) return this._units();
-    return this._units().filter(
-      (u) =>
-        u.name.toLowerCase().includes(q) || u.code.toLowerCase().includes(q),
+    if (!q) return this._taxTypes();
+    return this._taxTypes().filter(
+      (t) =>
+        t.name.toLowerCase().includes(q) || t.code.toLowerCase().includes(q),
     );
   });
 
@@ -51,7 +48,7 @@ export class UnitsComponent implements OnInit, OnDestroy {
 
   readonly form = this._fb.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(100)]],
-    code: ['', [Validators.required, Validators.maxLength(20)]],
+    code: ['', [Validators.required, Validators.maxLength(50)]],
   });
 
   ngOnInit(): void {
@@ -72,12 +69,12 @@ export class UnitsComponent implements OnInit, OnDestroy {
 
   private _load(): void {
     this._loading.set(true);
-    this._unitOfMeasureService
+    this._taxTypeService
       .getAll()
       .pipe(takeUntil(this._destroy$))
       .subscribe({
-        next: (units) => {
-          this._units.set(units);
+        next: (items) => {
+          this._taxTypes.set(items);
           this._loading.set(false);
         },
         error: () => this._loading.set(false),
@@ -94,9 +91,9 @@ export class UnitsComponent implements OnInit, OnDestroy {
     this._panelOpen.set(true);
   }
 
-  openEdit(unit: UnitOfMeasure): void {
-    this._editingId.set(unit.id);
-    this.form.patchValue({ name: unit.name, code: unit.code });
+  openEdit(taxType: TaxType): void {
+    this._editingId.set(taxType.id);
+    this.form.patchValue({ name: taxType.name, code: taxType.code });
     this._panelOpen.set(true);
   }
 
@@ -109,7 +106,7 @@ export class UnitsComponent implements OnInit, OnDestroy {
     if (this.form.invalid || this._saving()) return;
     this._saving.set(true);
 
-    const dto: UnitOfMeasureDto = this.form.getRawValue();
+    const dto: TaxTypeDto = this.form.getRawValue();
 
     const onSuccess = (): void => {
       this._saving.set(false);
@@ -120,12 +117,12 @@ export class UnitsComponent implements OnInit, OnDestroy {
 
     const editingId = this._editingId();
     if (editingId) {
-      this._unitOfMeasureService
+      this._taxTypeService
         .update(editingId, dto)
         .pipe(takeUntil(this._destroy$))
         .subscribe({ next: onSuccess, error: onError });
     } else {
-      this._unitOfMeasureService
+      this._taxTypeService
         .create(dto)
         .pipe(takeUntil(this._destroy$))
         .subscribe({ next: onSuccess, error: onError });
@@ -139,7 +136,7 @@ export class UnitsComponent implements OnInit, OnDestroy {
   }
 
   private doDelete(id: number): void {
-    this._unitOfMeasureService
+    this._taxTypeService
       .remove(id)
       .pipe(takeUntil(this._destroy$))
       .subscribe({ next: () => this._load() });

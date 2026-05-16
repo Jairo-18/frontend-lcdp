@@ -52,13 +52,13 @@ export class BrandService {
       .pipe(map((r) => r.data));
   }
 
-  getOne(id: string): Observable<Brand> {
+  getOne(id: number): Observable<Brand> {
     return this._http
       .get<ApiResponseInterface<Brand>>(`${environment.apiUrl}/brands/${id}`)
       .pipe(map((r) => r.data));
   }
 
-  create(dto: BrandDto): Observable<{ rowId: string }> {
+  create(dto: BrandDto): Observable<{ rowId: number }> {
     return this._http
       .post<CreatedResponseInterface>(`${environment.apiUrl}/brands`, dto)
       .pipe(
@@ -67,13 +67,13 @@ export class BrandService {
       );
   }
 
-  update(id: string, dto: Partial<BrandDto>): Observable<void> {
+  update(id: number, dto: Partial<BrandDto>): Observable<void> {
     return this._http
       .patch<void>(`${environment.apiUrl}/brands/${id}`, dto)
       .pipe(tap(() => this._invalidateCache()));
   }
 
-  remove(id: string): Observable<void> {
+  remove(id: number): Observable<void> {
     return this._http
       .delete<void>(`${environment.apiUrl}/brands/${id}`)
       .pipe(tap(() => this._invalidateCache()));

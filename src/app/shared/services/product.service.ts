@@ -31,7 +31,7 @@ export class ProductService {
       .pipe(map((r) => r.data));
   }
 
-  getOne(id: string): Observable<Product> {
+  getOne(id: number): Observable<Product> {
     return this._http
       .get<
         ApiResponseInterface<Product>
@@ -39,17 +39,17 @@ export class ProductService {
       .pipe(map((r) => r.data));
   }
 
-  create(dto: CreateProductDto): Observable<{ rowId: string }> {
+  create(dto: CreateProductDto): Observable<{ rowId: number }> {
     return this._http
       .post<CreatedResponseInterface>(`${environment.apiUrl}/products`, dto)
       .pipe(map((r) => r.data));
   }
 
-  update(id: string, dto: UpdateProductDto): Observable<void> {
+  update(id: number, dto: UpdateProductDto): Observable<void> {
     return this._http.patch<void>(`${environment.apiUrl}/products/${id}`, dto);
   }
 
-  remove(id: string): Observable<void> {
+  remove(id: number): Observable<void> {
     return this._http.delete<void>(`${environment.apiUrl}/products/${id}`);
   }
 }

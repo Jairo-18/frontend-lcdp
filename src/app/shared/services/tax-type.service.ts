@@ -7,23 +7,18 @@ import {
   ApiResponseInterface,
   CreatedResponseInterface,
 } from '@shared/interfaces/api-response.interface';
-import {
-  UnitOfMeasure,
-  UnitOfMeasureDto,
-} from '@shared/interfaces/product.interface';
+import { TaxType, TaxTypeDto } from '@shared/interfaces/tax-type.interface';
 
 @Injectable({ providedIn: 'root' })
-export class UnitOfMeasureService {
+export class TaxTypeService {
   private readonly _http: HttpClient = inject(HttpClient);
 
-  private _allCache$: Observable<UnitOfMeasure[]> | null = null;
+  private _allCache$: Observable<TaxType[]> | null = null;
 
-  getAll(): Observable<UnitOfMeasure[]> {
+  getAll(): Observable<TaxType[]> {
     if (!this._allCache$) {
       this._allCache$ = this._http
-        .get<
-          ApiResponseInterface<UnitOfMeasure[]>
-        >(`${environment.apiUrl}/units-of-measure`)
+        .get<ApiResponseInterface<TaxType[]>>(`${environment.apiUrl}/tax-types`)
         .pipe(
           map((r) => r.data),
           shareReplay(1),
@@ -36,27 +31,24 @@ export class UnitOfMeasureService {
     this._allCache$ = null;
   }
 
-  create(dto: UnitOfMeasureDto): Observable<{ rowId: number }> {
+  create(dto: TaxTypeDto): Observable<{ rowId: number }> {
     return this._http
-      .post<CreatedResponseInterface>(
-        `${environment.apiUrl}/units-of-measure`,
-        dto,
-      )
+      .post<CreatedResponseInterface>(`${environment.apiUrl}/tax-types`, dto)
       .pipe(
         map((r) => r.data),
         tap(() => this._invalidateCache()),
       );
   }
 
-  update(id: number, dto: Partial<UnitOfMeasureDto>): Observable<void> {
+  update(id: number, dto: Partial<TaxTypeDto>): Observable<void> {
     return this._http
-      .patch<void>(`${environment.apiUrl}/units-of-measure/${id}`, dto)
+      .patch<void>(`${environment.apiUrl}/tax-types/${id}`, dto)
       .pipe(tap(() => this._invalidateCache()));
   }
 
   remove(id: number): Observable<void> {
     return this._http
-      .delete<void>(`${environment.apiUrl}/units-of-measure/${id}`)
+      .delete<void>(`${environment.apiUrl}/tax-types/${id}`)
       .pipe(tap(() => this._invalidateCache()));
   }
 }
