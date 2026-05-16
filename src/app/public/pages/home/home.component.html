@@ -1,25 +1,32 @@
-<<<<<<< HEAD
 <!-- ── Hero ── -->
 <div class="px-6 py-10 md:px-10 md:py-12">
-  <section class="max-w-[1240px] mx-auto rounded-3xl bg-[radial-gradient(ellipse_80%_100%_at_70%_40%,#ffdf4a_0%,#ffcb05_55%,#f5b800_100%)] flex items-center justify-between gap-10 px-12 py-14 overflow-hidden relative max-lg:flex-col max-lg:justify-center max-lg:px-8 max-lg:py-10">
-
+  <section
+    class="max-w-[1240px] mx-auto rounded-3xl bg-[radial-gradient(ellipse_80%_100%_at_70%_40%,#ffdf4a_0%,#ffcb05_55%,#f5b800_100%)] flex items-center justify-between gap-10 px-12 py-14 overflow-hidden relative max-lg:flex-col max-lg:justify-center max-lg:px-8 max-lg:py-10"
+  >
     <!-- Left -->
     <div class="max-w-[500px] shrink-0 z-10">
-
       <!-- Badge -->
-      <span class="inline-block text-[11px] font-semibold tracking-[0.1em] uppercase text-ink border border-ink/25 rounded-full px-4 py-1.5 mb-6">
+      <span
+        class="inline-block text-[11px] font-semibold tracking-[0.1em] uppercase text-ink border border-ink/25 rounded-full px-4 py-1.5 mb-6"
+      >
         {{ _org()?.city || 'Mocoa' }} · Distribuidor autorizado
       </span>
 
       <!-- Heading -->
-      <h1 class="font-display font-extrabold text-[clamp(32px,4vw,50px)] leading-[1.1] text-ink m-0 mb-5">
-        Tu obra empieza con el <em class="font-hand not-italic font-semibold text-coral text-[clamp(36px,4.5vw,56px)]">color correcto.</em>
+      <h1
+        class="font-display font-extrabold text-[clamp(32px,4vw,50px)] leading-[1.1] text-ink m-0 mb-5"
+      >
+        Tu obra empieza con el
+        <em
+          class="font-hand not-italic font-semibold text-coral text-[clamp(36px,4.5vw,56px)]"
+          >color correcto.</em
+        >
       </h1>
 
       <!-- Sub -->
       <p class="text-[15px] leading-[1.65] text-ink/70 mb-8 max-w-[420px]">
-        Pinturas, esmaltes, brochas y todo lo que necesitas para terminar
-        el trabajo. Pedido directo a WhatsApp, sin filas ni complicaciones.
+        Pinturas, esmaltes, brochas y todo lo que necesitas para terminar el
+        trabajo. Pedido directo a WhatsApp, sin filas ni complicaciones.
       </p>
 
       <!-- CTAs -->
@@ -36,7 +43,9 @@
           rel="noopener noreferrer"
           class="inline-flex items-center gap-2 text-ink text-sm font-semibold px-5 py-3 rounded-full border border-ink/30 no-underline transition-all hover:bg-ink/10 hover:border-ink"
         >
-          <span class="material-symbols-outlined text-[18px] leading-none">chat</span>
+          <span class="material-symbols-outlined text-[18px] leading-none"
+            >chat</span
+          >
           Pedir por WhatsApp
         </a>
       </div>
@@ -45,76 +54,127 @@
       <div class="flex items-center gap-8">
         @for (stat of stats; track stat.label) {
           <div class="flex flex-col gap-0.5">
-            <span class="font-display font-extrabold text-[20px] leading-none text-ink">{{ stat.value }}</span>
-            <span class="text-[11px] font-semibold tracking-[0.08em] uppercase text-ink/50">{{ stat.label }}</span>
+            <span
+              class="font-display font-extrabold text-[20px] leading-none text-ink"
+              >{{ stat.value }}</span
+            >
+            <span
+              class="text-[11px] font-semibold tracking-[0.08em] uppercase text-ink/50"
+              >{{ stat.label }}</span
+            >
           </div>
         }
       </div>
-
     </div>
 
     <!-- Illustration -->
-    <div class="flex items-end h-[220px] shrink-0 max-lg:hidden" aria-hidden="true">
-      <div class="w-[80px] h-[200px] bg-[#d93025] rounded-[10px_10px_14px_14px] flex items-end justify-center pb-4 shadow-2xl -rotate-[4deg] translate-y-4 relative before:content-[''] before:absolute before:top-0 before:inset-x-0 before:h-6 before:bg-white/15 before:rounded-[10px_10px_0_0]">
-        <span class="text-[9px] font-extrabold tracking-wide text-center text-white/90 leading-tight">PINTUCO</span>
+    <div
+      class="flex items-end h-[220px] shrink-0 max-lg:hidden"
+      aria-hidden="true"
+    >
+      <div
+        class="w-[80px] h-[200px] bg-[#d93025] rounded-[10px_10px_14px_14px] flex items-end justify-center pb-4 shadow-2xl -rotate-[4deg] translate-y-4 relative before:content-[''] before:absolute before:top-0 before:inset-x-0 before:h-6 before:bg-white/15 before:rounded-[10px_10px_0_0]"
+      >
+        <span
+          class="text-[9px] font-extrabold tracking-wide text-center text-white/90 leading-tight"
+          >PINTUCO</span
+        >
       </div>
-      <div class="w-[80px] h-[200px] bg-[#1a56db] rounded-[10px_10px_14px_14px] flex items-end justify-center pb-4 shadow-2xl rotate-[2deg] z-10 relative before:content-[''] before:absolute before:top-0 before:inset-x-0 before:h-6 before:bg-white/15 before:rounded-[10px_10px_0_0]">
-        <span class="text-[9px] font-extrabold tracking-wide text-center text-white/90 leading-tight">CORONA</span>
+      <div
+        class="w-[80px] h-[200px] bg-[#1a56db] rounded-[10px_10px_14px_14px] flex items-end justify-center pb-4 shadow-2xl rotate-[2deg] z-10 relative before:content-[''] before:absolute before:top-0 before:inset-x-0 before:h-6 before:bg-white/15 before:rounded-[10px_10px_0_0]"
+      >
+        <span
+          class="text-[9px] font-extrabold tracking-wide text-center text-white/90 leading-tight"
+          >CORONA</span
+        >
       </div>
-      <div class="w-[80px] h-[200px] bg-[#1e7e34] rounded-[10px_10px_14px_14px] flex items-end justify-center pb-4 shadow-2xl rotate-[5deg] translate-y-5 relative before:content-[''] before:absolute before:top-0 before:inset-x-0 before:h-6 before:bg-white/15 before:rounded-[10px_10px_0_0]">
-        <span class="text-[9px] font-extrabold tracking-wide text-center text-white/90 leading-tight">SHERWIN<br>WILLIAMS</span>
+      <div
+        class="w-[80px] h-[200px] bg-[#1e7e34] rounded-[10px_10px_14px_14px] flex items-end justify-center pb-4 shadow-2xl rotate-[5deg] translate-y-5 relative before:content-[''] before:absolute before:top-0 before:inset-x-0 before:h-6 before:bg-white/15 before:rounded-[10px_10px_0_0]"
+      >
+        <span
+          class="text-[9px] font-extrabold tracking-wide text-center text-white/90 leading-tight"
+          >SHERWIN<br />WILLIAMS</span
+        >
       </div>
     </div>
-
   </section>
 </div>
 
 <!-- ── Asesoría WhatsApp ── -->
 <section class="px-6 pb-12 md:px-10">
   <div class="max-w-[1240px] mx-auto">
-    <div class="bg-ink rounded-3xl px-10 py-12 md:px-14 flex items-center justify-between gap-10 overflow-hidden relative max-md:flex-col max-md:items-start">
-
+    <div
+      class="bg-ink rounded-3xl px-10 py-12 md:px-14 flex items-center justify-between gap-10 overflow-hidden relative max-md:flex-col max-md:items-start"
+    >
       <!-- Content -->
       <div class="max-w-[520px] z-10">
-        <h2 class="font-display font-bold text-white text-[clamp(22px,3vw,34px)] leading-tight mb-2">
+        <h2
+          class="font-display font-bold text-white text-[clamp(22px,3vw,34px)] leading-tight mb-2"
+        >
           ¿Necesitas asesoría para tu proyecto?
         </h2>
-        <p class="font-hand text-yellow text-[clamp(22px,2.5vw,30px)] leading-none mb-5">
+        <p
+          class="font-hand text-yellow text-[clamp(22px,2.5vw,30px)] leading-none mb-5"
+        >
           Estamos aquí.
         </p>
         <p class="text-white/60 text-[15px] leading-relaxed mb-8 max-w-[420px]">
-          Mándanos una foto del espacio y te recomendamos cantidad, color y producto. Sin compromiso.
+          Mándanos una foto del espacio y te recomendamos cantidad, color y
+          producto. Sin compromiso.
         </p>
-        <a [href]="whatsappHref" target="_blank" rel="noopener noreferrer"
-          class="inline-flex items-center gap-2.5 bg-[#25D366] hover:bg-[#1fba58] text-white font-display font-bold text-[15px] px-7 py-3.5 rounded-full no-underline transition-all hover:-translate-y-px">
-          <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-            <path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.562 4.14 1.532 5.875L0 24l6.302-1.513A11.947 11.947 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.001-1.364l-.36-.214-3.732.895.942-3.631-.236-.374A9.818 9.818 0 1112 21.818z"/>
+        <a
+          [href]="whatsappHref"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2.5 bg-[#25D366] hover:bg-[#1fba58] text-white font-display font-bold text-[15px] px-7 py-3.5 rounded-full no-underline transition-all hover:-translate-y-px"
+        >
+          <svg
+            class="w-5 h-5 shrink-0"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"
+            />
+            <path
+              d="M12 0C5.373 0 0 5.373 0 12c0 2.136.562 4.14 1.532 5.875L0 24l6.302-1.513A11.947 11.947 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.001-1.364l-.36-.214-3.732.895.942-3.631-.236-.374A9.818 9.818 0 1112 21.818z"
+            />
           </svg>
           Escribir por WhatsApp
         </a>
       </div>
 
       <!-- Illustration: paint chips -->
-      <div class="shrink-0 flex items-end gap-3 h-[160px] max-md:hidden" aria-hidden="true">
+      <div
+        class="shrink-0 flex items-end gap-3 h-[160px] max-md:hidden"
+        aria-hidden="true"
+      >
         <!-- Chip 1 — salmon -->
-        <div class="w-[110px] bg-[#e8b4a0] rounded-2xl p-3 flex flex-col gap-2 -rotate-[6deg] translate-y-4 shadow-xl">
-          <p class="text-[9px] font-extrabold tracking-wider text-[#c0614a]">PINTUCO</p>
+        <div
+          class="w-[110px] bg-[#e8b4a0] rounded-2xl p-3 flex flex-col gap-2 -rotate-[6deg] translate-y-4 shadow-xl"
+        >
+          <p class="text-[9px] font-extrabold tracking-wider text-[#c0614a]">
+            PINTUCO
+          </p>
           <div class="h-8 rounded-lg bg-[#d97060]"></div>
           <p class="text-[8px] font-mono text-[#8b4030] opacity-80">VK-SAL</p>
           <div class="h-2 rounded bg-[#d97060]/40"></div>
           <div class="h-2 rounded bg-[#d97060]/20"></div>
         </div>
         <!-- Chip 2 — olive -->
-        <div class="w-[110px] bg-[#9db89a] rounded-2xl p-3 flex flex-col gap-2 rotate-[4deg] shadow-xl">
-          <p class="text-[9px] font-extrabold tracking-wider text-[#3d6b38]">CORONA</p>
+        <div
+          class="w-[110px] bg-[#9db89a] rounded-2xl p-3 flex flex-col gap-2 rotate-[4deg] shadow-xl"
+        >
+          <p class="text-[9px] font-extrabold tracking-wider text-[#3d6b38]">
+            CORONA
+          </p>
           <div class="h-8 rounded-lg bg-[#5a8c54]"></div>
           <p class="text-[8px] font-mono text-[#2d4d28] opacity-80">AVS</p>
           <div class="h-2 rounded bg-[#5a8c54]/40"></div>
           <div class="h-2 rounded bg-[#5a8c54]/20"></div>
         </div>
       </div>
-
     </div>
   </div>
 </section>
@@ -123,29 +183,36 @@
 @if (_categories().length > 0) {
   <section class="px-6 pb-12 md:px-10">
     <div class="max-w-[1240px] mx-auto">
-
       <!-- Header -->
       <div class="flex items-end justify-between mb-6 gap-4">
         <div>
-          <h2 class="font-display font-bold text-ink text-[clamp(22px,3vw,32px)] leading-tight mb-1">
+          <h2
+            class="font-display font-bold text-ink text-[clamp(22px,3vw,32px)] leading-tight mb-1"
+          >
             Compra por categoría
           </h2>
           <p class="text-ink-mute text-sm">
             Todo organizado para que encuentres lo que necesitas en segundos.
           </p>
         </div>
-        <a routerLink="/catalogo"
-          class="shrink-0 text-sm font-semibold text-ink underline-offset-2 hover:underline whitespace-nowrap">
+        <a
+          routerLink="/catalogo"
+          class="shrink-0 text-sm font-semibold text-ink underline-offset-2 hover:underline whitespace-nowrap"
+        >
           Ver todo →
         </a>
       </div>
 
       <!-- Cards -->
-      <div class="flex gap-3 overflow-x-auto pb-2 -mx-6 px-6 md:mx-0 md:px-0 md:grid md:grid-cols-[repeat(auto-fill,minmax(150px,1fr))]">
+      <div
+        class="flex gap-3 overflow-x-auto pb-2 -mx-6 px-6 md:mx-0 md:px-0 md:grid md:grid-cols-[repeat(auto-fill,minmax(150px,1fr))]"
+      >
         @for (cat of _categories(); track cat.id) {
-          <a routerLink="/catalogo" [queryParams]="{ categoria: cat.code }"
-            class="min-w-[140px] md:min-w-0 flex flex-col items-center gap-3 bg-white border border-rule rounded-2xl p-5 cursor-pointer no-underline transition-all hover:shadow-md hover:-translate-y-0.5 group">
-
+          <a
+            routerLink="/catalogo"
+            [queryParams]="{ categoria: cat.code }"
+            class="min-w-[140px] md:min-w-0 flex flex-col items-center gap-3 bg-white border border-rule rounded-2xl p-5 cursor-pointer no-underline transition-all hover:shadow-md hover:-translate-y-0.5 group"
+          >
             <!-- Imagen o placeholder -->
             @if (cat.images && cat.images.length > 0) {
               <img
@@ -155,26 +222,30 @@
                 loading="lazy"
               />
             } @else {
-              <div class="w-14 h-14 rounded-xl bg-paper-alt flex items-center justify-center">
-                <span class="material-symbols-outlined text-[28px] text-ink-mute leading-none">category</span>
+              <div
+                class="w-14 h-14 rounded-xl bg-paper-alt flex items-center justify-center"
+              >
+                <span
+                  class="material-symbols-outlined text-[28px] text-ink-mute leading-none"
+                  >category</span
+                >
               </div>
             }
 
             <!-- Nombre -->
-            <span class="font-display font-bold text-ink text-sm text-center leading-tight group-hover:text-coral transition-colors">
+            <span
+              class="font-display font-bold text-ink text-sm text-center leading-tight group-hover:text-coral transition-colors"
+            >
               {{ cat.name }}
             </span>
-
           </a>
         }
       </div>
-
     </div>
   </section>
 }
-=======
+
 <app-hero [org]="_org()" [whatsappHref]="whatsappHref" [stats]="stats" />
 <app-category-grid [categories]="_categories()" [apiUrl]="apiUrl" />
 <app-whatsapp-banner [whatsappHref]="whatsappHref" />
 <app-new-products />
->>>>>>> b77ce14b0751561e90110639c8f7b48bec0588a9

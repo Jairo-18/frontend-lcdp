@@ -41,18 +41,7 @@ export class UnitsComponent implements OnInit, OnDestroy {
 
   readonly _total = computed(() => this._filtered().length);
 
-<<<<<<< HEAD
-  readonly _panelOpen = signal(false);
-  readonly _saving = signal(false);
-  readonly _editingId = signal<number | null>(null);
 
-  readonly form = this._fb.nonNullable.group({
-    name: ['', [Validators.required, Validators.maxLength(100)]],
-    code: ['', [Validators.required, Validators.maxLength(20)]],
-  });
-
-=======
->>>>>>> b77ce14b0751561e90110639c8f7b48bec0588a9
   ngOnInit(): void {
     this._search$
       .pipe(

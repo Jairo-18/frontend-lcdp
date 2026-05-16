@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, signal, WritableSignal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { OrganizationalService } from '@shared/services/organizational.service';
 import { Organizational } from '@shared/interfaces/organizational.interface';
 import { Category } from '@shared/interfaces/category.interface';
@@ -13,7 +14,7 @@ interface Stat { value: string; label: string }
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [HeroComponent, WhatsappBannerComponent, CategoryGridComponent, NewProductsComponent],
+  imports: [HeroComponent, WhatsappBannerComponent, CategoryGridComponent, NewProductsComponent, RouterLink],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })

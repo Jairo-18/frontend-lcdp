@@ -39,7 +39,7 @@ export class CreateOrEditCategoriesComponent implements OnInit, OnDestroy {
   readonly _loading = signal(false);
   readonly _saving = signal(false);
   readonly _uploading = signal(false);
-  readonly _editingId = signal<string | null>(null);
+  readonly _editingId = signal<number | null>(null);
   readonly _images = signal<ImageVariant[]>([]);
 
   readonly form = this._fb.nonNullable.group({
@@ -48,7 +48,8 @@ export class CreateOrEditCategoriesComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
-    const id = this._route.snapshot.paramMap.get('id');
+    const idParam = this._route.snapshot.paramMap.get('id');
+    const id = idParam ? Number(idParam) : null;
     this._editingId.set(id);
 
     if (id) {

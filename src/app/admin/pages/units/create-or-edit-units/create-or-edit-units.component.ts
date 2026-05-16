@@ -31,7 +31,7 @@ export class CreateOrEditUnitsComponent implements OnInit, OnDestroy {
 
   readonly _loading = signal(false);
   readonly _saving = signal(false);
-  readonly _editingId = signal<string | null>(null);
+  readonly _editingId = signal<number | null>(null);
 
   readonly form = this._fb.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(100)]],
@@ -39,7 +39,8 @@ export class CreateOrEditUnitsComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
-    const id = this._route.snapshot.paramMap.get('id');
+    const idParam = this._route.snapshot.paramMap.get('id');
+    const id = idParam ? Number(idParam) : null;
     this._editingId.set(id);
 
     if (id) {

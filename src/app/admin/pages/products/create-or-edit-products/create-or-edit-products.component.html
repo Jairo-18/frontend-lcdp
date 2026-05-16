@@ -57,6 +57,39 @@
           />
         </div>
 
+        <div class="grid grid-cols-2 gap-4">
+          <app-input-field
+            formControlName="priceSale"
+            label="Precio de venta"
+            placeholder="45900"
+            type="number"
+          />
+          <app-select-field
+            formControlName="taxTypeId"
+            label="Tipo de impuesto"
+            placeholder="Sin impuesto"
+            [options]="taxTypeOptions()"
+          />
+        </div>
+
+        <!-- Estado activo/inactivo -->
+        <div class="flex items-center justify-between py-2 px-3 rounded-xl border border-rule bg-[rgba(26,28,44,0.02)]">
+          <div>
+            <p class="text-sm font-medium text-ink">Producto activo</p>
+            <p class="text-xs text-ink-mute mt-0.5">Si está inactivo no aparecerá en el catálogo.</p>
+          </div>
+          <button type="button"
+            (click)="form.get('isActive')!.setValue(!form.get('isActive')!.value)"
+            class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none"
+            [class.bg-ink]="form.get('isActive')!.value"
+            [class.bg-[rgba(26,28,44,0.15)]]="!form.get('isActive')!.value">
+            <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+              [class.translate-x-5]="form.get('isActive')!.value"
+              [class.translate-x-0]="!form.get('isActive')!.value">
+            </span>
+          </button>
+        </div>
+
         <app-input-field
           formControlName="videoUrl"
           label="URL de video"
