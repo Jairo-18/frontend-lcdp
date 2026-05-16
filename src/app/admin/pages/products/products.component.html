@@ -87,32 +87,18 @@
                   </span>
                 </td>
                 <td class="px-4 py-4">
-                  @if (_deletingId() === product.id) {
-                    <div class="flex items-center justify-end gap-2">
-                      <span class="text-xs text-ink-mute">¿Eliminar?</span>
-                      <button type="button" (click)="doDelete(product.id)"
-                        class="px-3 py-1 rounded-lg bg-red-500 text-white text-xs font-semibold hover:bg-red-600 transition-colors cursor-pointer border-0">
-                        Sí
-                      </button>
-                      <button type="button" (click)="cancelDelete()"
-                        class="px-3 py-1 rounded-lg border border-rule text-xs font-semibold text-ink hover:bg-[rgba(26,28,44,0.04)] transition-colors cursor-pointer">
-                        No
-                      </button>
-                    </div>
-                  } @else {
-                    <div class="flex items-center justify-end gap-1">
-                      <button type="button" (click)="openEdit(product)"
-                        class="p-1.5 rounded-lg hover:bg-[rgba(26,28,44,0.06)] text-ink-mute hover:text-ink transition-colors cursor-pointer border-0 bg-transparent"
-                        title="Editar">
-                        <span class="material-symbols-outlined text-[18px] leading-none">edit</span>
-                      </button>
-                      <button type="button" (click)="confirmDelete(product.id)"
-                        class="p-1.5 rounded-lg hover:bg-red-50 text-ink-mute hover:text-red-500 transition-colors cursor-pointer border-0 bg-transparent"
-                        title="Eliminar">
-                        <span class="material-symbols-outlined text-[18px] leading-none">delete</span>
-                      </button>
-                    </div>
-                  }
+                  <div class="flex items-center justify-end gap-1">
+                    <button type="button" (click)="openEdit(product)"
+                      class="p-1.5 rounded-lg hover:bg-[rgba(26,28,44,0.06)] text-ink-mute hover:text-ink transition-colors cursor-pointer border-0 bg-transparent"
+                      title="Editar">
+                      <span class="material-symbols-outlined text-[18px] leading-none">edit</span>
+                    </button>
+                    <button type="button" (click)="confirmDelete(product.id, product.name)"
+                      class="p-1.5 rounded-lg hover:bg-red-50 text-ink-mute hover:text-red-500 transition-colors cursor-pointer border-0 bg-transparent"
+                      title="Eliminar">
+                      <span class="material-symbols-outlined text-[18px] leading-none">delete</span>
+                    </button>
+                  </div>
                 </td>
               </tr>
             }
@@ -170,53 +156,46 @@
     } @else {
       <form [formGroup]="form" (ngSubmit)="save()" class="flex-1 overflow-y-auto px-6 py-5 space-y-5">
 
-        <!-- Nombre -->
-        <div>
-          <label class="block text-sm font-medium text-ink mb-1">Nombre *</label>
-          <input formControlName="name"
-            class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10"
-            placeholder="Vinilo Tipo 1 Koraza Blanco" />
-        </div>
+        <app-input-field
+          formControlName="name"
+          label="Nombre"
+          placeholder="Vinilo Tipo 1 Koraza Blanco"
+          [required]="true"
+          [control]="form.get('name')"
+        />
 
-        <!-- Descripción -->
-        <div>
-          <label class="block text-sm font-medium text-ink mb-1">Descripción</label>
-          <textarea formControlName="description" rows="3"
-            class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 resize-none"
-            placeholder="Descripción del producto..."></textarea>
-        </div>
+        <app-textarea-field
+          formControlName="description"
+          label="Descripción"
+          placeholder="Descripción del producto..."
+          [rows]="3"
+        />
 
-        <!-- Categoría y Marca -->
         <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-ink mb-1">Categoría *</label>
-            <select formControlName="categoryId"
-              class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 cursor-pointer">
-              <option value="">Seleccionar...</option>
-              @for (cat of _categories(); track cat.id) {
-                <option [value]="cat.id">{{ cat.name }}</option>
-              }
-            </select>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-ink mb-1">Marca *</label>
-            <select formControlName="brandId"
-              class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 cursor-pointer">
-              <option value="">Seleccionar...</option>
-              @for (brand of _brands(); track brand.id) {
-                <option [value]="brand.id">{{ brand.name }}</option>
-              }
-            </select>
-          </div>
+          <app-select-field
+            formControlName="categoryId"
+            label="Categoría"
+            placeholder="Seleccionar..."
+            [required]="true"
+            [options]="categoryOptions()"
+            [control]="form.get('categoryId')"
+          />
+          <app-select-field
+            formControlName="brandId"
+            label="Marca"
+            placeholder="Seleccionar..."
+            [required]="true"
+            [options]="brandOptions()"
+            [control]="form.get('brandId')"
+          />
         </div>
 
-        <!-- Video URL -->
-        <div>
-          <label class="block text-sm font-medium text-ink mb-1">URL de video</label>
-          <input formControlName="videoUrl"
-            class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10"
-            placeholder="https://youtube.com/..." />
-        </div>
+        <app-input-field
+          formControlName="videoUrl"
+          label="URL de video"
+          placeholder="https://youtube.com/..."
+          type="url"
+        />
 
         <!-- Presentaciones -->
         <div>
@@ -232,15 +211,19 @@
           <div formArrayName="presentations" class="space-y-2">
             @for (pres of presentationsArray.controls; track $index) {
               <div [formGroupName]="$index" class="flex gap-2 items-center p-3 rounded-xl border border-rule bg-[rgba(26,28,44,0.02)]">
-                <select formControlName="unitOfMeasureId"
-                  class="flex-1 rounded-lg border border-rule px-2 py-1.5 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 cursor-pointer">
-                  <option value="">Unidad...</option>
-                  @for (unit of _units(); track unit.id) {
-                    <option [value]="unit.id">{{ unit.name }}</option>
-                  }
-                </select>
-                <input formControlName="sku" placeholder="SKU"
-                  class="w-28 rounded-lg border border-rule px-2 py-1.5 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" />
+                <div class="flex-1">
+                  <app-select-field
+                    formControlName="unitOfMeasureId"
+                    placeholder="Unidad..."
+                    [options]="unitOptions()"
+                  />
+                </div>
+                <div class="w-28">
+                  <app-input-field
+                    formControlName="sku"
+                    placeholder="SKU"
+                  />
+                </div>
                 <button type="button" (click)="removePresentation($index)"
                   class="p-1 rounded-lg hover:bg-red-50 text-ink-mute hover:text-red-500 transition-colors cursor-pointer border-0 bg-transparent shrink-0">
                   <span class="material-symbols-outlined text-[18px] leading-none">remove_circle</span>

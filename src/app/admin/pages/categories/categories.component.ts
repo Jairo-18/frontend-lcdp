@@ -9,6 +9,8 @@ import {
   signal,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { InputFieldComponent } from '@shared/components';
+import { ConfirmDialogService } from '@shared/services/confirm-dialog.service';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { CategoryService } from '@shared/services/category.service';
@@ -20,13 +22,14 @@ import { environment } from '@env/environment';
 @Component({
   selector: 'app-categories',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, InputFieldComponent],
   templateUrl: './categories.component.html',
 })
 export class CategoriesComponent implements OnInit, OnDestroy {
   private readonly _categoryService: CategoryService = inject(CategoryService);
   private readonly _uploadService: UploadService = inject(UploadService);
   private readonly _fb: FormBuilder = inject(FormBuilder);
+  private readonly _confirmDialog: ConfirmDialogService = inject(ConfirmDialogService);
   private readonly _destroy$: Subject<void> = new Subject<void>();
   private readonly _search$: Subject<string> = new Subject<string>();
 
@@ -53,7 +56,6 @@ export class CategoriesComponent implements OnInit, OnDestroy {
   readonly _saving = signal(false);
   readonly _uploading = signal(false);
   readonly _editingId = signal<string | null>(null);
-  readonly _deletingId = signal<string | null>(null);
   readonly _panelImages = signal<ImageVariant[]>([]);
 
   readonly form = this._fb.nonNullable.group({
@@ -173,25 +175,22 @@ export class CategoriesComponent implements OnInit, OnDestroy {
     }
   }
 
-  confirmDelete(id: string): void {
-    this._deletingId.set(id);
-  }
-  cancelDelete(): void {
-    this._deletingId.set(null);
+  confirmDelete(id: string, name: string): void {
+    this._confirmDialog.confirmDelete(name).subscribe((confirmed) => {
+      if (confirmed) this.doDelete(id);
+    });
   }
 
-  doDelete(id: string): void {
+  private doDelete(id: string): void {
     this._categoryService
       .remove(id)
       .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: () => {
-          this._deletingId.set(null);
           if (this._categories().length === 1 && this._page() > 1)
             this._page.update((p) => p - 1);
           this._load();
         },
-        error: () => this._deletingId.set(null),
       });
   }
 

@@ -44,7 +44,7 @@
                 "output": "assets"
               }
             ],
-            "styles": ["src/styles.scss"],
+            "styles": ["src/styles.scss", "node_modules/@angular/cdk/overlay-prebuilt.css"],
             "stylePreprocessorOptions": {
               "includePaths": ["src/assets/styles"]
             },

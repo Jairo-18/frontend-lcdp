@@ -13,6 +13,11 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { InputFieldComponent } from '@shared/components';
+import { TextareaFieldComponent } from '@shared/components';
+import { SelectFieldComponent } from '@shared/components';
+import { SelectOption } from '@shared/interfaces/forms.interface';
+import { ConfirmDialogService } from '@shared/services/confirm-dialog.service';
 import { Subject, forkJoin } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { ProductService } from '@shared/services/product.service';
@@ -29,16 +34,15 @@ import { Brand } from '@shared/interfaces/brand.interface';
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, InputFieldComponent, TextareaFieldComponent, SelectFieldComponent],
   templateUrl: './products.component.html',
 })
 export class ProductsComponent implements OnInit, OnDestroy {
   private readonly _productService: ProductService = inject(ProductService);
   private readonly _brandService: BrandService = inject(BrandService);
-  private readonly _organizationalService: OrganizationalService = inject(
-    OrganizationalService,
-  );
+  private readonly _organizationalService: OrganizationalService = inject(OrganizationalService);
   private readonly _fb: FormBuilder = inject(FormBuilder);
+  private readonly _confirmDialog: ConfirmDialogService = inject(ConfirmDialogService);
   private readonly _destroy$ = new Subject<void>();
   private readonly _search$ = new Subject<string>();
 
@@ -63,10 +67,19 @@ export class ProductsComponent implements OnInit, OnDestroy {
   readonly _brands = signal<Brand[]>([]);
   readonly _units = signal<UnitOfMeasure[]>([]);
 
+  readonly categoryOptions = computed<SelectOption[]>(() =>
+    this._categories().map((c) => ({ value: c.id, label: c.name })),
+  );
+  readonly brandOptions = computed<SelectOption[]>(() =>
+    this._brands().map((b) => ({ value: b.id, label: b.name })),
+  );
+  readonly unitOptions = computed<SelectOption[]>(() =>
+    this._units().map((u) => ({ value: u.id, label: u.name })),
+  );
+
   readonly _panelOpen = signal(false);
   readonly _saving = signal(false);
   readonly _editingId = signal<string | null>(null);
-  readonly _deletingId = signal<string | null>(null);
   readonly _loadingProduct = signal(false);
 
   readonly form = this._fb.nonNullable.group({
@@ -245,27 +258,23 @@ export class ProductsComponent implements OnInit, OnDestroy {
     }
   }
 
-  confirmDelete(id: string): void {
-    this._deletingId.set(id);
+  confirmDelete(id: string, name: string): void {
+    this._confirmDialog.confirmDelete(name).subscribe((confirmed) => {
+      if (confirmed) this.doDelete(id);
+    });
   }
 
-  cancelDelete(): void {
-    this._deletingId.set(null);
-  }
-
-  doDelete(id: string): void {
+  private doDelete(id: string): void {
     this._productService
       .remove(id)
       .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: () => {
-          this._deletingId.set(null);
           if (this._products().length === 1 && this._page() > 1) {
             this._page.update((p) => p - 1);
           }
           this._loadProducts();
         },
-        error: () => this._deletingId.set(null),
       });
   }
 

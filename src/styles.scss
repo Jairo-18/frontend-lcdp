@@ -7,6 +7,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Remove default Material dialog chrome so our Tailwind styles take over */
+.confirm-dialog-panel .mat-mdc-dialog-container {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+.confirm-dialog-panel .mdc-dialog__surface {
+  background: transparent;
+  box-shadow: none;
+}
+
 html,
 body {
   min-height: 100%;

@@ -76,26 +76,16 @@
                   </span>
                 </td>
                 <td class="px-4 py-3">
-                  @if (_deletingId() === category.id) {
-                    <div class="flex items-center justify-end gap-2">
-                      <span class="text-xs text-ink-mute">¿Eliminar?</span>
-                      <button type="button" (click)="doDelete(category.id)"
-                        class="px-3 py-1 rounded-lg bg-red-500 text-white text-xs font-semibold hover:bg-red-600 transition-colors cursor-pointer border-0">Sí</button>
-                      <button type="button" (click)="cancelDelete()"
-                        class="px-3 py-1 rounded-lg border border-rule text-xs font-semibold text-ink hover:bg-[rgba(26,28,44,0.04)] transition-colors cursor-pointer">No</button>
-                    </div>
-                  } @else {
-                    <div class="flex items-center justify-end gap-1">
-                      <button type="button" (click)="openEdit(category)"
-                        class="p-1.5 rounded-lg hover:bg-[rgba(26,28,44,0.06)] text-ink-mute hover:text-ink transition-colors cursor-pointer border-0 bg-transparent" title="Editar">
-                        <span class="material-symbols-outlined text-[18px] leading-none">edit</span>
-                      </button>
-                      <button type="button" (click)="confirmDelete(category.id)"
-                        class="p-1.5 rounded-lg hover:bg-red-50 text-ink-mute hover:text-red-500 transition-colors cursor-pointer border-0 bg-transparent" title="Eliminar">
-                        <span class="material-symbols-outlined text-[18px] leading-none">delete</span>
-                      </button>
-                    </div>
-                  }
+                  <div class="flex items-center justify-end gap-1">
+                    <button type="button" (click)="openEdit(category)"
+                      class="p-1.5 rounded-lg hover:bg-[rgba(26,28,44,0.06)] text-ink-mute hover:text-ink transition-colors cursor-pointer border-0 bg-transparent" title="Editar">
+                      <span class="material-symbols-outlined text-[18px] leading-none">edit</span>
+                    </button>
+                    <button type="button" (click)="confirmDelete(category.id, category.name)"
+                      class="p-1.5 rounded-lg hover:bg-red-50 text-ink-mute hover:text-red-500 transition-colors cursor-pointer border-0 bg-transparent" title="Eliminar">
+                      <span class="material-symbols-outlined text-[18px] leading-none">delete</span>
+                    </button>
+                  </div>
                 </td>
               </tr>
             }
@@ -143,19 +133,22 @@
     <!-- Body -->
     <form [formGroup]="form" (ngSubmit)="save()" class="flex-1 overflow-y-auto px-6 py-5 space-y-5">
 
-      <div>
-        <label class="block text-sm font-medium text-ink mb-1">Nombre *</label>
-        <input formControlName="name"
-          class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10"
-          placeholder="Pinturas" />
-      </div>
+      <app-input-field
+        formControlName="name"
+        label="Nombre"
+        placeholder="Pinturas"
+        [required]="true"
+        [control]="form.get('name')"
+      />
 
-      <div>
-        <label class="block text-sm font-medium text-ink mb-1">Código * <span class="text-ink-mute font-normal">(único, sin espacios)</span></label>
-        <input formControlName="code"
-          class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 font-mono"
-          placeholder="pinturas" />
-      </div>
+      <app-input-field
+        formControlName="code"
+        label="Código (único, sin espacios)"
+        placeholder="pinturas"
+        [required]="true"
+        [mono]="true"
+        [control]="form.get('code')"
+      />
 
       <!-- Images -->
       <div>

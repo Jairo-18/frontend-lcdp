@@ -6,6 +6,8 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { InputFieldComponent } from '@shared/components';
+import { TextareaFieldComponent } from '@shared/components';
 import { Observable } from 'rxjs';
 import { OrganizationalService } from '@shared/services/organizational.service';
 import {
@@ -24,7 +26,7 @@ import {
 @Component({
   selector: 'app-aplication',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, InputFieldComponent, TextareaFieldComponent],
   templateUrl: './aplication.component.html',
 })
 export class AplicationComponent implements OnInit {

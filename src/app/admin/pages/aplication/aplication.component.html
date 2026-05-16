@@ -40,45 +40,19 @@
           <h2 class="font-semibold text-ink text-base mb-5">Información general</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="md:col-span-2">
-              <label class="block text-sm font-medium text-ink mb-1">Nombre del negocio *</label>
-              <input formControlName="name" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" placeholder="La Casa del Pintor" />
+              <app-input-field formControlName="name" label="Nombre del negocio" placeholder="La Casa del Pintor" [required]="true" [control]="form.get('name')" />
             </div>
-            <div>
-              <label class="block text-sm font-medium text-ink mb-1">Razón social</label>
-              <input formControlName="legalName" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" placeholder="Nombre legal" />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-ink mb-1">NIT / RUT</label>
-              <input formControlName="nit" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" placeholder="900.000.000-0" />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-ink mb-1">Correo electrónico</label>
-              <input formControlName="email" type="email" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" placeholder="contacto@empresa.com" />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-ink mb-1">Teléfono</label>
-              <input formControlName="phone" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" placeholder="+57 300 000 0000" />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-ink mb-1">WhatsApp</label>
-              <input formControlName="whatsappNumber" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" placeholder="+57 300 000 0000" />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-ink mb-1">Sitio web</label>
-              <input formControlName="website" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" placeholder="https://www.empresa.com" />
-            </div>
+            <app-input-field formControlName="legalName" label="Razón social" placeholder="Nombre legal" />
+            <app-input-field formControlName="nit" label="NIT / RUT" placeholder="900.000.000-0" />
+            <app-input-field formControlName="email" type="email" label="Correo electrónico" placeholder="contacto@empresa.com" />
+            <app-input-field formControlName="phone" label="Teléfono" placeholder="+57 300 000 0000" />
+            <app-input-field formControlName="whatsappNumber" label="WhatsApp" placeholder="+57 300 000 0000" />
+            <app-input-field formControlName="website" label="Sitio web" placeholder="https://www.empresa.com" />
             <div class="md:col-span-2">
-              <label class="block text-sm font-medium text-ink mb-1">Dirección</label>
-              <input formControlName="address" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" placeholder="Calle 10 # 5-20" />
+              <app-input-field formControlName="address" label="Dirección" placeholder="Calle 10 # 5-20" />
             </div>
-            <div>
-              <label class="block text-sm font-medium text-ink mb-1">Ciudad</label>
-              <input formControlName="city" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" placeholder="Mocoa" />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-ink mb-1">Departamento</label>
-              <input formControlName="department" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" placeholder="Putumayo" />
-            </div>
+            <app-input-field formControlName="city" label="Ciudad" placeholder="Mocoa" />
+            <app-input-field formControlName="department" label="Departamento" placeholder="Putumayo" />
           </div>
         </div>
       }
@@ -88,14 +62,8 @@
         <div class="bg-white border border-rule rounded-2xl p-6">
           <h2 class="font-semibold text-ink text-base mb-5">Branding</h2>
           <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-ink mb-1">URL del logo</label>
-              <input formControlName="logoUrl" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" placeholder="https://..." />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-ink mb-1">URL del favicon</label>
-              <input formControlName="faviconUrl" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" placeholder="https://..." />
-            </div>
+            <app-input-field formControlName="logoUrl" label="URL del logo" placeholder="https://..." />
+            <app-input-field formControlName="faviconUrl" label="URL del favicon" placeholder="https://..." />
           </div>
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-6">
             @for (color of colorFields; track color.key) {
@@ -126,13 +94,11 @@
           <h2 class="font-semibold text-ink text-base mb-5">Redes sociales</h2>
           <div class="space-y-4">
             @for (red of socialFields; track red.key) {
-              <div>
-                <label class="flex items-center gap-1.5 text-sm font-medium text-ink mb-1">
-                  <span class="material-symbols-outlined text-[16px] leading-none text-ink-mute">{{ red.icon }}</span>
-                  {{ red.label }}
-                </label>
-                <input [formControlName]="red.key" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" [placeholder]="red.placeholder" />
-              </div>
+              <app-input-field
+                [formControlName]="red.key"
+                [label]="red.label"
+                [placeholder]="red.placeholder"
+              />
             }
           </div>
         </div>
@@ -142,34 +108,13 @@
       @if (_tab() === 'contenido') {
         <div class="bg-white border border-rule rounded-2xl p-6 space-y-4">
           <h2 class="font-semibold text-ink text-base mb-1">Contenido</h2>
-          <div>
-            <label class="block text-sm font-medium text-ink mb-1">Descripción general</label>
-            <textarea formControlName="description" rows="3" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 resize-none" placeholder="Descripción breve del negocio..."></textarea>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-ink mb-1">Título — Quiénes somos</label>
-            <input formControlName="aboutTitle" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" placeholder="Quiénes somos" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-ink mb-1">Descripción — Quiénes somos</label>
-            <textarea formControlName="aboutDescription" rows="3" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 resize-none"></textarea>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-ink mb-1">Título — Misión</label>
-            <input formControlName="missionTitle" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" placeholder="Nuestra misión" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-ink mb-1">Descripción — Misión</label>
-            <textarea formControlName="missionDescription" rows="3" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 resize-none"></textarea>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-ink mb-1">Título — Visión</label>
-            <input formControlName="visionTitle" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" placeholder="Nuestra visión" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-ink mb-1">Descripción — Visión</label>
-            <textarea formControlName="visionDescription" rows="3" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 resize-none"></textarea>
-          </div>
+          <app-textarea-field formControlName="description" label="Descripción general" placeholder="Descripción breve del negocio..." [rows]="3" />
+          <app-input-field formControlName="aboutTitle" label="Título — Quiénes somos" placeholder="Quiénes somos" />
+          <app-textarea-field formControlName="aboutDescription" label="Descripción — Quiénes somos" [rows]="3" />
+          <app-input-field formControlName="missionTitle" label="Título — Misión" placeholder="Nuestra misión" />
+          <app-textarea-field formControlName="missionDescription" label="Descripción — Misión" [rows]="3" />
+          <app-input-field formControlName="visionTitle" label="Título — Visión" placeholder="Nuestra visión" />
+          <app-textarea-field formControlName="visionDescription" label="Descripción — Visión" [rows]="3" />
         </div>
       }
 
@@ -177,20 +122,14 @@
       @if (_tab() === 'seo') {
         <div class="bg-white border border-rule rounded-2xl p-6 space-y-4">
           <h2 class="font-semibold text-ink text-base mb-1">SEO</h2>
-          <div>
-            <label class="block text-sm font-medium text-ink mb-1">Meta título</label>
-            <input formControlName="metaTitle" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" placeholder="La Casa del Pintor — Pinturas y suministros" />
-            <p class="text-xs text-ink-mute mt-1">Máx. 200 caracteres. Aparece en el título del navegador y resultados de búsqueda.</p>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-ink mb-1">Meta descripción</label>
-            <textarea formControlName="metaDescription" rows="3" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 resize-none" placeholder="Encuentra las mejores pinturas..."></textarea>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-ink mb-1">Palabras clave</label>
-            <input formControlName="metaKeywords" class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" placeholder="pintura, esmalte, laca, Mocoa" />
-            <p class="text-xs text-ink-mute mt-1">Separadas por coma.</p>
-          </div>
+          <app-input-field
+            formControlName="metaTitle"
+            label="Meta título"
+            placeholder="La Casa del Pintor — Pinturas y suministros"
+            hint="Máx. 200 caracteres. Aparece en el título del navegador y resultados de búsqueda."
+          />
+          <app-textarea-field formControlName="metaDescription" label="Meta descripción" placeholder="Encuentra las mejores pinturas..." [rows]="3" />
+          <app-input-field formControlName="metaKeywords" label="Palabras clave" placeholder="pintura, esmalte, laca, Mocoa" hint="Separadas por coma." />
         </div>
       }
 

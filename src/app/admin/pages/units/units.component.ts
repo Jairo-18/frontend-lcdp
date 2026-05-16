@@ -7,6 +7,8 @@ import {
   signal,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { InputFieldComponent } from '@shared/components';
+import { ConfirmDialogService } from '@shared/services/confirm-dialog.service';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { UnitOfMeasureService } from '@shared/services/unit-of-measure.service';
@@ -18,20 +20,19 @@ import {
 @Component({
   selector: 'app-units',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, InputFieldComponent],
   templateUrl: './units.component.html',
 })
 export class UnitsComponent implements OnInit, OnDestroy {
-  private readonly _unitOfMeasureService: UnitOfMeasureService =
-    inject(UnitOfMeasureService);
+  private readonly _unitOfMeasureService: UnitOfMeasureService = inject(UnitOfMeasureService);
   private readonly _fb: FormBuilder = inject(FormBuilder);
+  private readonly _confirmDialog: ConfirmDialogService = inject(ConfirmDialogService);
   private readonly _destroy$: Subject<void> = new Subject<void>();
   private readonly _search$: Subject<string> = new Subject<string>();
 
   readonly _loading = signal(false);
   readonly _units = signal<UnitOfMeasure[]>([]);
   readonly _search = signal('');
-  readonly _deletingId = signal<string | null>(null);
 
   readonly _filtered = computed(() => {
     const q = this._search().toLowerCase().trim();
@@ -131,23 +132,16 @@ export class UnitsComponent implements OnInit, OnDestroy {
     }
   }
 
-  confirmDelete(id: string): void {
-    this._deletingId.set(id);
-  }
-  cancelDelete(): void {
-    this._deletingId.set(null);
+  confirmDelete(id: string, name: string): void {
+    this._confirmDialog.confirmDelete(name).subscribe((confirmed) => {
+      if (confirmed) this.doDelete(id);
+    });
   }
 
-  doDelete(id: string): void {
+  private doDelete(id: string): void {
     this._unitOfMeasureService
       .remove(id)
       .pipe(takeUntil(this._destroy$))
-      .subscribe({
-        next: () => {
-          this._deletingId.set(null);
-          this._load();
-        },
-        error: () => this._deletingId.set(null),
-      });
+      .subscribe({ next: () => this._load() });
   }
 }
