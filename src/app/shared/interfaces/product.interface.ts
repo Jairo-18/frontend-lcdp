@@ -2,6 +2,7 @@ import { Category } from './category.interface';
 import { Brand } from './brand.interface';
 import { TaxType } from './tax-type.interface';
 import { PaginationParams } from './pagination.interface';
+import { ImageVariant } from './image-variant.interface';
 
 export interface UnitOfMeasureDto {
   name: string;
@@ -11,10 +12,12 @@ export interface UnitOfMeasureDto {
 export interface CreatePresentationDto {
   unitOfMeasureId: number;
   sku?: string;
+  images?: ImageVariant[];
 }
 
 export interface CreateProductDto {
   name: string;
+  code?: string;
   description?: string;
   categoryId: number;
   brandId: number;
@@ -45,7 +48,7 @@ export interface UnitOfMeasure {
 export interface ProductImage {
   id: number;
   presentationId: number;
-  url: string;
+  variants: ImageVariant;
   order: number;
   createdAt: string;
 }
@@ -64,6 +67,7 @@ export interface ProductPresentation {
 export interface Product {
   id: number;
   name: string;
+  code: string | null;
   description: string | null;
   categoryId: number;
   category: Category;

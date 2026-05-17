@@ -43,7 +43,7 @@ export class NewProductsComponent implements OnInit {
   }
 
   firstImage(product: Product): string | null {
-    return product.presentations?.[0]?.images?.[0]?.url ?? null;
+    return product.presentations?.[0]?.images?.[0]?.variants?.thumb ?? null;
   }
 
   firstSku(product: Product): string {

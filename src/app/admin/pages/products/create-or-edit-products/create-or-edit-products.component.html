@@ -14,6 +14,9 @@
     </div>
   </div>
 
+  <!-- Hidden shared file input for presentation image uploads -->
+  <input #fileInput type="file" multiple accept="image/*" class="hidden" (change)="onFilesSelected($event)" />
+
   @if (_loading()) {
     <div class="flex items-center justify-center py-20 text-ink-mute gap-3">
       <span class="material-symbols-outlined text-[28px] leading-none animate-spin">progress_activity</span>
@@ -29,6 +32,13 @@
           placeholder="Vinilo Tipo 1 Koraza Blanco"
           [required]="true"
           [control]="form.get('name')"
+        />
+
+        <app-input-field
+          formControlName="code"
+          label="Código"
+          placeholder="KOR-VK1-BL"
+          [mono]="true"
         />
 
         <app-textarea-field
@@ -75,7 +85,7 @@
         <!-- Estado activo/inactivo -->
         <div class="flex items-center justify-between py-2 px-3 rounded-xl border border-rule bg-[rgba(26,28,44,0.02)]">
           <div>
-            <p class="text-sm font-medium text-ink">Producto activo</p>
+            <p class="text-sm font-medium text-ink">{{ form.get('isActive')!.value ? 'Producto activo' : 'Producto inactivo' }}</p>
             <p class="text-xs text-ink-mute mt-0.5">Si está inactivo no aparecerá en el catálogo.</p>
           </div>
           <button type="button"
@@ -109,26 +119,70 @@
           </button>
         </div>
 
-        <div formArrayName="presentations" class="space-y-2">
-          @for (pres of presentationsArray.controls; track $index) {
-            <div [formGroupName]="$index" class="flex gap-2 items-center p-3 rounded-xl border border-rule bg-[rgba(26,28,44,0.02)]">
-              <div class="flex-1">
-                <app-select-field
-                  formControlName="unitOfMeasureId"
-                  placeholder="Unidad..."
-                  [options]="unitOptions()"
-                />
+        <div formArrayName="presentations" class="space-y-3">
+          @for (pres of presentationsArray.controls; track $index; let pi = $index) {
+            <div [formGroupName]="pi" class="rounded-xl border border-rule bg-[rgba(26,28,44,0.02)] overflow-hidden">
+
+              <!-- Presentation header row -->
+              <div class="flex gap-2 items-center p-3">
+                <div class="flex-1">
+                  <app-select-field
+                    formControlName="unitOfMeasureId"
+                    placeholder="Unidad..."
+                    [options]="unitOptions()"
+                  />
+                </div>
+                <div class="w-28">
+                  <app-input-field
+                    formControlName="sku"
+                    placeholder="SKU"
+                  />
+                </div>
+                <button type="button" (click)="removePresentation(pi)"
+                  class="p-1 rounded-lg hover:bg-red-50 text-ink-mute hover:text-red-500 transition-colors cursor-pointer border-0 bg-transparent shrink-0">
+                  <span class="material-symbols-outlined text-[18px] leading-none">remove_circle</span>
+                </button>
               </div>
-              <div class="w-28">
-                <app-input-field
-                  formControlName="sku"
-                  placeholder="SKU"
-                />
+
+              <!-- Images for this presentation -->
+              <div class="px-3 pb-3">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-medium text-ink-mute">Imágenes de esta presentación</span>
+                  <button type="button" (click)="triggerImageUpload(pi)"
+                    [disabled]="_uploadingForIndex() === pi"
+                    class="flex items-center gap-1 text-xs font-medium text-ink-mute hover:text-ink disabled:opacity-50 transition-colors cursor-pointer border-0 bg-transparent">
+                    @if (_uploadingForIndex() === pi) {
+                      <span class="material-symbols-outlined text-[14px] leading-none animate-spin">progress_activity</span>
+                      Subiendo...
+                    } @else {
+                      <span class="material-symbols-outlined text-[14px] leading-none">upload</span>
+                      Subir imágenes
+                    }
+                  </button>
+                </div>
+
+                @if (presImages(pi).length > 0) {
+                  <div class="grid grid-cols-5 gap-1.5">
+                    @for (img of presImages(pi); track $index; let ii = $index) {
+                      <div class="relative group aspect-square">
+                        <img [src]="apiUrl + img.thumb" alt="imagen"
+                          class="w-full h-full object-cover rounded-lg border border-rule" />
+                        <button type="button" (click)="removeImage(pi, ii)"
+                          class="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center border-0 cursor-pointer">
+                          <span class="material-symbols-outlined text-[10px] leading-none">close</span>
+                        </button>
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <div class="border border-dashed border-rule rounded-lg p-3 text-center text-ink-mute text-xs cursor-pointer hover:border-ink/30 transition-colors"
+                    (click)="triggerImageUpload(pi)">
+                    <span class="material-symbols-outlined text-[20px] leading-none block mb-0.5 opacity-30">add_photo_alternate</span>
+                    Sin imágenes
+                  </div>
+                }
               </div>
-              <button type="button" (click)="removePresentation($index)"
-                class="p-1 rounded-lg hover:bg-red-50 text-ink-mute hover:text-red-500 transition-colors cursor-pointer border-0 bg-transparent shrink-0">
-                <span class="material-symbols-outlined text-[18px] leading-none">remove_circle</span>
-              </button>
+
             </div>
           }
           @if (presentationsArray.length === 0) {
