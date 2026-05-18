@@ -18,15 +18,23 @@
     <div class="relative flex-1 min-w-[200px]">
       <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-ink-mute leading-none pointer-events-none">search</span>
       <input type="text" placeholder="Buscar por nombre..."
+        [value]="_search()"
         (input)="onSearch($any($event.target).value)"
         class="w-full pl-9 pr-3 py-2 rounded-xl border border-rule text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" />
     </div>
-    <select (change)="onLimitChange($any($event.target).value)"
+    <select [value]="_perPage()" (change)="onPerPageChange($any($event.target).value)"
       class="rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 cursor-pointer">
       <option value="10">10 por página</option>
       <option value="25">25 por página</option>
       <option value="50">50 por página</option>
     </select>
+    @if (_hasFilters()) {
+      <button type="button" (click)="clearFilters()"
+        class="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-rule text-sm text-ink-mute hover:text-ink hover:bg-[rgba(26,28,44,0.04)] transition-colors cursor-pointer bg-white">
+        <span class="material-symbols-outlined text-[16px] leading-none">filter_list_off</span>
+        Limpiar
+      </button>
+    }
   </div>
 
   <!-- Table -->
@@ -101,8 +109,8 @@
             class="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-rule text-sm text-ink hover:bg-[rgba(26,28,44,0.04)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer bg-white">
             <span class="material-symbols-outlined text-[16px] leading-none">chevron_left</span>Anterior
           </button>
-          <span class="text-sm text-ink-mute px-2">{{ _page() }} / {{ _totalPages() }}</span>
-          <button type="button" (click)="nextPage()" [disabled]="_page() >= _totalPages()"
+          <span class="text-sm text-ink-mute px-2">{{ _page() }} / {{ _pageCount() }}</span>
+          <button type="button" (click)="nextPage()" [disabled]="_page() >= _pageCount()"
             class="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-rule text-sm text-ink hover:bg-[rgba(26,28,44,0.04)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer bg-white">
             Siguiente<span class="material-symbols-outlined text-[16px] leading-none">chevron_right</span>
           </button>

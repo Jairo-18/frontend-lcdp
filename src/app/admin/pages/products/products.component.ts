@@ -33,25 +33,29 @@ export class ProductsComponent implements OnInit, OnDestroy {
   private readonly _destroy$: Subject<void> = new Subject<void>();
   private readonly _search$: Subject<string> = new Subject<string>();
 
-  readonly _loading = signal(false);
-  readonly _products = signal<Product[]>([]);
-  readonly _total = signal(0);
-  readonly _totalPages = signal(0);
-  readonly _page = signal(1);
-  readonly _limit = signal(10);
-  readonly _search = signal('');
+  readonly _loading        = signal(false);
+  readonly _products       = signal<Product[]>([]);
+  readonly _total          = signal(0);
+  readonly _pageCount      = signal(0);
+  readonly _page           = signal(1);
+  readonly _perPage        = signal(10);
+  readonly _search         = signal('');
   readonly _categoryFilter = signal<number | undefined>(undefined);
-  readonly _brandFilter = signal<number | undefined>(undefined);
+  readonly _brandFilter    = signal<number | undefined>(undefined);
 
   readonly _from = computed(() =>
-    this._total() === 0 ? 0 : (this._page() - 1) * this._limit() + 1,
+    this._total() === 0 ? 0 : (this._page() - 1) * this._perPage() + 1,
   );
   readonly _to = computed(() =>
-    Math.min(this._page() * this._limit(), this._total()),
+    Math.min(this._page() * this._perPage(), this._total()),
   );
 
   readonly _categories = signal<Category[]>([]);
-  readonly _brands = signal<Brand[]>([]);
+  readonly _brands     = signal<Brand[]>([]);
+
+  readonly _hasFilters = computed(() =>
+    !!this._search() || !!this._categoryFilter() || !!this._brandFilter(),
+  );
 
   ngOnInit(): void {
     this._search$
@@ -88,7 +92,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this._productService
       .getAll({
         page: this._page(),
-        limit: this._limit(),
+        perPage: this._perPage(),
         search: this._search() || undefined,
         categoryId: this._categoryFilter(),
         brandId: this._brandFilter(),
@@ -96,9 +100,9 @@ export class ProductsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: (res) => {
-          this._products.set(res.items);
-          this._total.set(res.total);
-          this._totalPages.set(res.totalPages);
+          this._products.set(res.data);
+          this._total.set(res.pagination.total);
+          this._pageCount.set(res.pagination.pageCount);
           this._loading.set(false);
         },
         error: () => this._loading.set(false),
@@ -121,8 +125,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this._loadProducts();
   }
 
-  onLimitChange(value: string): void {
-    this._limit.set(Number(value));
+  onPerPageChange(value: string): void {
+    this._perPage.set(Number(value));
     this._page.set(1);
     this._loadProducts();
   }
@@ -134,8 +138,16 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   nextPage(): void {
-    if (this._page() >= this._totalPages()) return;
+    if (this._page() >= this._pageCount()) return;
     this._page.update((p) => p + 1);
+    this._loadProducts();
+  }
+
+  clearFilters(): void {
+    this._search.set('');
+    this._categoryFilter.set(undefined);
+    this._brandFilter.set(undefined);
+    this._page.set(1);
     this._loadProducts();
   }
 

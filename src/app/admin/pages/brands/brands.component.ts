@@ -29,21 +29,22 @@ export class BrandsComponent implements OnInit, OnDestroy {
 
   readonly apiUrl: string = environment.apiUrl;
 
-  readonly _loading = signal(false);
-  readonly _brands = signal<Brand[]>([]);
-  readonly _total = signal(0);
-  readonly _totalPages = signal(0);
-  readonly _page = signal(1);
-  readonly _limit = signal(10);
-  readonly _search = signal('');
+  readonly _loading   = signal(false);
+  readonly _brands    = signal<Brand[]>([]);
+  readonly _total     = signal(0);
+  readonly _pageCount = signal(0);
+  readonly _page      = signal(1);
+  readonly _perPage   = signal(10);
+  readonly _search    = signal('');
 
   readonly _from = computed(() =>
-    this._total() === 0 ? 0 : (this._page() - 1) * this._limit() + 1,
+    this._total() === 0 ? 0 : (this._page() - 1) * this._perPage() + 1,
   );
   readonly _to = computed(() =>
-    Math.min(this._page() * this._limit(), this._total()),
+    Math.min(this._page() * this._perPage(), this._total()),
   );
 
+  readonly _hasFilters = computed(() => !!this._search());
 
   ngOnInit(): void {
     this._search$
@@ -70,15 +71,15 @@ export class BrandsComponent implements OnInit, OnDestroy {
     this._brandService
       .getPaginated({
         page: this._page(),
-        limit: this._limit(),
+        perPage: this._perPage(),
         search: this._search() || undefined,
       })
       .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: (res) => {
-          this._brands.set(res.items);
-          this._total.set(res.total);
-          this._totalPages.set(res.totalPages);
+          this._brands.set(res.data);
+          this._total.set(res.pagination.total);
+          this._pageCount.set(res.pagination.pageCount);
           this._loading.set(false);
         },
         error: () => this._loading.set(false),
@@ -89,8 +90,8 @@ export class BrandsComponent implements OnInit, OnDestroy {
     this._search$.next(value);
   }
 
-  onLimitChange(value: string): void {
-    this._limit.set(Number(value));
+  onPerPageChange(value: string): void {
+    this._perPage.set(Number(value));
     this._page.set(1);
     this._load();
   }
@@ -102,8 +103,14 @@ export class BrandsComponent implements OnInit, OnDestroy {
   }
 
   nextPage(): void {
-    if (this._page() >= this._totalPages()) return;
+    if (this._page() >= this._pageCount()) return;
     this._page.update((p) => p + 1);
+    this._load();
+  }
+
+  clearFilters(): void {
+    this._search.set('');
+    this._page.set(1);
     this._load();
   }
 
@@ -133,5 +140,4 @@ export class BrandsComponent implements OnInit, OnDestroy {
         },
       });
   }
-
 }
