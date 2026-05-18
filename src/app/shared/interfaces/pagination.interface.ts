@@ -1,14 +1,19 @@
-export interface PaginatedResponse<T> {
-  items: T[];
-  total: number;
+export interface PaginationInterface {
   page: number;
-  limit: number;
-  totalPages: number;
+  perPage: number;
+  total: number;
+  pageCount: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
 }
 
-export interface PaginationParams {
+export interface ParamsPaginationInterface {
+  order?: 'ASC' | 'DESC';
   page?: number;
-  limit?: number;
+  perPage?: number;
   search?: string;
-  [key: string]: string | number | undefined;
+}
+
+export interface BasePaginationParams extends ParamsPaginationInterface {
+  [key: string]: string | number | boolean | undefined;
 }

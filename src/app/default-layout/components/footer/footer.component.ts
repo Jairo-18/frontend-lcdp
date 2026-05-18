@@ -8,7 +8,7 @@ interface FooterLink {
 }
 interface SocialLink {
   label: string;
-  icon: string;
+  key: 'facebook' | 'instagram' | 'tiktok' | 'youtube' | 'maps' | 'website';
   url: string;
 }
 
@@ -57,20 +57,16 @@ export class FooterComponent {
       this.socialLinks = [];
       return;
     }
-    const candidates: {
-      url: string | undefined;
-      label: string;
-      icon: string;
-    }[] = [
-      { url: org.facebookUrl, label: 'Facebook', icon: 'public' },
-      { url: org.instagramUrl, label: 'Instagram', icon: 'photo_camera' },
-      { url: org.youtubeUrl, label: 'YouTube', icon: 'smart_display' },
-      { url: org.tiktokUrl, label: 'TikTok', icon: 'music_note' },
-      { url: org.mapsUrl, label: 'Maps', icon: 'location_on' },
-      { url: org.website, label: 'Sitio web', icon: 'language' },
+    const candidates: { url: string | undefined; label: string; key: SocialLink['key'] }[] = [
+      { url: org.facebookUrl,  label: 'Facebook',  key: 'facebook'  },
+      { url: org.instagramUrl, label: 'Instagram', key: 'instagram' },
+      { url: org.tiktokUrl,   label: 'TikTok',    key: 'tiktok'    },
+      { url: org.youtubeUrl,  label: 'YouTube',   key: 'youtube'   },
+      { url: org.mapsUrl,     label: 'Ubicación', key: 'maps'      },
+      { url: org.website,     label: 'Sitio web', key: 'website'   },
     ];
     this.socialLinks = candidates
       .filter((c): c is SocialLink & { url: string } => !!c.url)
-      .map(({ label, icon, url }) => ({ label, icon, url }));
+      .map(({ label, key, url }) => ({ label, key, url }));
   }
 }

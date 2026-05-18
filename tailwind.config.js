@@ -15,10 +15,12 @@ module.exports = {
         'rule-soft': '#efe9d6',
       },
       fontFamily: {
-        display: ['Bricolage Grotesque', 'sans-serif'],
-        hand:    ['Caveat', 'cursive'],
-        mono:    ['JetBrains Mono', 'monospace'],
-        body:    ['Inter', 'system-ui', 'sans-serif'],
+        display:  ['Bricolage Grotesque', 'sans-serif'],
+        faster:   ['Faster One', 'sans-serif'],
+        hand:     ['Caveat', 'cursive'],
+        alegreya: ['Alegreya', 'serif'],
+        mono:     ['JetBrains Mono', 'monospace'],
+        body:     ['Inter', 'system-ui', 'sans-serif'],
       },
       screens: {
         '3xl': '1920px',

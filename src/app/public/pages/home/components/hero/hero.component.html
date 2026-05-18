@@ -1,32 +1,93 @@
 <!-- ── Hero ── -->
 <div class="px-6 py-10 md:px-10 md:py-12">
-  <section class="max-w-[1240px] mx-auto rounded-3xl bg-[radial-gradient(ellipse_80%_100%_at_70%_40%,#ffdf4a_0%,#ffcb05_55%,#f5b800_100%)] flex items-center justify-between gap-10 px-12 py-14 overflow-hidden relative max-lg:flex-col max-lg:justify-center max-lg:px-8 max-lg:py-10">
-
+  <section
+    class="max-w-[1240px] mx-auto rounded-3xl bg-[radial-gradient(ellipse_80%_100%_at_70%_40%,#ffdf4a_0%,#ffcb05_55%,#f5b800_100%)] flex items-center justify-between gap-10 px-12 py-14 overflow-hidden relative max-lg:flex-col max-lg:justify-center max-lg:px-8 max-lg:py-10"
+  >
     <!-- Left -->
-    <div class="max-w-[500px] shrink-0 z-10">
+    <div class="max-w-[500px] shrink-0 z-10 w-full lg:w-auto">
 
       <!-- Badge -->
-      <span class="inline-block text-[11px] font-semibold tracking-[0.1em] uppercase text-ink border border-ink/25 rounded-full px-4 py-1.5 mb-6">
-        {{ org()?.city || 'Mocoa' }} · Distribuidor autorizado
+      <span
+        class="inline-block text-[11px] font-semibold tracking-[0.1em] uppercase text-ink border border-ink/25 rounded-full px-4 py-1.5 mb-6"
+      >
+        {{ org()?.city }} - {{ org()?.department }} - {{ org()?.address }}
       </span>
 
-      <!-- Heading -->
-      <h1 class="font-display font-extrabold text-[clamp(32px,4vw,50px)] leading-[1.1] text-ink m-0 mb-5">
-        Tu obra empieza con el<br>
-        <em class="font-hand not-italic font-semibold text-coral text-[clamp(36px,4.5vw,56px)]">color correcto.</em>
+      <!-- Heading multicolor Faster One -->
+      <h1
+        class="font-faster text-[clamp(32px,4vw,50px)] leading-[1.1] m-0 mb-5 [word-spacing:.15em]"
+      >
+        <span style="color: #e23e57">T</span
+        ><span style="color: #1a56db">u</span>&nbsp;
+        <span style="color: #1e7e34">o</span
+        ><span style="color: #f97316">b</span
+        ><span style="color: #7c3aed">r</span
+        ><span style="color: #0891b2">a</span>&nbsp;
+        <span style="color: #ec4899">e</span
+        ><span style="color: #ca8a04">m</span
+        ><span style="color: #dc2626">p</span
+        ><span style="color: #2563eb">i</span
+        ><span style="color: #16a34a">e</span
+        ><span style="color: #d97706">z</span
+        ><span style="color: #9333ea">a</span>&nbsp;
+        <span style="color: #0369a1">c</span
+        ><span style="color: #be185d">o</span
+        ><span style="color: #e23e57">n</span>&nbsp;
+        <span style="color: #1a56db">e</span
+        ><span style="color: #1e7e34">l</span><br />
+        <em
+          class="font-hand not-italic font-semibold text-[clamp(36px,4.5vw,56px)]"
+        >
+          <span style="color: #f97316">c</span
+          ><span style="color: #7c3aed">o</span
+          ><span style="color: #0891b2">l</span
+          ><span style="color: #ec4899">o</span
+          ><span style="color: #ca8a04">r</span>&nbsp;<span
+            style="color: #dc2626"
+            >c</span
+          ><span style="color: #2563eb">o</span
+          ><span style="color: #16a34a">r</span
+          ><span style="color: #d97706">r</span
+          ><span style="color: #9333ea">e</span
+          ><span style="color: #0369a1">c</span
+          ><span style="color: #be185d">t</span
+          ><span style="color: #e23e57">o</span
+          ><span style="color: #1a56db">.</span>
+        </em>
       </h1>
 
       <!-- Sub -->
-      <p class="text-[15px] leading-[1.65] text-ink/70 mb-8 max-w-[420px]">
-        Pinturas, esmaltes, brochas y todo lo que necesitas para terminar
-        el trabajo. Pedido directo a WhatsApp, sin filas ni complicaciones.
+      <p
+        class="font-alegreya text-[17px] leading-[1.7] text-ink/70 mb-6 max-w-[420px]"
+      >
+        Pinturas, esmaltes, brochas y todo lo que necesitas para terminar el
+        trabajo. Pedido directo a WhatsApp, sin filas ni complicaciones.
       </p>
 
+      <!-- Imágenes — solo mobile (entre párrafo y botones) -->
+      <div class="flex items-end justify-center lg:hidden mb-6" aria-hidden="true">
+        <img
+          src="assets/images/hero/pinturaIzquierda.webp"
+          alt=""
+          class="h-[95px] w-auto object-contain drop-shadow-xl -rotate-[4deg] translate-y-2 -mr-5 z-0"
+        />
+        <img
+          src="assets/images/hero/pinturaCentro.webp"
+          alt=""
+          class="h-[120px] w-auto object-contain drop-shadow-xl z-10 relative"
+        />
+        <img
+          src="assets/images/hero/pinturaDerecha.webp"
+          alt=""
+          class="h-[95px] w-auto object-contain drop-shadow-xl rotate-[4deg] translate-y-2 -ml-5 z-0"
+        />
+      </div>
+
       <!-- CTAs -->
-      <div class="flex items-center gap-4 flex-wrap mb-10">
+      <div class="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 mb-10">
         <a
           routerLink="/catalogo"
-          class="inline-flex items-center gap-1.5 bg-ink text-white text-sm font-semibold px-6 py-3 rounded-full no-underline transition-all hover:bg-black hover:-translate-y-px"
+          class="inline-flex items-center justify-center gap-1.5 bg-ink text-white text-sm font-semibold px-6 py-3 rounded-full no-underline transition-all hover:bg-black hover:-translate-y-px"
         >
           Ver catálogo completo <span>→</span>
         </a>
@@ -34,7 +95,7 @@
           [href]="whatsappHref()"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 text-ink text-sm font-semibold px-5 py-3 rounded-full border border-ink/30 no-underline transition-all hover:bg-ink/10 hover:border-ink"
+          class="inline-flex items-center justify-center gap-2 text-[#128c46] text-sm font-semibold px-5 py-3 rounded-full border border-[#128c46]/40 no-underline transition-all hover:bg-[#25D366]/15 hover:border-[#25D366]"
         >
           <span class="material-symbols-outlined text-[18px] leading-none">chat</span>
           Pedir por WhatsApp
@@ -46,24 +107,30 @@
         @for (stat of stats(); track stat.label) {
           <div class="flex flex-col gap-0.5">
             <span class="font-display font-extrabold text-[20px] leading-none text-ink">{{ stat.value }}</span>
-            <span class="text-[11px] font-semibold tracking-[0.08em] uppercase text-ink/50">{{ stat.label }}</span>
+            <span class="font-alegreya text-[12px] font-semibold tracking-[0.08em] uppercase text-ink/50">{{ stat.label }}</span>
           </div>
         }
       </div>
 
     </div>
 
-    <!-- Illustration -->
-    <div class="flex items-end h-[220px] shrink-0 max-lg:hidden" aria-hidden="true">
-      <div class="w-[80px] h-[200px] bg-[#d93025] rounded-[10px_10px_14px_14px] flex items-end justify-center pb-4 shadow-2xl -rotate-[4deg] translate-y-4 relative before:content-[''] before:absolute before:top-0 before:inset-x-0 before:h-6 before:bg-white/15 before:rounded-[10px_10px_0_0]">
-        <span class="text-[9px] font-extrabold tracking-wide text-center text-white/90 leading-tight">PINTUCO</span>
-      </div>
-      <div class="w-[80px] h-[200px] bg-[#1a56db] rounded-[10px_10px_14px_14px] flex items-end justify-center pb-4 shadow-2xl rotate-[2deg] z-10 relative before:content-[''] before:absolute before:top-0 before:inset-x-0 before:h-6 before:bg-white/15 before:rounded-[10px_10px_0_0]">
-        <span class="text-[9px] font-extrabold tracking-wide text-center text-white/90 leading-tight">CORONA</span>
-      </div>
-      <div class="w-[80px] h-[200px] bg-[#1e7e34] rounded-[10px_10px_14px_14px] flex items-end justify-center pb-4 shadow-2xl rotate-[5deg] translate-y-5 relative before:content-[''] before:absolute before:top-0 before:inset-x-0 before:h-6 before:bg-white/15 before:rounded-[10px_10px_0_0]">
-        <span class="text-[9px] font-extrabold tracking-wide text-center text-white/90 leading-tight">SHERWIN<br>WILLIAMS</span>
-      </div>
+    <!-- Imágenes — solo desktop (columna derecha) -->
+    <div class="hidden lg:flex items-end shrink-0" aria-hidden="true">
+      <img
+        src="assets/images/hero/pinturaIzquierda.webp"
+        alt=""
+        class="h-[220px] w-auto object-contain drop-shadow-2xl -rotate-[4deg] translate-y-4 -mr-14 z-0"
+      />
+      <img
+        src="assets/images/hero/pinturaCentro.webp"
+        alt=""
+        class="h-[260px] w-auto object-contain drop-shadow-2xl z-10 relative"
+      />
+      <img
+        src="assets/images/hero/pinturaDerecha.webp"
+        alt=""
+        class="h-[220px] w-auto object-contain drop-shadow-2xl rotate-[4deg] translate-y-4 -ml-14 z-0"
+      />
     </div>
 
   </section>

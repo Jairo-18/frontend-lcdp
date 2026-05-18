@@ -28,10 +28,10 @@ export class NewProductsComponent implements OnInit {
 
   ngOnInit(): void {
     this._productService
-      .getAll({ page: 1, limit: 10, orderBy: 'createdAt', order: 'DESC' })
+      .getAll({ page: 1, perPage: 10, orderBy: 'createdAt', order: 'DESC' })
       .subscribe({
         next: (res): void => {
-          this.products.set(res.items);
+          this.products.set(res.data);
           this.loading.set(false);
         },
         error: (): void => this.loading.set(false),

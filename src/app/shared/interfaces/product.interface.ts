@@ -1,7 +1,7 @@
 import { Category } from './category.interface';
 import { Brand } from './brand.interface';
 import { TaxType } from './tax-type.interface';
-import { PaginationParams } from './pagination.interface';
+import { BasePaginationParams } from './pagination.interface';
 import { ImageVariant } from './image-variant.interface';
 
 export interface UnitOfMeasureDto {
@@ -31,7 +31,7 @@ export interface CreateProductDto {
 
 export type UpdateProductDto = Partial<CreateProductDto>;
 
-export interface ProductParams extends PaginationParams {
+export interface ProductParams extends BasePaginationParams {
   search?: string;
   categoryId?: number;
   brandId?: number;

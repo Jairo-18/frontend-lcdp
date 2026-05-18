@@ -8,7 +8,7 @@ import {
   CreatedResponseInterface,
 } from '@shared/interfaces/api-response.interface';
 import { TaxType, TaxTypeDto } from '@shared/interfaces/tax-type.interface';
-import { PaginatedResponse } from '@shared/interfaces/pagination.interface';
+import { PaginationInterface } from '@shared/interfaces/pagination.interface';
 
 @Injectable({ providedIn: 'root' })
 export class TaxTypeService {
@@ -19,9 +19,12 @@ export class TaxTypeService {
   getAll(): Observable<TaxType[]> {
     if (!this._allCache$) {
       this._allCache$ = this._http
-        .get<ApiResponseInterface<PaginatedResponse<TaxType>>>(`${environment.apiUrl}/tax-types`, { params: { limit: '200' } })
+        .get<ApiResponseInterface<{ data: TaxType[]; pagination: PaginationInterface }>>(
+          `${environment.apiUrl}/tax-types`,
+          { params: { perPage: '200' } },
+        )
         .pipe(
-          map((r) => r.data.items),
+          map((r) => r.data.data),
           shareReplay(1),
         );
     }

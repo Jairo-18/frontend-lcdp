@@ -267,6 +267,8 @@ h6 {
   font-family: var(--font-title);
 }
 
+h1 span, h2 span, h3 span { font-family: inherit !important; }
+
 body,
 p,
 span,

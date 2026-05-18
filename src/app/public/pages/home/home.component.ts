@@ -1,4 +1,10 @@
-import { Component, OnInit, inject, signal, WritableSignal } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { OrganizationalService } from '@shared/services/organizational.service';
 import { Organizational } from '@shared/interfaces/organizational.interface';
@@ -9,17 +15,27 @@ import { WhatsappBannerComponent } from './components/whatsapp-banner/whatsapp-b
 import { CategoryGridComponent } from './components/category-grid/category-grid.component';
 import { NewProductsComponent } from './components/new-products/new-products.component';
 
-interface Stat { value: string; label: string }
+interface Stat {
+  value: string;
+  label: string;
+}
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [HeroComponent, WhatsappBannerComponent, CategoryGridComponent, NewProductsComponent, RouterLink],
+  imports: [
+    HeroComponent,
+    WhatsappBannerComponent,
+    CategoryGridComponent,
+    NewProductsComponent,
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
 export class HomeComponent implements OnInit {
-  private readonly _orgService: OrganizationalService = inject(OrganizationalService);
+  private readonly _orgService: OrganizationalService = inject(
+    OrganizationalService,
+  );
 
   readonly _org: WritableSignal<Organizational | null> = signal(null);
   readonly _categories: WritableSignal<Category[]> = signal([]);

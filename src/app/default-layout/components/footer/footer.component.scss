@@ -57,26 +57,52 @@ $footer-border: rgba(255, 255, 255, 0.08);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: $radius-sm;
   background: rgba(255, 255, 255, 0.07);
-  color: $footer-text;
-  border: 0;
+  color: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   cursor: pointer;
   transition:
-    background $transition-fast,
-    color $transition-fast;
+    background 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
   text-decoration: none;
 
-  .material-symbols-outlined {
-    font-size: 18px;
-    line-height: 1;
-  }
+  svg { display: block; flex-shrink: 0; }
 
-  &:hover {
-    background: var(--yellow);
-    color: var(--ink);
+  &:hover { transform: translateY(-2px); }
+
+  /* ── Brand colors ── */
+  &[data-platform="facebook"] {
+    color: #1877F2;
+    &:hover { background: #1877F2; color: #fff; border-color: #1877F2; }
+  }
+  &[data-platform="instagram"] {
+    color: #E1306C;
+    &:hover {
+      background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      color: #fff;
+      border-color: transparent;
+    }
+  }
+  &[data-platform="tiktok"] {
+    color: #EE1D52;
+    &:hover { background: #010101; color: #fff; border-color: #EE1D52; }
+  }
+  &[data-platform="youtube"] {
+    color: #FF0000;
+    &:hover { background: #FF0000; color: #fff; border-color: #FF0000; }
+  }
+  &[data-platform="maps"] {
+    color: #EA4335;
+    &:hover { background: #EA4335; color: #fff; border-color: #EA4335; }
+  }
+  &[data-platform="website"] {
+    color: #38bdf8;
+    &:hover { background: #0ea5e9; color: #fff; border-color: #0ea5e9; }
   }
 }
 

@@ -9,33 +9,31 @@ import {
 } from '@shared/interfaces/api-response.interface';
 import { Category, CategoryDto } from '@shared/interfaces/category.interface';
 import {
-  PaginatedResponse,
-  PaginationParams,
+  BasePaginationParams,
+  PaginationInterface,
 } from '@shared/interfaces/pagination.interface';
 import { HttpUtilitiesService } from '@shared/utilities/http-utilities.service';
 
 @Injectable({ providedIn: 'root' })
 export class CategoryService {
   private readonly _http: HttpClient = inject(HttpClient);
-  private readonly _httpUtils: HttpUtilitiesService =
-    inject(HttpUtilitiesService);
+  private readonly _httpUtils: HttpUtilitiesService = inject(HttpUtilitiesService);
 
   getPaginated(
-    params: PaginationParams & { search?: string },
-  ): Observable<PaginatedResponse<Category>> {
+    params: BasePaginationParams & { search?: string },
+  ): Observable<{ data: Category[]; pagination: PaginationInterface }> {
     const httpParams = this._httpUtils.httpParamsFromObject(params as object);
     return this._http
-      .get<
-        ApiResponseInterface<PaginatedResponse<Category>>
-      >(`${environment.apiUrl}/categories`, { params: httpParams })
+      .get<ApiResponseInterface<{ data: Category[]; pagination: PaginationInterface }>>(
+        `${environment.apiUrl}/categories`,
+        { params: httpParams },
+      )
       .pipe(map((r) => r.data));
   }
 
   getOne(id: number): Observable<Category> {
     return this._http
-      .get<
-        ApiResponseInterface<Category>
-      >(`${environment.apiUrl}/categories/${id}`)
+      .get<ApiResponseInterface<Category>>(`${environment.apiUrl}/categories/${id}`)
       .pipe(map((r) => r.data));
   }
 
@@ -46,10 +44,7 @@ export class CategoryService {
   }
 
   update(id: number, dto: Partial<CategoryDto>): Observable<void> {
-    return this._http.patch<void>(
-      `${environment.apiUrl}/categories/${id}`,
-      dto,
-    );
+    return this._http.patch<void>(`${environment.apiUrl}/categories/${id}`, dto);
   }
 
   remove(id: number): Observable<void> {

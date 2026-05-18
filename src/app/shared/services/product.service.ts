@@ -13,29 +13,27 @@ import {
   UpdateProductDto,
   ProductParams,
 } from '@shared/interfaces/product.interface';
-import { PaginatedResponse } from '@shared/interfaces/pagination.interface';
+import { PaginationInterface } from '@shared/interfaces/pagination.interface';
 import { HttpUtilitiesService } from '@shared/utilities/http-utilities.service';
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
   private readonly _http: HttpClient = inject(HttpClient);
-  private readonly _httpUtils: HttpUtilitiesService =
-    inject(HttpUtilitiesService);
+  private readonly _httpUtils: HttpUtilitiesService = inject(HttpUtilitiesService);
 
-  getAll(params: ProductParams): Observable<PaginatedResponse<Product>> {
+  getAll(params: ProductParams): Observable<{ data: Product[]; pagination: PaginationInterface }> {
     const httpParams = this._httpUtils.httpParamsFromObject(params as object);
     return this._http
-      .get<
-        ApiResponseInterface<PaginatedResponse<Product>>
-      >(`${environment.apiUrl}/products`, { params: httpParams })
+      .get<ApiResponseInterface<{ data: Product[]; pagination: PaginationInterface }>>(
+        `${environment.apiUrl}/products`,
+        { params: httpParams },
+      )
       .pipe(map((r) => r.data));
   }
 
   getOne(id: number): Observable<Product> {
     return this._http
-      .get<
-        ApiResponseInterface<Product>
-      >(`${environment.apiUrl}/products/${id}`)
+      .get<ApiResponseInterface<Product>>(`${environment.apiUrl}/products/${id}`)
       .pipe(map((r) => r.data));
   }
 

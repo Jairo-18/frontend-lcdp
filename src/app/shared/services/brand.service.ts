@@ -9,28 +9,28 @@ import {
 } from '@shared/interfaces/api-response.interface';
 import { Brand, BrandDto } from '@shared/interfaces/brand.interface';
 import {
-  PaginatedResponse,
-  PaginationParams,
+  BasePaginationParams,
+  PaginationInterface,
 } from '@shared/interfaces/pagination.interface';
 import { HttpUtilitiesService } from '@shared/utilities/http-utilities.service';
 
 @Injectable({ providedIn: 'root' })
 export class BrandService {
   private readonly _http: HttpClient = inject(HttpClient);
-  private readonly _httpUtils: HttpUtilitiesService =
-    inject(HttpUtilitiesService);
+  private readonly _httpUtils: HttpUtilitiesService = inject(HttpUtilitiesService);
 
   private _allCache$: Observable<Brand[]> | null = null;
 
   getAll(): Observable<Brand[]> {
     if (!this._allCache$) {
-      const params = this._httpUtils.httpParamsFromObject({ limit: 200 });
+      const params = this._httpUtils.httpParamsFromObject({ perPage: 200 });
       this._allCache$ = this._http
-        .get<
-          ApiResponseInterface<PaginatedResponse<Brand>>
-        >(`${environment.apiUrl}/brands`, { params })
+        .get<ApiResponseInterface<{ data: Brand[]; pagination: PaginationInterface }>>(
+          `${environment.apiUrl}/brands`,
+          { params },
+        )
         .pipe(
-          map((r) => r.data.items),
+          map((r) => r.data.data),
           shareReplay(1),
         );
     }
@@ -42,13 +42,14 @@ export class BrandService {
   }
 
   getPaginated(
-    params: PaginationParams & { search?: string },
-  ): Observable<PaginatedResponse<Brand>> {
+    params: BasePaginationParams & { search?: string },
+  ): Observable<{ data: Brand[]; pagination: PaginationInterface }> {
     const httpParams = this._httpUtils.httpParamsFromObject(params as object);
     return this._http
-      .get<
-        ApiResponseInterface<PaginatedResponse<Brand>>
-      >(`${environment.apiUrl}/brands`, { params: httpParams })
+      .get<ApiResponseInterface<{ data: Brand[]; pagination: PaginationInterface }>>(
+        `${environment.apiUrl}/brands`,
+        { params: httpParams },
+      )
       .pipe(map((r) => r.data));
   }
 
