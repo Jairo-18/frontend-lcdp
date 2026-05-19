@@ -1,5 +1,6 @@
 import {
   Component,
+  OnInit,
   computed,
   inject,
   signal,
@@ -10,6 +11,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { NotificationsService } from '@shared/services/notifications.service';
+import { OrganizationalService } from '@shared/services/organizational.service';
 
 @Component({
   selector: 'app-login',
@@ -18,19 +20,29 @@ import { NotificationsService } from '@shared/services/notifications.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   private readonly _formBuilder: FormBuilder = inject(FormBuilder);
   private readonly _authService: AuthService = inject(AuthService);
+  private readonly _orgService: OrganizationalService = inject(OrganizationalService);
   private readonly _router: Router = inject(Router);
   private readonly _notificationsService: NotificationsService =
     inject(NotificationsService);
 
   readonly _loading: WritableSignal<boolean> = signal(false);
   readonly _showPassword: WritableSignal<boolean> = signal(false);
+  readonly _logoUrl: WritableSignal<string> = signal('');
 
   readonly _greeting: Signal<string> = computed(
     () => this._authService.getCurrentUser()?.fullName?.split(' ')[0] ?? '',
   );
+
+  ngOnInit(): void {
+    this._orgService.bootstrap().subscribe({
+      next: ({ org }) => {
+        if (org?.logoUrl) this._logoUrl.set(org.logoUrl);
+      },
+    });
+  }
 
   readonly form = this._formBuilder.group({
     email: ['', [Validators.required, Validators.email]],

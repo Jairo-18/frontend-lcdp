@@ -5,7 +5,7 @@
 
   <div class="app-container flex-1 relative">
     @if (!isAdmin) {
-      <app-nav-bar class="brand-nav-bar" />
+      <app-nav-bar class="brand-nav-bar" [logoUrl]="_org()?.logoUrl ?? ''" />
     }
 
     <main class="main w-full">

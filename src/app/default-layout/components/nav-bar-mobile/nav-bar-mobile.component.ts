@@ -32,6 +32,7 @@ export class NavBarMobileComponent implements OnInit, OnDestroy {
   private readonly _platformId: object = inject(PLATFORM_ID);
 
   @Input() cartCount: number = 0;
+  @Input() logoUrl: string = '';
   @Output() openCart: EventEmitter<void> = new EventEmitter<void>();
   @Output() goHome: EventEmitter<void> = new EventEmitter<void>();
 

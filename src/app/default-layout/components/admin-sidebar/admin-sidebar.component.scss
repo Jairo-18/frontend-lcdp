@@ -33,7 +33,11 @@ $sidebar-bg: #0f1014;
   background: var(--yellow);
   flex-shrink: 0;
 
-  img { width: 100%; height: 100%; object-fit: cover; }
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 
 .admin-brand-name {
@@ -63,9 +67,15 @@ $sidebar-bg: #0f1014;
   transition: background $transition-fast, color $transition-fast;
   flex-shrink: 0;
 
-  &:hover { background: rgba(255, 255, 255, 0.14); color: #fff; }
+  &:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+  }
 
-  .material-symbols-outlined { font-size: 20px; display: block; }
+  .material-symbols-outlined {
+    font-size: 20px;
+    display: block;
+  }
 }
 
 /* Nav */
@@ -91,8 +101,15 @@ $sidebar-bg: #0f1014;
   text-decoration: none;
   transition: background $transition-fast, color $transition-fast;
 
-  &:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
-  &.active { background: var(--yellow); color: var(--ink); }
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+  }
+
+  &.active {
+    background: var(--yellow);
+    color: var(--ink);
+  }
 
   .ct {
     margin-left: auto;
@@ -103,7 +120,10 @@ $sidebar-bg: #0f1014;
     font-weight: 600;
   }
 
-  &.active .ct { background: rgba(0, 0, 0, 0.15); color: var(--ink); }
+  &.active .ct {
+    background: rgba(0, 0, 0, 0.15);
+    color: var(--ink);
+  }
 }
 
 /* Footer */
@@ -132,8 +152,15 @@ $sidebar-bg: #0f1014;
   flex-shrink: 0;
 }
 
-.admin-user-name { font-size: 13px; font-weight: 600; }
-.admin-user-role { font-size: 11px; color: rgba(255, 255, 255, 0.5); }
+.admin-user-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.admin-user-role {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+}
 
 .admin-exit {
   margin-top: 10px;
@@ -151,7 +178,10 @@ $sidebar-bg: #0f1014;
   gap: 8px;
   transition: background $transition-fast, color $transition-fast;
 
-  &:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+  }
 }
 
 /* ── Mobile: drawer slide-in ──────────────────────────────── */

@@ -9,11 +9,11 @@ import {
 import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { ConfirmDialogService } from '@shared/services/confirm-dialog.service';
-import { Subject, forkJoin } from 'rxjs';
+import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { ProductService } from '@shared/services/product.service';
-import { BrandService } from '@shared/services/brand.service';
 import { OrganizationalService } from '@shared/services/organizational.service';
+import { ImagePreviewService } from '@shared/services/image-preview.service';
 import { Product } from '@shared/interfaces/product.interface';
 import { Category } from '@shared/interfaces/category.interface';
 import { Brand } from '@shared/interfaces/brand.interface';
@@ -26,8 +26,8 @@ import { Brand } from '@shared/interfaces/brand.interface';
 })
 export class ProductsComponent implements OnInit, OnDestroy {
   private readonly _productService: ProductService = inject(ProductService);
-  private readonly _brandService: BrandService = inject(BrandService);
   private readonly _organizationalService: OrganizationalService = inject(OrganizationalService);
+  readonly _previewSvc: ImagePreviewService = inject(ImagePreviewService);
   private readonly _confirmDialog: ConfirmDialogService = inject(ConfirmDialogService);
   private readonly _router: Router = inject(Router);
   private readonly _destroy$: Subject<void> = new Subject<void>();
@@ -38,7 +38,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   readonly _total          = signal(0);
   readonly _pageCount      = signal(0);
   readonly _page           = signal(1);
-  readonly _perPage        = signal(10);
+  readonly _perPage        = signal(25);
   readonly _search         = signal('');
   readonly _categoryFilter = signal<number | undefined>(undefined);
   readonly _brandFilter    = signal<number | undefined>(undefined);
@@ -70,14 +70,12 @@ export class ProductsComponent implements OnInit, OnDestroy {
         this._loadProducts();
       });
 
-    forkJoin({
-      bootstrap: this._organizationalService.bootstrap(),
-      brands: this._brandService.getAll(),
-    })
+    this._organizationalService
+      .bootstrap()
       .pipe(takeUntil(this._destroy$))
-      .subscribe(({ bootstrap, brands }) => {
+      .subscribe((bootstrap) => {
         this._categories.set(bootstrap.categories);
-        this._brands.set(brands);
+        this._brands.set(bootstrap.brands);
         this._loadProducts();
       });
   }
@@ -149,6 +147,17 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this._brandFilter.set(undefined);
     this._page.set(1);
     this._loadProducts();
+  }
+
+  productThumb(product: Product): string | null {
+    return product.presentations[0]?.images[0]?.variants.thumb ?? null;
+  }
+
+  openProductPreview(product: Product): void {
+    const urls = product.presentations.flatMap((p) =>
+      p.images.map((img) => img.variants.md),
+    );
+    this._previewSvc.open(urls);
   }
 
   openCreate(): void {

@@ -44,7 +44,7 @@
         <span class="material-symbols-outlined text-[28px] leading-none animate-spin">progress_activity</span>
         Cargando...
       </div>
-    } @else if (_filtered().length === 0) {
+    } @else if (_taxTypes().length === 0) {
       <div class="flex flex-col items-center justify-center py-20 text-ink-mute gap-3">
         <span class="material-symbols-outlined text-[48px] leading-none opacity-30">receipt_long</span>
         <p class="text-sm">No se encontraron tipos de impuesto.</p>
@@ -59,7 +59,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (taxType of _paginated(); track taxType.id) {
+          @for (taxType of _taxTypes(); track taxType.id) {
             <tr class="border-b border-rule last:border-0 hover:bg-[rgba(26,28,44,0.02)] transition-colors">
               <td class="px-6 py-3 font-medium text-ink">{{ taxType.name }}</td>
               <td class="px-4 py-3">

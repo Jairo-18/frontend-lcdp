@@ -72,7 +72,8 @@
         <table class="w-full text-sm">
           <thead>
             <tr class="border-b border-rule text-left">
-              <th class="px-6 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Producto</th>
+              <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide w-14"></th>
+              <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Producto</th>
               <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Categoría</th>
               <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Marca</th>
               <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide text-center">Presentaciones</th>
@@ -83,7 +84,24 @@
           <tbody>
             @for (product of _products(); track product.id) {
               <tr class="border-b border-rule last:border-0 hover:bg-[rgba(26,28,44,0.02)] transition-colors">
-                <td class="px-6 py-4">
+                <!-- Thumbnail -->
+                <td class="px-4 py-3">
+                  @if (productThumb(product); as thumb) {
+                    <button type="button" (click)="openProductPreview(product)"
+                      class="relative group block border-0 bg-transparent p-0 cursor-pointer">
+                      <img [src]="thumb" [alt]="product.name"
+                        class="w-12 h-12 rounded-xl object-cover border border-rule group-hover:scale-105 group-hover:shadow-md transition-all duration-150" />
+                      <span class="absolute inset-0 rounded-xl bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                        <span class="material-symbols-outlined text-white text-[14px] leading-none opacity-0 group-hover:opacity-100 transition-opacity drop-shadow">zoom_in</span>
+                      </span>
+                    </button>
+                  } @else {
+                    <div class="w-12 h-12 rounded-xl border border-dashed border-rule bg-[rgba(26,28,44,0.03)] flex items-center justify-center">
+                      <span class="material-symbols-outlined text-[18px] text-ink-mute leading-none opacity-30">inventory_2</span>
+                    </div>
+                  }
+                </td>
+                <td class="px-4 py-4">
                   <p class="font-medium text-ink leading-tight">{{ product.name }}</p>
                   @if (product.description) {
                     <p class="text-ink-mute text-xs mt-0.5 line-clamp-1">{{ product.description }}</p>

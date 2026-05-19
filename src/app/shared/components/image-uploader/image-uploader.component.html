@@ -1,0 +1,61 @@
+<input #fileInput type="file" [multiple]="multiple" accept="image/*" class="hidden" (change)="onFilesSelected($event)" />
+
+<div>
+  <div class="flex items-center justify-between mb-3">
+    <label class="block text-sm font-medium text-ink">{{ label }}</label>
+    <button type="button" (click)="triggerFileInput()" [disabled]="_uploading()"
+      class="flex items-center gap-1.5 text-xs font-medium text-ink-mute hover:text-ink disabled:opacity-50 transition-colors cursor-pointer border-0 bg-transparent">
+      @if (_uploading()) {
+        <span class="material-symbols-outlined text-[15px] leading-none animate-spin">progress_activity</span>
+        Subiendo...
+      } @else {
+        <span class="material-symbols-outlined text-[15px] leading-none">upload</span>
+        Subir imágenes
+      }
+    </button>
+  </div>
+
+  @if (images.length > 0) {
+    <!-- Main preview (click to open fullscreen) -->
+    <div class="relative group bg-[rgba(26,28,44,0.03)] rounded-xl border border-rule overflow-hidden aspect-video flex items-center justify-center mb-3 cursor-zoom-in"
+      (click)="openLightbox(_previewIndex())">
+      <img [src]="images[_previewIndex()].md" alt="Vista previa"
+        class="max-w-full max-h-full object-contain p-3" />
+      <span class="absolute bottom-2 right-2 px-2 py-0.5 rounded-md bg-black/50 text-white text-[10px] font-medium">
+        {{ _previewIndex() + 1 }} / {{ images.length }}
+      </span>
+      <span class="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/10 transition-colors">
+        <span class="material-symbols-outlined text-white text-[28px] leading-none opacity-0 group-hover:opacity-70 transition-opacity drop-shadow">zoom_in</span>
+      </span>
+    </div>
+    <!-- Thumbnail strip -->
+    <div class="flex gap-2 overflow-x-auto pb-1">
+      @for (img of images; track $index) {
+        <div class="relative shrink-0 group">
+          <div class="w-16 h-16 rounded-xl overflow-hidden border-2 transition-all cursor-pointer"
+            [class.border-ink]="_previewIndex() === $index"
+            [class.border-rule]="_previewIndex() !== $index"
+            [class.opacity-60]="_previewIndex() !== $index"
+            (click)="selectPreview($index); openLightbox($index)">
+            <img [src]="img.thumb" alt="imagen" class="w-full h-full object-cover" />
+          </div>
+          <button type="button" (click)="removeImage($index); $event.stopPropagation()"
+            class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center border-0 cursor-pointer shadow">
+            <span class="material-symbols-outlined text-[11px] leading-none">close</span>
+          </button>
+        </div>
+      }
+      <button type="button" (click)="triggerFileInput()" [disabled]="_uploading()"
+        class="shrink-0 w-16 h-16 rounded-xl border-2 border-dashed border-rule flex items-center justify-center text-ink-mute hover:border-ink/40 hover:text-ink transition-colors cursor-pointer bg-transparent disabled:opacity-40">
+        <span class="material-symbols-outlined text-[18px] leading-none">add_photo_alternate</span>
+      </button>
+    </div>
+  } @else {
+    <div class="border-2 border-dashed border-rule rounded-xl p-8 text-center text-ink-mute cursor-pointer hover:border-ink/30 transition-colors"
+      (click)="triggerFileInput()">
+      <span class="material-symbols-outlined text-[40px] leading-none block mb-2 opacity-30">add_photo_alternate</span>
+      <p class="text-sm font-medium">Haz clic para subir imágenes</p>
+      <p class="text-xs mt-1 opacity-60">PNG, JPG, WEBP — se generan miniaturas automáticamente</p>
+    </div>
+  }
+</div>

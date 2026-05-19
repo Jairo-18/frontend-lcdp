@@ -27,7 +27,7 @@
 
             @if (cat.images && cat.images.length > 0) {
               <img
-                [src]="apiUrl() + cat.images[0].md"
+                [src]="cat.images[0].md"
                 [alt]="cat.name"
                 class="w-14 h-14 object-cover rounded-xl"
                 loading="lazy"

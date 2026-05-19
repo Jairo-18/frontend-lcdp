@@ -11,9 +11,9 @@ import { ConfirmDialogService } from '@shared/services/confirm-dialog.service';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { BrandService } from '@shared/services/brand.service';
+import { ImagePreviewService } from '@shared/services/image-preview.service';
 import { Brand } from '@shared/interfaces/brand.interface';
-import { environment } from '@env/environment';
-
+import { ImageVariant } from '@shared/interfaces/image-variant.interface';
 @Component({
   selector: 'app-brands',
   standalone: true,
@@ -24,17 +24,16 @@ export class BrandsComponent implements OnInit, OnDestroy {
   private readonly _brandService: BrandService = inject(BrandService);
   private readonly _confirmDialog: ConfirmDialogService = inject(ConfirmDialogService);
   private readonly _router: Router = inject(Router);
+  readonly _previewSvc: ImagePreviewService = inject(ImagePreviewService);
   private readonly _destroy$: Subject<void> = new Subject<void>();
   private readonly _search$: Subject<string> = new Subject<string>();
-
-  readonly apiUrl: string = environment.apiUrl;
 
   readonly _loading   = signal(false);
   readonly _brands    = signal<Brand[]>([]);
   readonly _total     = signal(0);
   readonly _pageCount = signal(0);
   readonly _page      = signal(1);
-  readonly _perPage   = signal(10);
+  readonly _perPage   = signal(25);
   readonly _search    = signal('');
 
   readonly _from = computed(() =>
@@ -112,6 +111,10 @@ export class BrandsComponent implements OnInit, OnDestroy {
     this._search.set('');
     this._page.set(1);
     this._load();
+  }
+
+  openPreview(images: ImageVariant[], index = 0): void {
+    this._previewSvc.open(images.map((v) => v.md), index);
   }
 
   openCreate(): void {

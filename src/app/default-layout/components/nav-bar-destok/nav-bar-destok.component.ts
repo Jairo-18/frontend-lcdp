@@ -13,6 +13,7 @@ import { CategoryPill } from '@shared/interfaces/category.interface';
 })
 export class NavBarDestokComponent {
   @Input() cartCount = 0;
+  @Input() logoUrl = '';
   @Input() categories: CategoryPill[] = [];
   @Input() activeCategory: string | null = null;
 

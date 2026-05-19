@@ -1,3 +1,8 @@
+import { Category } from './category.interface';
+import { UnitOfMeasure } from './product.interface';
+import { Brand } from './brand.interface';
+import { TaxType } from './tax-type.interface';
+
 export interface Organizational {
   id: string;
   name: string;
@@ -38,11 +43,10 @@ export interface Organizational {
 export type UpdateOrganizationalDto = Partial<Omit<Organizational, 'id' | 'status'>>;
 export type CreateOrganizationalDto = UpdateOrganizationalDto & { name: string };
 
-import { Category } from './category.interface';
-import { UnitOfMeasure } from './product.interface';
-
 export interface BootstrapData {
   org: Organizational | null;
   categories: Category[];
   units: UnitOfMeasure[];
+  brands: Brand[];
+  taxTypes: TaxType[];
 }

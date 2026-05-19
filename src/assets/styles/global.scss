@@ -4,6 +4,7 @@
 .material-symbols-outlined {
   visibility: hidden;
 }
+
 html.fonts-loaded .material-symbols-outlined {
   visibility: visible;
 }
@@ -73,6 +74,7 @@ html.fonts-loaded .material-symbols-outlined {
 .toast-container {
   overflow: hidden;
   border-radius: 4px !important;
+
   &.ngx-toastr {
     pointer-events: auto;
     position: fixed;
@@ -216,7 +218,7 @@ html.fonts-loaded .material-symbols-outlined {
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background-color: #047d03;
+    background-color: #0f1014;
   }
 
   ::-webkit-scrollbar-button {
@@ -267,7 +269,11 @@ h6 {
   font-family: var(--font-title);
 }
 
-h1 span, h2 span, h3 span { font-family: inherit !important; }
+h1 span,
+h2 span,
+h3 span {
+  font-family: inherit !important;
+}
 
 body,
 p,
@@ -285,9 +291,11 @@ label {
 .red-color {
   color: rgb(255, 27, 27) !important;
 }
+
 .green-color {
   color: green !important;
 }
+
 .blue-color {
   color: rgb(14, 58, 154) !important;
 }

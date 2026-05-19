@@ -13,11 +13,19 @@ import {
   PaginationInterface,
 } from '@shared/interfaces/pagination.interface';
 import { HttpUtilitiesService } from '@shared/utilities/http-utilities.service';
+import { resolveVariant } from '@shared/utilities/image-url.utils';
+import { OrganizationalService } from '@shared/services/organizational.service';
+
+const resolveBrand = (b: Brand): Brand => ({
+  ...b,
+  images: b.images?.map(resolveVariant) ?? [],
+});
 
 @Injectable({ providedIn: 'root' })
 export class BrandService {
   private readonly _http: HttpClient = inject(HttpClient);
   private readonly _httpUtils: HttpUtilitiesService = inject(HttpUtilitiesService);
+  private readonly _orgService: OrganizationalService = inject(OrganizationalService);
 
   private _allCache$: Observable<Brand[]> | null = null;
 
@@ -30,7 +38,7 @@ export class BrandService {
           { params },
         )
         .pipe(
-          map((r) => r.data.data),
+          map((r) => r.data.data.map(resolveBrand)),
           shareReplay(1),
         );
     }
@@ -39,24 +47,25 @@ export class BrandService {
 
   private _invalidateCache(): void {
     this._allCache$ = null;
+    this._orgService.invalidateBootstrap();
   }
 
   getPaginated(
     params: BasePaginationParams & { search?: string },
   ): Observable<{ data: Brand[]; pagination: PaginationInterface }> {
-    const httpParams = this._httpUtils.httpParamsFromObject(params as object);
+    const httpParams = this._httpUtils.httpParamsFromObject(params);
     return this._http
       .get<ApiResponseInterface<{ data: Brand[]; pagination: PaginationInterface }>>(
         `${environment.apiUrl}/brands`,
         { params: httpParams },
       )
-      .pipe(map((r) => r.data));
+      .pipe(map((r) => ({ ...r.data, data: r.data.data.map(resolveBrand) })));
   }
 
   getOne(id: number): Observable<Brand> {
     return this._http
       .get<ApiResponseInterface<Brand>>(`${environment.apiUrl}/brands/${id}`)
-      .pipe(map((r) => r.data));
+      .pipe(map((r) => resolveBrand(r.data)));
   }
 
   create(dto: BrandDto): Observable<{ rowId: number }> {

@@ -30,7 +30,7 @@ export class UnitsComponent implements OnInit, OnDestroy {
   readonly _units    = signal<UnitOfMeasure[]>([]);
   readonly _search   = signal('');
   readonly _page     = signal(1);
-  readonly _perPage  = signal(10);
+  readonly _perPage  = signal(25);
 
   readonly _filtered = computed(() => {
     const q = this._search().toLowerCase().trim();

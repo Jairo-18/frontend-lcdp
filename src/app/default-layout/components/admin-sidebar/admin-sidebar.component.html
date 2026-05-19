@@ -3,7 +3,7 @@
   <!-- Brand -->
   <div class="admin-brand">
     <div class="admin-logo">
-      <img src="assets/images/logo.jpg" alt="La Casa del Pintor" />
+      <img [src]="logoUrl || 'assets/images/logo.jpg'" alt="La Casa del Pintor" />
     </div>
     <div>
       <div class="admin-brand-name">La Casa del Pintor</div>
@@ -18,17 +18,13 @@
   <!-- Nav -->
   <nav class="admin-nav">
     @for (item of navItems; track item.route) {
-      <a
-        [routerLink]="item.route"
-        routerLinkActive="active"
-        class="admin-nav-item"
-      >
-        <span class="material-symbols-outlined text-[20px] leading-none shrink-0">{{ item.icon }}</span>
-        {{ item.label }}
-        @if (item.count !== undefined) {
-          <span class="ct">{{ item.count }}</span>
-        }
-      </a>
+    <a [routerLink]="item.route" routerLinkActive="active" class="admin-nav-item">
+      <span class="material-symbols-outlined text-[20px] leading-none shrink-0">{{ item.icon }}</span>
+      {{ item.label }}
+      @if (item.count !== undefined) {
+      <span class="ct">{{ item.count }}</span>
+      }
+    </a>
     }
   </nav>
 

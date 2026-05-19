@@ -2,8 +2,6 @@ import { Component, OnInit, inject, signal, WritableSignal } from '@angular/core
 import { RouterModule } from '@angular/router';
 import { ProductService } from '@shared/services/product.service';
 import { Product } from '@shared/interfaces/product.interface';
-import { environment } from '@env/environment';
-
 const CLIPBOARD_PALETTE: readonly string[] = [
   '#1a56db',
   '#d93025',
@@ -23,7 +21,6 @@ export class NewProductsComponent implements OnInit {
 
   readonly products: WritableSignal<Product[]> = signal([]);
   readonly loading: WritableSignal<boolean> = signal(true);
-  readonly apiUrl: string = environment.apiUrl;
   readonly skeletons: null[] = Array(10).fill(null);
 
   ngOnInit(): void {

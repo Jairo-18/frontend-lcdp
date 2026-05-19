@@ -1,0 +1,53 @@
+@if (_svc.visible()) {
+<div class="fixed inset-0 z-[200] flex flex-col items-center justify-center p-4"
+  style="background: rgba(0,0,0,0.88); backdrop-filter: blur(8px);" (click)="_svc.close()">
+
+  <!-- Close + counter -->
+  <div class="absolute top-4 right-4 flex items-center gap-3 z-10 mr-2">
+    @if (_svc.images().length > 1) {
+    <span class="px-3 py-1 rounded-full bg-white/10 text-white text-xs font-medium">
+      {{ _svc.index() + 1 }} / {{ _svc.images().length }}
+    </span>
+    }
+    <button type="button" (click)="_svc.close()"
+      class=" px-[13px] pt-3 pb-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer border-0">
+      <span class="material-symbols-outlined text-[22px] leading-none">close</span>
+    </button>
+  </div>
+
+  <!-- Main image + arrows -->
+  <div class="relative flex items-center justify-center w-full max-w-4xl" (click)="$event.stopPropagation()">
+    @if (_svc.images().length > 1) {
+    <button type="button" (click)="_svc.prev()"
+      class="absolute left-0 z-10 px-[13px] pt-3 pb-2  rounded-full bg-white/10 hover:bg-white/25 text-white transition-colors cursor-pointer border-0">
+      <span class="material-symbols-outlined text-[24px] leading-none">chevron_left</span>
+    </button>
+    }
+
+    <img [src]="_svc.images()[_svc.index()]" alt="Vista previa"
+      class="max-h-[72vh] max-w-full object-contain rounded-xl shadow-2xl" />
+
+    @if (_svc.images().length > 1) {
+    <button type="button" (click)="_svc.next()"
+      class="absolute right-0 z-10 px-[13px] pt-3 pb-2 rounded-full bg-white/10 hover:bg-white/25 text-white transition-colors cursor-pointer border-0">
+      <span class="material-symbols-outlined text-[24px] leading-none">chevron_right</span>
+    </button>
+    }
+  </div>
+
+  <!-- Thumbnail strip -->
+  @if (_svc.images().length > 1) {
+  <div class="flex gap-2 mt-5 overflow-x-auto max-w-full pb-1" (click)="$event.stopPropagation()">
+    @for (img of _svc.images(); track $index) {
+    <button type="button" (click)="_svc.setIndex($index)"
+      class="shrink-0 w-12 h-12 rounded-lg overflow-hidden border-2 transition-all cursor-pointer"
+      [class.border-white]="_svc.index() === $index" [class.border-transparent]="_svc.index() !== $index"
+      [class.opacity-50]="_svc.index() !== $index">
+      <img [src]="img" alt="" class="w-full h-full object-cover" />
+    </button>
+    }
+  </div>
+  }
+
+</div>
+}

@@ -1,14 +1,16 @@
 <div class="p-8">
-  <h1 class="font-display font-bold text-ink text-3xl">Dashboard</h1>
+  <h1 class="font-display font-bold text-ink text-3xl">Panel de gestión</h1>
   <p class="text-ink-mute mt-2">Bienvenido al panel de administración.</p>
 
   <div class="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
     @for (item of _nav; track item.path) {
-      <a [routerLink]="item.path"
-        class="flex flex-col items-center gap-3 p-6 rounded-2xl border border-rule bg-white hover:bg-[rgba(26,28,44,0.02)] hover:border-ink/20 transition-all cursor-pointer no-underline group">
-        <span class="material-symbols-outlined text-[32px] leading-none text-ink-mute group-hover:text-ink transition-colors">{{ item.icon }}</span>
-        <span class="text-sm font-semibold text-ink text-center leading-tight">{{ item.label }}</span>
-      </a>
+    <a [routerLink]="item.path"
+      class="flex flex-col items-center gap-3 p-6 rounded-2xl border border-rule bg-white hover:bg-[rgba(26,28,44,0.02)] hover:border-ink/20 transition-all cursor-pointer no-underline group">
+      <span
+        class="material-symbols-outlined text-[32px] leading-none text-ink-mute group-hover:text-ink transition-colors">{{
+        item.icon }}</span>
+      <span class="text-sm font-semibold text-ink text-center leading-tight">{{ item.label }}</span>
+    </a>
     }
   </div>
 </div>

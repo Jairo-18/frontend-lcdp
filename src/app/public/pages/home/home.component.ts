@@ -9,7 +9,6 @@ import { RouterLink } from '@angular/router';
 import { OrganizationalService } from '@shared/services/organizational.service';
 import { Organizational } from '@shared/interfaces/organizational.interface';
 import { Category } from '@shared/interfaces/category.interface';
-import { environment } from '@env/environment';
 import { HeroComponent } from './components/hero/hero.component';
 import { WhatsappBannerComponent } from './components/whatsapp-banner/whatsapp-banner.component';
 import { CategoryGridComponent } from './components/category-grid/category-grid.component';
@@ -39,8 +38,6 @@ export class HomeComponent implements OnInit {
 
   readonly _org: WritableSignal<Organizational | null> = signal(null);
   readonly _categories: WritableSignal<Category[]> = signal([]);
-  readonly apiUrl = environment.apiUrl;
-
   readonly stats: Stat[] = [
     { value: '+1000', label: 'Productos' },
     { value: '30+', label: 'Marcas' },

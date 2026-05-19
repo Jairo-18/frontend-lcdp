@@ -30,6 +30,7 @@ export class AdminSidebarComponent implements OnDestroy {
   @Input() userName: string = 'Admin';
   @Input() userRole: string = 'Administrador';
   @Input() userInitials: string = 'AD';
+  @Input() logoUrl: string = '';
   @Input() set isOpen(value: boolean) {
     this._isOpen = value;
     if (isPlatformBrowser(this._platformId)) {
@@ -44,12 +45,12 @@ export class AdminSidebarComponent implements OnDestroy {
   private _isOpen: boolean = false;
 
   readonly navItems: NavItem[] = [
-    { label: 'Dashboard',  icon: 'dashboard',        route: '/admin/dashboard'  },
-    { label: 'Productos',  icon: 'inventory_2',      route: '/admin/products'   },
-    { label: 'Marcas',     icon: 'label',            route: '/admin/brands'     },
-    { label: 'Categorías', icon: 'category',         route: '/admin/categories' },
-    { label: 'Unidades',   icon: 'straighten',       route: '/admin/units'      },
-    { label: 'Impuestos',  icon: 'receipt_long',     route: '/admin/tax-types'  },
+    { label: 'Panel de gestión', icon: 'dashboard', route: '/admin/dashboard' },
+    { label: 'Productos', icon: 'inventory_2', route: '/admin/products' },
+    { label: 'Marcas', icon: 'label', route: '/admin/brands' },
+    { label: 'Categorías', icon: 'category', route: '/admin/categories' },
+    { label: 'Unidades', icon: 'straighten', route: '/admin/units' },
+    { label: 'Impuestos', icon: 'receipt_long', route: '/admin/tax-types' },
     { label: 'Aplicación', icon: 'app_settings_alt', route: '/admin/aplication' },
   ];
 

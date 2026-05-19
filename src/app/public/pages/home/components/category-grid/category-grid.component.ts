@@ -10,5 +10,4 @@ import { Category } from '@shared/interfaces/category.interface';
 })
 export class CategoryGridComponent {
   readonly categories = input<Category[]>([]);
-  readonly apiUrl = input<string>('');
 }

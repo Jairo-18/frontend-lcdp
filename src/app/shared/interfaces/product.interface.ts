@@ -12,6 +12,7 @@ export interface UnitOfMeasureDto {
 export interface CreatePresentationDto {
   unitOfMeasureId: number;
   sku?: string;
+  priceSale?: number;
   images?: ImageVariant[];
 }
 
@@ -59,6 +60,7 @@ export interface ProductPresentation {
   unitOfMeasureId: number;
   unitOfMeasure: UnitOfMeasure;
   sku: string | null;
+  priceSale: number | null;
   images: ProductImage[];
   createdAt: string;
   updatedAt: string | null;

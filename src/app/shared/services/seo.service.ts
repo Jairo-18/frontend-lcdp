@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
 import { Organizational } from '@shared/interfaces/organizational.interface';
 
 const DEFAULTS = {
@@ -15,6 +16,7 @@ const DEFAULTS = {
 export class SeoService {
   private readonly _meta: Meta = inject(Meta);
   private readonly _title: Title = inject(Title);
+  private readonly _doc: Document = inject(DOCUMENT);
 
   applyFromOrg(org: Organizational | null): void {
     const title = org?.metaTitle || DEFAULTS.title;
@@ -36,13 +38,21 @@ export class SeoService {
     this._meta.updateTag({ property: 'og:url', content: DEFAULTS.url });
     this._meta.updateTag({ property: 'og:image', content: logoUrl });
 
-    this._meta.updateTag({
-      name: 'twitter:card',
-      content: 'summary_large_image',
-    });
+    this._meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
     this._meta.updateTag({ name: 'twitter:title', content: title });
     this._meta.updateTag({ name: 'twitter:description', content: description });
     this._meta.updateTag({ name: 'twitter:image', content: logoUrl });
+
+    if (org?.faviconUrl) {
+      let link = this._doc.querySelector<HTMLLinkElement>("link[rel~='icon']");
+      if (!link) {
+        link = this._doc.createElement('link');
+        link.rel = 'icon';
+        this._doc.head.appendChild(link);
+      }
+      link.type = 'image/webp';
+      link.href = org.faviconUrl;
+    }
   }
 
   setPageTitle(pageTitle: string, org?: Organizational | null): void {

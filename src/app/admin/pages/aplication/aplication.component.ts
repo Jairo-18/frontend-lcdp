@@ -20,7 +20,6 @@ import {
   TabItem,
   ColorField,
   SocialField,
-  OrgFormGroup,
 } from '@shared/interfaces/aplication.interface';
 
 @Component({
@@ -43,7 +42,7 @@ export class AplicationComponent implements OnInit {
 
   readonly tabs: TabItem[] = [
     { id: 'general', label: 'General', icon: 'storefront' },
-    { id: 'branding', label: 'Branding', icon: 'palette' },
+    { id: 'branding', label: 'Identidad visual', icon: 'palette' },
     { id: 'redes', label: 'Redes sociales', icon: 'share' },
     { id: 'contenido', label: 'Contenido', icon: 'article' },
     { id: 'seo', label: 'SEO', icon: 'travel_explore' },
@@ -90,7 +89,7 @@ export class AplicationComponent implements OnInit {
     },
   ];
 
-  readonly form: OrgFormGroup = this._formBuilder.nonNullable.group({
+  readonly form = this._formBuilder.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(150)]],
     legalName: ['', Validators.maxLength(150)],
     nit: ['', Validators.maxLength(50)],
@@ -123,19 +122,14 @@ export class AplicationComponent implements OnInit {
     metaTitle: ['', Validators.maxLength(200)],
     metaDescription: [''],
     metaKeywords: ['', Validators.maxLength(500)],
-  }) as unknown as OrgFormGroup;
+  });
 
   ngOnInit(): void {
     this._loading.set(true);
     this._organizationService.get().subscribe({
-      next: (data: Organizational | null): void => {
-        if (data) {
-          this._orgId = data.id;
-          const clean: Record<string, string> = Object.fromEntries(
-            Object.entries(data).map(([k, v]) => [k, v ?? '']),
-          );
-          this.form.patchValue(clean as never);
-        }
+      next: (data: Organizational): void => {
+        this._orgId = data.id;
+        this.form.patchValue(data);
         this._loading.set(false);
       },
       error: (): void => {

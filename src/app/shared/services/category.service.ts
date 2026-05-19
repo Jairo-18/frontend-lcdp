@@ -13,6 +13,12 @@ import {
   PaginationInterface,
 } from '@shared/interfaces/pagination.interface';
 import { HttpUtilitiesService } from '@shared/utilities/http-utilities.service';
+import { resolveVariant } from '@shared/utilities/image-url.utils';
+
+const resolveCategory = (c: Category): Category => ({
+  ...c,
+  images: c.images?.map(resolveVariant) ?? [],
+});
 
 @Injectable({ providedIn: 'root' })
 export class CategoryService {
@@ -22,19 +28,19 @@ export class CategoryService {
   getPaginated(
     params: BasePaginationParams & { search?: string },
   ): Observable<{ data: Category[]; pagination: PaginationInterface }> {
-    const httpParams = this._httpUtils.httpParamsFromObject(params as object);
+    const httpParams = this._httpUtils.httpParamsFromObject(params);
     return this._http
       .get<ApiResponseInterface<{ data: Category[]; pagination: PaginationInterface }>>(
         `${environment.apiUrl}/categories`,
         { params: httpParams },
       )
-      .pipe(map((r) => r.data));
+      .pipe(map((r) => ({ ...r.data, data: r.data.data.map(resolveCategory) })));
   }
 
   getOne(id: number): Observable<Category> {
     return this._http
       .get<ApiResponseInterface<Category>>(`${environment.apiUrl}/categories/${id}`)
-      .pipe(map((r) => r.data));
+      .pipe(map((r) => resolveCategory(r.data)));
   }
 
   create(dto: CategoryDto): Observable<{ rowId: number }> {

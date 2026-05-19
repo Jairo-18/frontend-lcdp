@@ -15,6 +15,15 @@ import {
 } from '@shared/interfaces/product.interface';
 import { PaginationInterface } from '@shared/interfaces/pagination.interface';
 import { HttpUtilitiesService } from '@shared/utilities/http-utilities.service';
+import { resolveVariant } from '@shared/utilities/image-url.utils';
+
+const resolveProduct = (p: Product): Product => ({
+  ...p,
+  presentations: p.presentations?.map((pres) => ({
+    ...pres,
+    images: pres.images?.map((img) => ({ ...img, variants: resolveVariant(img.variants) })) ?? [],
+  })) ?? [],
+});
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
@@ -22,19 +31,19 @@ export class ProductService {
   private readonly _httpUtils: HttpUtilitiesService = inject(HttpUtilitiesService);
 
   getAll(params: ProductParams): Observable<{ data: Product[]; pagination: PaginationInterface }> {
-    const httpParams = this._httpUtils.httpParamsFromObject(params as object);
+    const httpParams = this._httpUtils.httpParamsFromObject(params);
     return this._http
       .get<ApiResponseInterface<{ data: Product[]; pagination: PaginationInterface }>>(
         `${environment.apiUrl}/products`,
         { params: httpParams },
       )
-      .pipe(map((r) => r.data));
+      .pipe(map((r) => ({ ...r.data, data: r.data.data.map(resolveProduct) })));
   }
 
   getOne(id: number): Observable<Product> {
     return this._http
       .get<ApiResponseInterface<Product>>(`${environment.apiUrl}/products/${id}`)
-      .pipe(map((r) => r.data));
+      .pipe(map((r) => resolveProduct(r.data)));
   }
 
   create(dto: CreateProductDto): Observable<{ rowId: number }> {

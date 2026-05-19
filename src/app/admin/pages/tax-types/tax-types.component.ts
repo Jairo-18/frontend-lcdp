@@ -31,26 +31,16 @@ export class TaxTypesComponent implements OnInit, OnDestroy {
   readonly _taxTypes  = signal<TaxType[]>([]);
   readonly _search    = signal('');
   readonly _page      = signal(1);
-  readonly _perPage   = signal(10);
+  readonly _perPage   = signal(25);
+  readonly _total     = signal(0);
+  readonly _pageCount = signal(0);
 
-  readonly _filtered = computed(() => {
-    const q = this._search().toLowerCase().trim();
-    if (!q) return this._taxTypes();
-    return this._taxTypes().filter(
-      (t) =>
-        t.name.toLowerCase().includes(q) || t.code.toLowerCase().includes(q),
-    );
-  });
-
-  readonly _total     = computed(() => this._filtered().length);
-  readonly _pageCount = computed(() => Math.max(1, Math.ceil(this._total() / this._perPage())));
-  readonly _from      = computed(() => this._total() === 0 ? 0 : (this._page() - 1) * this._perPage() + 1);
-  readonly _to        = computed(() => Math.min(this._page() * this._perPage(), this._total()));
-
-  readonly _paginated = computed(() => {
-    const start = (this._page() - 1) * this._perPage();
-    return this._filtered().slice(start, start + this._perPage());
-  });
+  readonly _from = computed(() =>
+    this._total() === 0 ? 0 : (this._page() - 1) * this._perPage() + 1,
+  );
+  readonly _to = computed(() =>
+    Math.min(this._page() * this._perPage(), this._total()),
+  );
 
   readonly _hasFilters = computed(() => !!this._search());
 
@@ -73,6 +63,7 @@ export class TaxTypesComponent implements OnInit, OnDestroy {
       .subscribe((val) => {
         this._search.set(val);
         this._page.set(1);
+        this._load();
       });
     this._load();
   }
@@ -85,11 +76,17 @@ export class TaxTypesComponent implements OnInit, OnDestroy {
   private _load(): void {
     this._loading.set(true);
     this._taxTypeService
-      .getAll()
+      .getPaginated({
+        page: this._page(),
+        perPage: this._perPage(),
+        search: this._search() || undefined,
+      })
       .pipe(takeUntil(this._destroy$))
       .subscribe({
-        next: (items) => {
-          this._taxTypes.set(items);
+        next: ({ data, pagination }) => {
+          this._taxTypes.set(data);
+          this._total.set(pagination.total);
+          this._pageCount.set(pagination.pageCount);
           this._loading.set(false);
         },
         error: () => this._loading.set(false),
@@ -103,21 +100,25 @@ export class TaxTypesComponent implements OnInit, OnDestroy {
   onPerPageChange(value: string): void {
     this._perPage.set(Number(value));
     this._page.set(1);
+    this._load();
   }
 
   prevPage(): void {
     if (this._page() <= 1) return;
     this._page.update((p) => p - 1);
+    this._load();
   }
 
   nextPage(): void {
     if (this._page() >= this._pageCount()) return;
     this._page.update((p) => p + 1);
+    this._load();
   }
 
   clearFilters(): void {
     this._search.set('');
     this._page.set(1);
+    this._load();
   }
 
   openCreate(): void {
