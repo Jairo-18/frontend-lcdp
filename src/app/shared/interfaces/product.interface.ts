@@ -20,7 +20,7 @@ export interface CreateProductDto {
   name: string;
   code?: string;
   description?: string;
-  categoryId: number;
+  categoryIds: number[];
   brandId: number;
   priceSale?: number;
   taxTypeId?: number;
@@ -75,8 +75,7 @@ export interface Product {
   name: string;
   code: string | null;
   description: string | null;
-  categoryId: number;
-  category: Category;
+  categories: Category[];
   brandId: number;
   brand: Brand;
   priceSale: number | null;

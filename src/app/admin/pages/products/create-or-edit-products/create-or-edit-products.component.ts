@@ -74,6 +74,7 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
   readonly _brands = signal<Brand[]>([]);
   readonly _units = signal<UnitOfMeasure[]>([]);
   readonly _taxTypes = signal<TaxType[]>([]);
+  readonly _categoryIds = signal<number[]>([]);
 
   readonly _presImages = signal<ImageVariant[][]>([]);
   readonly _uploadingForIndex = signal<number | null>(null);
@@ -103,7 +104,6 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
     name: ['', [Validators.required, Validators.maxLength(200)]],
     code: [''],
     description: [''],
-    categoryId: ['', Validators.required],
     brandId: ['', Validators.required],
     priceSale: [null as number | null],
     taxTypeId: [''],
@@ -116,6 +116,13 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
 
   get presentationsArray(): FormArray<FormGroup> {
     return this.form.get('presentations') as FormArray<FormGroup>;
+  }
+
+  toggleCategory(id: number): void {
+    this._categoryIds.update(ids =>
+      ids.includes(id) ? ids.filter(i => i !== id) : [...ids, id],
+    );
+    this.form.markAsDirty();
   }
 
   get previewBrandName(): string {
@@ -212,11 +219,11 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
               .subscribe({
                 next: (p) => {
                   this.presentationsArray.clear();
+                  this._categoryIds.set((p.categories ?? []).map(c => c.id));
                   this.form.patchValue({
                     name: p.name,
                     code: p.code ?? '',
                     description: p.description ?? '',
-                    categoryId: String(p.categoryId),
                     brandId: String(p.brandId),
                     priceSale: p.priceSale ?? null,
                     taxTypeId: p.taxTypeId ? String(p.taxTypeId) : '',
@@ -382,7 +389,7 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
   }
 
   save(): void {
-    if (this.form.invalid || this._saving()) return;
+    if (this.form.invalid || this._saving() || this._categoryIds().length === 0) return;
     this._saving.set(true);
 
     const raw = this.form.getRawValue();
@@ -391,7 +398,7 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
       name: raw.name,
       code: raw.code || undefined,
       description: raw.description || undefined,
-      categoryId: Number(raw.categoryId),
+      categoryIds: this._categoryIds(),
       brandId: Number(raw.brandId),
       priceSale: raw.priceSale ?? undefined,
       taxTypeId: raw.taxTypeId ? Number(raw.taxTypeId) : undefined,

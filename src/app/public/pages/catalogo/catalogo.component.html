@@ -199,7 +199,7 @@
                         class="font-display font-bold text-ink text-[13px] leading-tight line-clamp-2 group-hover:text-coral transition-colors no-underline">
                         {{ product.name }}
                       </a>
-                      <p class="text-[11px] text-ink-mute">{{ product.category.name }}</p>
+                      <p class="text-[11px] text-ink-mute">{{ product.categories.at(0)?.name }}</p>
                       @if (webPrice(product); as price) {
                         <p class="text-[13px] font-bold text-ink mt-1">desde {{ formatPrice(price) }}</p>
                         <p class="text-[9px] text-ink-mute leading-none">Precio incluye IVA</p>

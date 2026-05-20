@@ -91,7 +91,7 @@
                 {{ product.name }}
               </p>
               <p class="text-[11px] text-ink-mute mt-0.5">
-                {{ product.category.name }}
+                {{ product.categories.at(0)?.name }}
               </p>
 
               @if (webPrice(product); as price) {
