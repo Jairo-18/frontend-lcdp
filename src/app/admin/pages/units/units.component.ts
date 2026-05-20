@@ -7,6 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { PaginatorComponent } from '@shared/components';
 import { ConfirmDialogService } from '@shared/services/confirm-dialog.service';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
@@ -16,7 +17,7 @@ import { UnitOfMeasure } from '@shared/interfaces/product.interface';
 @Component({
   selector: 'app-units',
   standalone: true,
-  imports: [],
+  imports: [PaginatorComponent],
   templateUrl: './units.component.html',
 })
 export class UnitsComponent implements OnInit, OnDestroy {
@@ -50,18 +51,6 @@ export class UnitsComponent implements OnInit, OnDestroy {
   readonly _paginated = computed(() => {
     const start = (this._page() - 1) * this._perPage();
     return this._filtered().slice(start, start + this._perPage());
-  });
-
-  readonly pageNumbers = computed(() => {
-    const total = this._pageCount();
-    const current = this._page();
-    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1) as (number | null)[];
-    const pages: (number | null)[] = [1];
-    if (current > 3) pages.push(null);
-    for (let p = Math.max(2, current - 1); p <= Math.min(total - 1, current + 1); p++) pages.push(p);
-    if (current < total - 2) pages.push(null);
-    pages.push(total);
-    return pages;
   });
 
   readonly _hasFilters = computed(() => !!this._search());
@@ -108,13 +97,10 @@ export class UnitsComponent implements OnInit, OnDestroy {
     this._page.set(1);
   }
 
-  goToPage(page: number | null): void {
-    if (page === null || page < 1 || page > this._pageCount() || page === this._page()) return;
+  goToPage(page: number): void {
+    if (page < 1 || page > this._pageCount() || page === this._page()) return;
     this._page.set(page);
   }
-
-  prevPage(): void { this.goToPage(this._page() - 1); }
-  nextPage(): void { this.goToPage(this._page() + 1); }
 
   clearFilters(): void {
     this._search.set('');

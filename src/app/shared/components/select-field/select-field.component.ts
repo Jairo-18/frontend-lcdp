@@ -2,6 +2,7 @@ import {
   Component,
   Input,
   forwardRef,
+  signal,
 } from '@angular/core';
 import {
   AbstractControl,
@@ -39,7 +40,7 @@ let uid = 0;
         <option value="">{{ placeholder }}</option>
       }
       @for (opt of options; track opt.value) {
-        <option [value]="opt.value" [selected]="opt.value == value">{{ opt.label }}</option>
+        <option [value]="opt.value" [selected]="opt.value == _value()">{{ opt.label }}</option>
       }
     </select>
     @if (hint && !showError) {
@@ -60,7 +61,7 @@ export class SelectFieldComponent implements ControlValueAccessor {
   @Input() control: AbstractControl | null | undefined;
 
   protected readonly id = `field-${++uid}`;
-  protected value: string | number = '';
+  protected readonly _value = signal<string | number>('');
   protected isDisabled = false;
 
   private onChange: (v: string | number) => void = () => {};
@@ -91,12 +92,12 @@ export class SelectFieldComponent implements ControlValueAccessor {
 
   protected onSelect(event: Event): void {
     const val = (event.target as HTMLSelectElement).value;
-    this.value = val;
+    this._value.set(val);
     this.onChange(val);
   }
 
   writeValue(val: string | number | null): void {
-    this.value = val ?? '';
+    this._value.set(val ?? '');
   }
   registerOnChange(fn: (v: string | number) => void): void {
     this.onChange = fn;

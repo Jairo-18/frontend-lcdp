@@ -13,6 +13,7 @@ import { takeUntil } from 'rxjs/operators';
 import { CategoryService } from '@shared/services/category.service';
 import { Category, CategoryDto } from '@shared/interfaces/category.interface';
 import { ImageVariant } from '@shared/interfaces/image-variant.interface';
+import { CacheRouteReuseStrategy } from '@shared/strategies/cache-route-reuse.strategy';
 
 @Component({
   selector: 'app-create-or-edit-categories',
@@ -22,6 +23,7 @@ import { ImageVariant } from '@shared/interfaces/image-variant.interface';
 })
 export class CreateOrEditCategoriesComponent implements OnInit, OnDestroy {
   private readonly _categoryService: CategoryService = inject(CategoryService);
+  private readonly _routeReuse: CacheRouteReuseStrategy = inject(CacheRouteReuseStrategy);
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
   private readonly _router: Router = inject(Router);
@@ -77,7 +79,12 @@ export class CreateOrEditCategoriesComponent implements OnInit, OnDestroy {
     this._saving.set(true);
 
     const dto: CategoryDto = { ...this.form.getRawValue(), images: this._images() };
-    const onSuccess = (): void => { this._saving.set(false); this.goBack(); };
+    const onSuccess = (): void => {
+      this._saving.set(false);
+      this.form.markAsPristine();
+      this._routeReuse.invalidate('categories');
+      this.goBack();
+    };
     const onError = (): void => this._saving.set(false);
 
     const editingId = this._editingId();

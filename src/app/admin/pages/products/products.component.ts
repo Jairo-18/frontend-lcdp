@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
+import { PaginatorComponent } from '@shared/components';
 import { ConfirmDialogService } from '@shared/services/confirm-dialog.service';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
@@ -21,28 +22,31 @@ import { Brand } from '@shared/interfaces/brand.interface';
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [DecimalPipe],
+  imports: [DecimalPipe, PaginatorComponent],
   templateUrl: './products.component.html',
 })
 export class ProductsComponent implements OnInit, OnDestroy {
   private readonly _productService: ProductService = inject(ProductService);
-  private readonly _organizationalService: OrganizationalService = inject(OrganizationalService);
+  private readonly _organizationalService: OrganizationalService = inject(
+    OrganizationalService,
+  );
   readonly _previewSvc: ImagePreviewService = inject(ImagePreviewService);
-  private readonly _confirmDialog: ConfirmDialogService = inject(ConfirmDialogService);
+  private readonly _confirmDialog: ConfirmDialogService =
+    inject(ConfirmDialogService);
   private readonly _router: Router = inject(Router);
   private readonly _destroy$: Subject<void> = new Subject<void>();
   private readonly _search$: Subject<string> = new Subject<string>();
 
-  readonly _loading        = signal(false);
-  readonly _deletingId     = signal<number | null>(null);
-  readonly _products       = signal<Product[]>([]);
-  readonly _total          = signal(0);
-  readonly _pageCount      = signal(0);
-  readonly _page           = signal(1);
-  readonly _perPage        = signal(25);
-  readonly _search         = signal('');
+  readonly _loading = signal(false);
+  readonly _deletingId = signal<number | null>(null);
+  readonly _products = signal<Product[]>([]);
+  readonly _total = signal(0);
+  readonly _pageCount = signal(0);
+  readonly _page = signal(1);
+  readonly _perPage = signal(25);
+  readonly _search = signal('');
   readonly _categoryFilter = signal<number | undefined>(undefined);
-  readonly _brandFilter    = signal<number | undefined>(undefined);
+  readonly _brandFilter = signal<number | undefined>(undefined);
 
   readonly _from = computed(() =>
     this._total() === 0 ? 0 : (this._page() - 1) * this._perPage() + 1,
@@ -50,23 +54,11 @@ export class ProductsComponent implements OnInit, OnDestroy {
   readonly _to = computed(() =>
     Math.min(this._page() * this._perPage(), this._total()),
   );
-  readonly pageNumbers = computed(() => {
-    const total = this._pageCount();
-    const current = this._page();
-    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1) as (number | null)[];
-    const pages: (number | null)[] = [1];
-    if (current > 3) pages.push(null);
-    for (let p = Math.max(2, current - 1); p <= Math.min(total - 1, current + 1); p++) pages.push(p);
-    if (current < total - 2) pages.push(null);
-    pages.push(total);
-    return pages;
-  });
-
   readonly _categories = signal<Category[]>([]);
-  readonly _brands     = signal<Brand[]>([]);
+  readonly _brands = signal<Brand[]>([]);
 
-  readonly _hasFilters = computed(() =>
-    !!this._search() || !!this._categoryFilter() || !!this._brandFilter(),
+  readonly _hasFilters = computed(
+    () => !!this._search() || !!this._categoryFilter() || !!this._brandFilter(),
   );
 
   ngOnInit(): void {
@@ -141,14 +133,11 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this._loadProducts();
   }
 
-  goToPage(page: number | null): void {
-    if (page === null || page < 1 || page > this._pageCount() || page === this._page()) return;
+  goToPage(page: number): void {
+    if (page < 1 || page > this._pageCount() || page === this._page()) return;
     this._page.set(page);
     this._loadProducts();
   }
-
-  prevPage(): void { this.goToPage(this._page() - 1); }
-  nextPage(): void { this.goToPage(this._page() + 1); }
 
   clearFilters(): void {
     this._search.set('');
@@ -174,7 +163,10 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   openEdit(product: Product): void {
-    this._router.navigate(['/admin/products/create-or-edit-products', product.id]);
+    this._router.navigate([
+      '/admin/products/create-or-edit-products',
+      product.id,
+    ]);
   }
 
   confirmDelete(id: number, name: string): void {

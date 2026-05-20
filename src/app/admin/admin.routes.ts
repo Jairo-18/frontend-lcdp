@@ -23,7 +23,7 @@ export const adminRoutes: Routes = [
         children: [
           {
             path: '',
-            data: { reuse: true },
+            data: { reuse: true, reuseKey: 'products' },
             loadComponent: () =>
               import('./pages/products/products.component').then((m) => m.ProductsComponent),
           },
@@ -48,7 +48,7 @@ export const adminRoutes: Routes = [
         children: [
           {
             path: '',
-            data: { reuse: true },
+            data: { reuse: true, reuseKey: 'brands' },
             loadComponent: () =>
               import('./pages/brands/brands.component').then((m) => m.BrandsComponent),
           },
@@ -73,7 +73,7 @@ export const adminRoutes: Routes = [
         children: [
           {
             path: '',
-            data: { reuse: true },
+            data: { reuse: true, reuseKey: 'categories' },
             loadComponent: () =>
               import('./pages/categories/categories.component').then((m) => m.CategoriesComponent),
           },
@@ -98,7 +98,7 @@ export const adminRoutes: Routes = [
         children: [
           {
             path: '',
-            data: { reuse: true },
+            data: { reuse: true, reuseKey: 'units' },
             loadComponent: () =>
               import('./pages/units/units.component').then((m) => m.UnitsComponent),
           },

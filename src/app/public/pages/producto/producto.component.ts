@@ -2,9 +2,11 @@ import {
   Component,
   OnInit,
   OnDestroy,
+  PLATFORM_ID,
   inject,
   signal,
 } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
@@ -22,6 +24,7 @@ export class ProductoComponent implements OnInit, OnDestroy {
   private readonly _route      = inject(ActivatedRoute);
   private readonly _productSvc = inject(ProductService);
   private readonly _sanitizer  = inject(DomSanitizer);
+  private readonly _platformId = inject(PLATFORM_ID);
   private readonly _destroy$   = new Subject<void>();
 
   readonly loading        = signal(true);
@@ -43,7 +46,9 @@ export class ProductoComponent implements OnInit, OnDestroy {
 
   private _load(id: number): void {
     this.loading.set(true);
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    if (isPlatformBrowser(this._platformId)) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
     this._productSvc.getPublicOne(id).pipe(takeUntil(this._destroy$)).subscribe({
       next: (p) => { this.product.set(p); this.loading.set(false); },
       error: () => this.loading.set(false),

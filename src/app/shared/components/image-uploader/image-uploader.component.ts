@@ -13,6 +13,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UploadService } from '@shared/services/upload.service';
 import { ImagePreviewService } from '@shared/services/image-preview.service';
+import { ImageEditorService } from '@shared/services/image-editor.service';
 import { ImageVariant } from '@shared/interfaces/image-variant.interface';
 import { UploadFolder } from '@shared/interfaces/upload.interface';
 
@@ -25,6 +26,7 @@ import { UploadFolder } from '@shared/interfaces/upload.interface';
 export class ImageUploaderComponent implements OnDestroy {
   private readonly _uploadService = inject(UploadService);
   private readonly _previewSvc = inject(ImagePreviewService);
+  private readonly _editorSvc = inject(ImageEditorService);
   private readonly _destroy$ = new Subject<void>();
 
   @ViewChild('fileInput') fileInputRef!: ElementRef<HTMLInputElement>;
@@ -48,14 +50,18 @@ export class ImageUploaderComponent implements OnDestroy {
     this.fileInputRef.nativeElement.click();
   }
 
-  onFilesSelected(event: Event): void {
+  async onFilesSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
-    const files = Array.from(input.files);
+    const rawFiles = Array.from(input.files);
+
+    const editedFiles = await this._editorSvc.edit(rawFiles);
+    if (!editedFiles.length) return;
+
     const prevLen = this.images.length;
     this._uploading.set(true);
     this._uploadService
-      .uploadImages(this.folder, files)
+      .uploadImages(this.folder, editedFiles)
       .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: (variants) => {

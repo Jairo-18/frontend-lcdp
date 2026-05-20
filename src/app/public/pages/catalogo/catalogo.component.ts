@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { PaginatorComponent } from '@shared/components';
 import { FormsModule } from '@angular/forms';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { combineLatest, Subject } from 'rxjs';
@@ -24,7 +25,7 @@ const PALETTE: readonly string[] = ['#1a56db','#d93025','#1e7e34','#7c3aed','#b4
 @Component({
   selector: 'app-catalogo',
   standalone: true,
-  imports: [RouterModule, FormsModule],
+  imports: [RouterModule, FormsModule, PaginatorComponent],
   templateUrl: './catalogo.component.html',
 })
 export class CatalogoComponent implements OnInit, OnDestroy {
@@ -56,22 +57,6 @@ export class CatalogoComponent implements OnInit, OnDestroy {
   readonly hasFilters = computed(() =>
     !!this.selectedCategory() || !!this.selectedBrand() || !!this.searchQuery(),
   );
-
-  readonly pageNumbers = computed(() => {
-    const total = this.totalPages();
-    const current = this.currentPage();
-    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
-
-    const pages: (number | null)[] = [];
-    pages.push(1);
-    if (current > 3) pages.push(null);
-    for (let p = Math.max(2, current - 1); p <= Math.min(total - 1, current + 1); p++) {
-      pages.push(p);
-    }
-    if (current < total - 2) pages.push(null);
-    pages.push(total);
-    return pages;
-  });
 
   readonly skeletons: null[] = Array<null>(12).fill(null);
 
@@ -125,8 +110,8 @@ export class CatalogoComponent implements OnInit, OnDestroy {
     });
   }
 
-  goToPage(page: number | null): void {
-    if (page === null || page < 1 || page > this.totalPages() || page === this.currentPage()) return;
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages() || page === this.currentPage()) return;
     this._load(page);
   }
 

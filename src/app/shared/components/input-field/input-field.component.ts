@@ -2,6 +2,7 @@ import {
   Component,
   Input,
   forwardRef,
+  signal,
 } from '@angular/core';
 import {
   AbstractControl,
@@ -31,7 +32,7 @@ let uid = 0;
       [id]="id"
       [type]="type"
       [placeholder]="placeholder"
-      [value]="value"
+      [value]="_value()"
       [disabled]="isDisabled"
       [readOnly]="readonly"
       (input)="onInput($event)"
@@ -58,7 +59,7 @@ export class InputFieldComponent implements ControlValueAccessor {
   @Input() control: AbstractControl | null | undefined;
 
   protected readonly id = `field-${++uid}`;
-  protected value = '';
+  protected readonly _value = signal('');
   protected isDisabled = false;
 
   private onChange: (v: string) => void = () => {};
@@ -94,12 +95,12 @@ export class InputFieldComponent implements ControlValueAccessor {
 
   protected onInput(event: Event): void {
     const val = (event.target as HTMLInputElement).value;
-    this.value = val;
+    this._value.set(val);
     this.onChange(val);
   }
 
   writeValue(val: string | null): void {
-    this.value = val ?? '';
+    this._value.set(val ?? '');
   }
   registerOnChange(fn: (v: string) => void): void {
     this.onChange = fn;

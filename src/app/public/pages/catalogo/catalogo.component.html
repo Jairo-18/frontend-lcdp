@@ -202,6 +202,7 @@
                       <p class="text-[11px] text-ink-mute">{{ product.category.name }}</p>
                       @if (webPrice(product); as price) {
                         <p class="text-[13px] font-bold text-ink mt-1">desde {{ formatPrice(price) }}</p>
+                        <p class="text-[9px] text-ink-mute leading-none">Precio incluye IVA</p>
                       }
                       @if (product.discountPercentage) {
                         <p class="text-[10px] font-semibold text-green-600">{{ product.discountPercentage }}% dto. al cotizar</p>
@@ -229,38 +230,13 @@
 
           <!-- Paginador -->
           @if (!loading() && totalPages() > 1) {
-            <div class="flex flex-col items-center gap-3 mt-10">
-              <p class="text-xs text-ink-mute">Página {{ currentPage() }} de {{ totalPages() }}</p>
-              <div class="flex items-center flex-wrap justify-center gap-1.5">
-                <button type="button" (click)="goToPage(1)" [disabled]="currentPage() === 1"
-                  class="p-2 rounded-lg border border-rule bg-white text-ink-mute hover:text-ink hover:border-ink/30 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
-                  <span class="material-symbols-outlined text-[16px] leading-none">first_page</span>
-                </button>
-                <button type="button" (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() === 1"
-                  class="p-2 rounded-lg border border-rule bg-white text-ink-mute hover:text-ink hover:border-ink/30 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
-                  <span class="material-symbols-outlined text-[16px] leading-none">chevron_left</span>
-                </button>
-                @for (p of pageNumbers(); track $index) {
-                  @if (p === null) {
-                    <span class="px-1 text-ink-mute text-sm">…</span>
-                  } @else {
-                    <button type="button" (click)="goToPage(p)"
-                      class="min-w-[36px] h-9 px-2 rounded-lg border text-sm font-semibold transition-colors cursor-pointer"
-                      [class]="p === currentPage() ? 'bg-ink text-white border-ink' : 'bg-white text-ink-mute border-rule hover:text-ink hover:border-ink/30'">
-                      {{ p }}
-                    </button>
-                  }
-                }
-                <button type="button" (click)="goToPage(currentPage() + 1)" [disabled]="currentPage() === totalPages()"
-                  class="p-2 rounded-lg border border-rule bg-white text-ink-mute hover:text-ink hover:border-ink/30 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
-                  <span class="material-symbols-outlined text-[16px] leading-none">chevron_right</span>
-                </button>
-                <button type="button" (click)="goToPage(totalPages())" [disabled]="currentPage() === totalPages()"
-                  class="p-2 rounded-lg border border-rule bg-white text-ink-mute hover:text-ink hover:border-ink/30 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
-                  <span class="material-symbols-outlined text-[16px] leading-none">last_page</span>
-                </button>
-              </div>
-            </div>
+            <app-paginator
+              class="mt-10"
+              [page]="currentPage()"
+              [pageCount]="totalPages()"
+              [summary]="'Página ' + currentPage() + ' de ' + totalPages()"
+              (pageChange)="goToPage($event)">
+            </app-paginator>
           }
 
         </div>

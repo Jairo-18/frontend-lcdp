@@ -27,6 +27,8 @@ import { ProductService } from '@shared/services/product.service';
 import { OrganizationalService } from '@shared/services/organizational.service';
 import { UploadService } from '@shared/services/upload.service';
 import { ImagePreviewService } from '@shared/services/image-preview.service';
+import { ImageEditorService } from '@shared/services/image-editor.service';
+import { CacheRouteReuseStrategy } from '@shared/strategies/cache-route-reuse.strategy';
 import {
   UnitOfMeasure,
   CreateProductDto,
@@ -53,6 +55,8 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
     OrganizationalService,
   );
   private readonly _uploadService: UploadService = inject(UploadService);
+  private readonly _editorSvc: ImageEditorService = inject(ImageEditorService);
+  private readonly _routeReuse: CacheRouteReuseStrategy = inject(CacheRouteReuseStrategy);
   private readonly _sanitizer: DomSanitizer = inject(DomSanitizer);
   readonly _previewSvc: ImagePreviewService = inject(ImagePreviewService);
   private readonly _fb: FormBuilder = inject(FormBuilder);
@@ -272,21 +276,59 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
     this._previewImageIndex.set(0);
   }
 
+  movePresentationUp(index: number): void {
+    if (index <= 0) return;
+    const arr = this.presentationsArray;
+    const ctrl = arr.at(index);
+    arr.removeAt(index);
+    arr.insert(index - 1, ctrl);
+    this._presImages.update(imgs => {
+      const updated = [...imgs];
+      [updated[index - 1], updated[index]] = [updated[index], updated[index - 1]];
+      return updated;
+    });
+    this._previewPresIndex.set(index - 1);
+    this._previewImageIndex.set(0);
+    this.form.markAsDirty();
+  }
+
+  movePresentationDown(index: number): void {
+    const arr = this.presentationsArray;
+    if (index >= arr.length - 1) return;
+    const ctrl = arr.at(index);
+    arr.removeAt(index);
+    arr.insert(index + 1, ctrl);
+    this._presImages.update(imgs => {
+      const updated = [...imgs];
+      [updated[index], updated[index + 1]] = [updated[index + 1], updated[index]];
+      return updated;
+    });
+    this._previewPresIndex.set(index + 1);
+    this._previewImageIndex.set(0);
+    this.form.markAsDirty();
+  }
+
   triggerImageUpload(index: number): void {
     this._uploadingForIndex.set(index);
     this.fileInputRef.nativeElement.value = '';
     this.fileInputRef.nativeElement.click();
   }
 
-  onFilesSelected(event: Event): void {
+  async onFilesSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
     const index = this._uploadingForIndex();
     if (index === null) return;
 
-    const files = Array.from(input.files);
+    const rawFiles = Array.from(input.files);
+    const editedFiles = await this._editorSvc.edit(rawFiles);
+    if (!editedFiles.length) {
+      this._uploadingForIndex.set(null);
+      return;
+    }
+
     this._uploadService
-      .uploadImages('products/images', files)
+      .uploadImages('products/images', editedFiles)
       .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: (variants) => {
@@ -375,7 +417,11 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
         .update(editingId, dto)
         .pipe(takeUntil(this._destroy$))
         .subscribe({
-          next: () => this._saving.set(false),
+          next: () => {
+            this._saving.set(false);
+            this.form.markAsPristine();
+            this._routeReuse.invalidate('products');
+          },
           error: onError,
         });
     } else {
@@ -385,6 +431,7 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
         .subscribe({
           next: ({ rowId }) => {
             this._saving.set(false);
+            this._routeReuse.invalidate('products');
             this._router.navigate(['/admin/products/edit', rowId], {
               replaceUrl: true,
             });

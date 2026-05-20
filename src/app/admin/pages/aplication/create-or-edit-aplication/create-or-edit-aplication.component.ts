@@ -16,6 +16,7 @@ import { takeUntil } from 'rxjs/operators';
 import { OrganizationalService } from '@shared/services/organizational.service';
 import { UploadService } from '@shared/services/upload.service';
 import { ImagePreviewService } from '@shared/services/image-preview.service';
+import { ImageEditorService } from '@shared/services/image-editor.service';
 import {
   Organizational,
   UpdateOrganizationalDto,
@@ -37,6 +38,7 @@ export class CreateOrEditAplicationComponent implements OnInit, OnDestroy {
   private readonly _formBuilder: FormBuilder = inject(FormBuilder);
   private readonly _organizationService: OrganizationalService = inject(OrganizationalService);
   private readonly _uploadService: UploadService = inject(UploadService);
+  private readonly _editorSvc: ImageEditorService = inject(ImageEditorService);
   readonly _previewSvc: ImagePreviewService = inject(ImagePreviewService);
   private readonly _destroy$: Subject<void> = new Subject<void>();
 
@@ -143,12 +145,14 @@ export class CreateOrEditAplicationComponent implements OnInit, OnDestroy {
     this.faviconInputRef.nativeElement.click();
   }
 
-  onLogoSelected(event: Event): void {
+  async onLogoSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
+    const edited = await this._editorSvc.edit([input.files[0]]);
+    if (!edited.length) return;
     this._uploadingLogo.set(true);
     this._uploadService
-      .uploadImages('organizational', [input.files[0]])
+      .uploadImages('organizational', edited)
       .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: ([variant]) => {
@@ -162,12 +166,14 @@ export class CreateOrEditAplicationComponent implements OnInit, OnDestroy {
       });
   }
 
-  onFaviconSelected(event: Event): void {
+  async onFaviconSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
+    const edited = await this._editorSvc.edit([input.files[0]]);
+    if (!edited.length) return;
     this._uploadingFavicon.set(true);
     this._uploadService
-      .uploadImages('organizational', [input.files[0]])
+      .uploadImages('organizational', edited)
       .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: ([variant]) => {
@@ -194,6 +200,7 @@ export class CreateOrEditAplicationComponent implements OnInit, OnDestroy {
       next: (data: Organizational): void => {
         if (data?.id) this._orgId = data.id;
         this._saving.set(false);
+        this.form.markAsPristine();
       },
       error: (): void => {
         this._saving.set(false);

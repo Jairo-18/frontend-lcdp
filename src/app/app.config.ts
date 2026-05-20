@@ -12,7 +12,8 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    { provide: RouteReuseStrategy, useClass: CacheRouteReuseStrategy },
+    CacheRouteReuseStrategy,
+    { provide: RouteReuseStrategy, useExisting: CacheRouteReuseStrategy },
     provideHttpClient(
       withFetch(),
       withInterceptors([authInterceptor, notificationsInterceptor]),

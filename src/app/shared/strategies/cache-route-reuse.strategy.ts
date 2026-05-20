@@ -1,43 +1,41 @@
 import { RouteReuseStrategy, ActivatedRouteSnapshot, DetachedRouteHandle } from '@angular/router';
 
 export class CacheRouteReuseStrategy implements RouteReuseStrategy {
-  private _cache = new Map<object, DetachedRouteHandle>();
+  private readonly _cache = new Map<string, DetachedRouteHandle>();
+
+  private _key(route: ActivatedRouteSnapshot): string | null {
+    return (route.data['reuseKey'] as string) ?? null;
+  }
 
   shouldDetach(route: ActivatedRouteSnapshot): boolean {
-    return route.data['reuse'] === true;
+    return !!this._key(route);
   }
 
   store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): void {
-    if (route.routeConfig && handle) {
-      this._cache.set(route.routeConfig, handle);
-    }
+    const key = this._key(route);
+    if (key && handle) this._cache.set(key, handle);
   }
 
   shouldAttach(route: ActivatedRouteSnapshot): boolean {
-    return (
-      route.data['reuse'] === true &&
-      !!route.routeConfig &&
-      this._cache.has(route.routeConfig)
-    );
+    const key = this._key(route);
+    return !!(key && this._cache.has(key));
   }
 
   retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle | null {
-    if (!route.routeConfig) return null;
-    return this._cache.get(route.routeConfig) ?? null;
+    const key = this._key(route);
+    return key ? (this._cache.get(key) ?? null) : null;
   }
 
   shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean {
     return future.routeConfig === curr.routeConfig;
   }
 
-  /** Fuerza re-fetch en la próxima visita a una ruta específica (por path). */
-  invalidate(path: string): void {
-    for (const [routeConfig, handle] of this._cache) {
-      if ((routeConfig as { path?: string }).path === path) {
-        this._cache.delete(routeConfig);
-        (handle as { componentRef?: { destroy(): void } }).componentRef?.destroy();
-        break;
-      }
+  /** Elimina la entrada del caché para que la próxima visita recree el componente. */
+  invalidate(key: string): void {
+    const handle = this._cache.get(key);
+    if (handle) {
+      this._cache.delete(key);
+      (handle as { componentRef?: { destroy(): void } }).componentRef?.destroy();
     }
   }
 }

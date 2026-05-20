@@ -133,7 +133,10 @@
       <!-- Presentaciones -->
       <div class="bg-white border border-rule rounded-2xl p-6">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="font-semibold text-ink text-base">Presentaciones</h2>
+          <div>
+            <h2 class="font-semibold text-ink text-base">Presentaciones</h2>
+            <p class="text-[11px] text-ink-mute mt-0.5">La primera se muestra por defecto en el catálogo. Usa ↑↓ para reordenar.</p>
+          </div>
           <button type="button" (click)="addPresentation()"
             class="flex items-center gap-1 text-sm font-medium text-ink-mute hover:text-ink transition-colors cursor-pointer border-0 bg-transparent">
             <span class="material-symbols-outlined text-[18px] leading-none">add_circle</span>
@@ -142,11 +145,32 @@
         </div>
 
         <div formArrayName="presentations" class="space-y-3">
-          @for (pres of presentationsArray.controls; track $index; let pi = $index) {
-            <div [formGroupName]="pi" class="rounded-xl border border-rule bg-[rgba(26,28,44,0.02)] overflow-hidden">
+          @for (pres of presentationsArray.controls; track pres; let pi = $index) {
+            <div [formGroupName]="pi" class="rounded-xl overflow-hidden border"
+              [class.border-ink]="pi === 0"
+              [class.border-rule]="pi !== 0"
+              [class.bg-white]="pi === 0"
+              [style.background]="pi !== 0 ? 'rgba(26,28,44,0.02)' : null">
+              @if (pi === 0) {
+                <div class="flex items-center gap-1.5 px-3 py-1.5 bg-ink/5 border-b border-rule">
+                  <span class="material-symbols-outlined text-[13px] leading-none text-ink">star</span>
+                  <span class="text-[11px] font-semibold text-ink">Presentación principal</span>
+                </div>
+              }
 
               <!-- Presentation header row -->
               <div class="flex flex-wrap gap-2 items-center p-3">
+                <!-- Order arrows -->
+                <div class="flex flex-col gap-0.5 shrink-0">
+                  <button type="button" (click)="movePresentationUp(pi)" [disabled]="pi === 0"
+                    class="w-5 h-5 flex items-center justify-center rounded bg-transparent border-0 cursor-pointer text-ink-mute hover:text-ink disabled:opacity-20 disabled:cursor-not-allowed transition-colors">
+                    <span class="material-symbols-outlined text-[14px] leading-none">keyboard_arrow_up</span>
+                  </button>
+                  <button type="button" (click)="movePresentationDown(pi)" [disabled]="pi === presentationsArray.length - 1"
+                    class="w-5 h-5 flex items-center justify-center rounded bg-transparent border-0 cursor-pointer text-ink-mute hover:text-ink disabled:opacity-20 disabled:cursor-not-allowed transition-colors">
+                    <span class="material-symbols-outlined text-[14px] leading-none">keyboard_arrow_down</span>
+                  </button>
+                </div>
                 <div class="flex-1 min-w-[140px]">
                   <app-select-field
                     formControlName="unitOfMeasureId"
@@ -191,8 +215,8 @@
                         <img [src]="img.thumb" alt="imagen"
                           class="w-full h-full object-cover rounded-lg border border-rule" />
                         <button type="button" (click)="removeImage(pi, ii); $event.stopPropagation()"
-                          class="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center border-0 cursor-pointer">
-                          <span class="material-symbols-outlined text-[10px] leading-none">close</span>
+                          class="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/75 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center border-0 cursor-pointer shadow-sm hover:bg-red-600">
+                          <span class="material-symbols-outlined text-[15px] leading-none">close</span>
                         </button>
                       </div>
                     }
@@ -337,7 +361,7 @@
               <div class="space-y-2.5">
                 <p class="text-[10px] font-bold text-ink-mute tracking-widest uppercase">Presentación</p>
                 <div class="flex flex-wrap gap-2">
-                  @for (pres of presentationsArray.controls; track $index; let pi = $index) {
+                  @for (pres of presentationsArray.controls; track pres; let pi = $index) {
                     <button type="button" (click)="selectPreviewPres(pi)"
                       class="px-4 py-2.5 rounded-xl border-2 text-sm font-medium transition-all text-left"
                       [class.border-ink]="_previewPresIndex() === pi"

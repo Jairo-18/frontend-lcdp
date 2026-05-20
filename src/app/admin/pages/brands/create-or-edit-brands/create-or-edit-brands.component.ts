@@ -13,6 +13,7 @@ import { takeUntil } from 'rxjs/operators';
 import { BrandService } from '@shared/services/brand.service';
 import { Brand, BrandDto } from '@shared/interfaces/brand.interface';
 import { ImageVariant } from '@shared/interfaces/image-variant.interface';
+import { CacheRouteReuseStrategy } from '@shared/strategies/cache-route-reuse.strategy';
 
 @Component({
   selector: 'app-create-or-edit-brands',
@@ -22,6 +23,7 @@ import { ImageVariant } from '@shared/interfaces/image-variant.interface';
 })
 export class CreateOrEditBrandsComponent implements OnInit, OnDestroy {
   private readonly _brandService: BrandService = inject(BrandService);
+  private readonly _routeReuse: CacheRouteReuseStrategy = inject(CacheRouteReuseStrategy);
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
   private readonly _router: Router = inject(Router);
@@ -77,7 +79,12 @@ export class CreateOrEditBrandsComponent implements OnInit, OnDestroy {
     this._saving.set(true);
 
     const dto: BrandDto = { ...this.form.getRawValue(), images: this._images() };
-    const onSuccess = (): void => { this._saving.set(false); this.goBack(); };
+    const onSuccess = (): void => {
+      this._saving.set(false);
+      this.form.markAsPristine();
+      this._routeReuse.invalidate('brands');
+      this.goBack();
+    };
     const onError = (): void => this._saving.set(false);
 
     const editingId = this._editingId();

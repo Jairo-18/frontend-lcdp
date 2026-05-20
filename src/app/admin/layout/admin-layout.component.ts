@@ -2,13 +2,14 @@ import { Component, OnInit, inject, signal, WritableSignal } from '@angular/core
 import { RouterOutlet } from '@angular/router';
 import { AdminSidebarComponent } from '../../default-layout/components/admin-sidebar/admin-sidebar.component';
 import { ImagePreviewComponent } from '@shared/components';
+import { ImageEditorComponent } from '@shared/components/image-editor/image-editor.component';
 import { AuthService } from '@app/auth/services/auth.service';
 import { OrganizationalService } from '@shared/services/organizational.service';
 
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
-  imports: [RouterOutlet, AdminSidebarComponent, ImagePreviewComponent],
+  imports: [RouterOutlet, AdminSidebarComponent, ImagePreviewComponent, ImageEditorComponent],
   templateUrl: './admin-layout.component.html',
 })
 export class AdminLayoutComponent implements OnInit {

@@ -1,0 +1,188 @@
+@if (_svc.visible()) {
+  <div class="fixed inset-0 z-[200] bg-[#0a0b0f] flex flex-col select-none">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between px-5 py-3.5 border-b border-white/10 shrink-0">
+      <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-white/70 text-[20px] leading-none">edit</span>
+        <span class="text-white font-medium text-sm">Editor de imagen</span>
+        @if (_svc.files().length > 1) {
+          <span class="text-xs text-white/40 bg-white/10 px-2 py-0.5 rounded-full">
+            {{ _svc.currentIndex() + 1 }} / {{ _svc.files().length }}
+          </span>
+        }
+      </div>
+      <button type="button" (click)="_svc.cancel()"
+        class="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/15 text-white/50 hover:text-white transition-colors border-0 cursor-pointer">
+        <span class="material-symbols-outlined text-[18px] leading-none">close</span>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="flex flex-1 overflow-hidden">
+
+      <!-- Canvas area -->
+      <div #containerRef class="flex-1 flex items-center justify-center overflow-hidden p-6 relative">
+        <div #wrapperRef class="relative"
+          [class.cursor-crosshair]="_cropMode()"
+          (mousedown)="onWrapperMouseDown($event)">
+          <canvas #canvasRef class="block"></canvas>
+
+          <!-- Crop overlay (always square) -->
+          @if (_cropMode()) {
+            <!-- Dark masks -->
+            <div class="absolute inset-0 pointer-events-none overflow-hidden">
+              <div class="absolute left-0 right-0 top-0 bg-black/55" [style.height.px]="_crop().y"></div>
+              <div class="absolute left-0 right-0 bottom-0 bg-black/55" [style.top.px]="_crop().y + _crop().h"></div>
+              <div class="absolute bg-black/55"
+                [style.top.px]="_crop().y" [style.width.px]="_crop().x" [style.height.px]="_crop().h"></div>
+              <div class="absolute bg-black/55"
+                [style.left.px]="_crop().x + _crop().w" [style.top.px]="_crop().y"
+                [style.right.px]="0" [style.height.px]="_crop().h"></div>
+            </div>
+
+            <!-- Crop border -->
+            <div class="absolute border-2 border-white/80 pointer-events-none"
+              [style.left.px]="_crop().x" [style.top.px]="_crop().y"
+              [style.width.px]="_crop().w" [style.height.px]="_crop().h">
+
+              <!-- Rule-of-thirds -->
+              <div class="absolute top-1/3 left-0 right-0 h-px bg-white/20"></div>
+              <div class="absolute top-2/3 left-0 right-0 h-px bg-white/20"></div>
+              <div class="absolute left-1/3 top-0 bottom-0 w-px bg-white/20"></div>
+              <div class="absolute left-2/3 top-0 bottom-0 w-px bg-white/20"></div>
+
+              <!-- Corner handles only (square crop) -->
+              <div class="absolute w-4 h-4 bg-white rounded-sm pointer-events-auto cursor-nw-resize shadow -left-2 -top-2"
+                (mousedown)="onHandleMouseDown($event, 'nw')"></div>
+              <div class="absolute w-4 h-4 bg-white rounded-sm pointer-events-auto cursor-ne-resize shadow -right-2 -top-2"
+                (mousedown)="onHandleMouseDown($event, 'ne')"></div>
+              <div class="absolute w-4 h-4 bg-white rounded-sm pointer-events-auto cursor-sw-resize shadow -left-2 -bottom-2"
+                (mousedown)="onHandleMouseDown($event, 'sw')"></div>
+              <div class="absolute w-4 h-4 bg-white rounded-sm pointer-events-auto cursor-se-resize shadow -right-2 -bottom-2"
+                (mousedown)="onHandleMouseDown($event, 'se')"></div>
+
+              <!-- Square indicator label -->
+              <div class="absolute -bottom-7 left-1/2 -translate-x-1/2 text-[10px] text-white/60 bg-black/70 px-2 py-0.5 rounded whitespace-nowrap pointer-events-none">
+                @if (_outputPx) {
+                  {{ _outputPx | number:'1.0-0' }} × {{ _outputPx | number:'1.0-0' }} px
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Right control panel -->
+      <div class="w-56 shrink-0 bg-white/[0.03] border-l border-white/10 flex flex-col gap-1 p-4 overflow-y-auto">
+
+        <!-- Rotate -->
+        <p class="text-[10px] font-semibold text-white/30 uppercase tracking-widest mb-1.5">Rotar</p>
+        <div class="flex gap-2 mb-4">
+          <button type="button" (click)="rotate(-90)"
+            class="flex-1 flex flex-col items-center gap-1 py-3 rounded-xl bg-white/8 hover:bg-white/[0.12] text-white transition-colors border-0 cursor-pointer">
+            <span class="material-symbols-outlined text-[22px] leading-none">rotate_left</span>
+            <span class="text-[10px] text-white/40">−90°</span>
+          </button>
+          <button type="button" (click)="rotate(90)"
+            class="flex-1 flex flex-col items-center gap-1 py-3 rounded-xl bg-white/8 hover:bg-white/[0.12] text-white transition-colors border-0 cursor-pointer">
+            <span class="material-symbols-outlined text-[22px] leading-none">rotate_right</span>
+            <span class="text-[10px] text-white/40">+90°</span>
+          </button>
+        </div>
+
+        <!-- Flip -->
+        <p class="text-[10px] font-semibold text-white/30 uppercase tracking-widest mb-1.5">Voltear</p>
+        <div class="flex gap-2 mb-4">
+          <button type="button" (click)="toggleFlipH()"
+            class="flex-1 flex flex-col items-center gap-1 py-3 rounded-xl transition-colors border-0 cursor-pointer"
+            [class]="_flipH() ? 'bg-indigo-600 text-white' : 'bg-white/8 hover:bg-white/[0.12] text-white/70'">
+            <span class="material-symbols-outlined text-[22px] leading-none">flip</span>
+            <span class="text-[10px] opacity-60">H</span>
+          </button>
+          <button type="button" (click)="toggleFlipV()"
+            class="flex-1 flex flex-col items-center gap-1 py-3 rounded-xl transition-colors border-0 cursor-pointer"
+            [class]="_flipV() ? 'bg-indigo-600 text-white' : 'bg-white/8 hover:bg-white/[0.12] text-white/70'">
+            <span class="material-symbols-outlined text-[22px] leading-none" style="transform:rotate(90deg)">flip</span>
+            <span class="text-[10px] opacity-60">V</span>
+          </button>
+        </div>
+
+        <!-- Crop (always square) -->
+        <p class="text-[10px] font-semibold text-white/30 uppercase tracking-widest mb-1.5">Recortar</p>
+        <button type="button" (click)="toggleCrop()"
+          class="w-full flex items-center justify-center gap-2 py-3 rounded-xl transition-colors border-0 cursor-pointer text-sm mb-1"
+          [class]="_cropMode() ? 'bg-indigo-600 text-white' : 'bg-white/8 hover:bg-white/[0.12] text-white/70'">
+          <span class="material-symbols-outlined text-[18px] leading-none">crop_square</span>
+          {{ _cropMode() ? 'Recorte cuadrado activo' : 'Recorte cuadrado' }}
+        </button>
+        @if (_cropMode()) {
+          <button type="button" (click)="resetCrop()"
+            class="w-full py-1.5 text-xs text-white/30 hover:text-white/60 transition-colors border-0 bg-transparent cursor-pointer mb-2">
+            Centrar selección
+          </button>
+
+          <!-- Target pixel size -->
+          <div class="space-y-1.5 mb-2">
+            <p class="text-[10px] text-white/30 uppercase tracking-widest font-semibold">Tamaño de salida</p>
+            <div class="flex items-center gap-1.5">
+              <input type="number" min="50" max="4000" step="50"
+                [value]="_targetPx() ?? ''"
+                (input)="onTargetPxInput($any($event.target).value)"
+                placeholder="{{ _outputPx ?? '' }}"
+                class="flex-1 bg-white/8 border border-white/10 rounded-lg px-2.5 py-2 text-xs text-white placeholder:text-white/20 focus:outline-none focus:border-white/30" />
+              <span class="text-[10px] text-white/30">px</span>
+            </div>
+            @if (_targetPx()) {
+              <p class="text-[10px] text-indigo-400">Exportará a {{ _targetPx() }}×{{ _targetPx() }} px</p>
+            } @else if (_outputPx) {
+              <p class="text-[10px] text-white/25">Tamaño natural: {{ _outputPx | number:'1.0-0' }}×{{ _outputPx | number:'1.0-0' }} px</p>
+            }
+          </div>
+        }
+
+        <!-- Divider -->
+        <div class="border-t border-white/10 my-2"></div>
+
+        <!-- Reset all -->
+        <button type="button" (click)="resetAll()"
+          class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/35 hover:text-white/60 text-xs transition-colors border-0 cursor-pointer">
+          <span class="material-symbols-outlined text-[16px] leading-none">restart_alt</span>
+          Resetear todo
+        </button>
+
+        <!-- File name -->
+        @if (_img) {
+          <div class="mt-auto pt-4 text-[9px] text-white/15 leading-relaxed break-all">
+            {{ _svc.files()[_svc.currentIndex()].name }}
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-between px-5 py-3.5 border-t border-white/10 shrink-0 gap-3">
+      <p class="text-[11px] text-white/25">
+        @if (_svc.files().length > 1) {
+          Imagen {{ _svc.currentIndex() + 1 }} de {{ _svc.files().length }}
+        } @else {
+          <kbd class="px-1.5 py-0.5 bg-white/10 rounded text-[10px] font-sans">Enter</kbd> confirmar ·
+          <kbd class="px-1.5 py-0.5 bg-white/10 rounded text-[10px] font-sans">Esc</kbd> cancelar
+        }
+      </p>
+      <div class="flex items-center gap-2">
+        <button type="button" (click)="skip()"
+          class="px-5 py-2 rounded-xl bg-white/8 hover:bg-white/[0.12] text-white/60 hover:text-white text-sm transition-colors border-0 cursor-pointer">
+          Omitir
+        </button>
+        <button type="button" (click)="confirm()" [disabled]="_confirming()"
+          class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60 text-white text-sm font-medium transition-colors border-0 cursor-pointer flex items-center gap-2">
+          @if (_confirming()) {
+            <span class="material-symbols-outlined text-[15px] leading-none animate-spin">progress_activity</span>
+          }
+          {{ _svc.files().length > 1 && _svc.currentIndex() < _svc.files().length - 1 ? 'Siguiente' : 'Confirmar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

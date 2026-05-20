@@ -1,0 +1,32 @@
+@if (summary) {
+  <p class="text-sm text-ink-mute">{{ summary }}</p>
+}
+<div class="flex items-center flex-wrap justify-center gap-1.5">
+  <button type="button" (click)="emit(1)" [disabled]="page <= 1"
+    class="p-2 rounded-lg border border-rule bg-white text-ink-mute hover:text-ink hover:border-ink/30 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
+    <span class="material-symbols-outlined text-[16px] leading-none">first_page</span>
+  </button>
+  <button type="button" (click)="emit(page - 1)" [disabled]="page <= 1"
+    class="p-2 rounded-lg border border-rule bg-white text-ink-mute hover:text-ink hover:border-ink/30 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
+    <span class="material-symbols-outlined text-[16px] leading-none">chevron_left</span>
+  </button>
+  @for (p of pageNumbers; track $index) {
+    @if (p === null) {
+      <span class="px-1 text-ink-mute text-sm">…</span>
+    } @else {
+      <button type="button" (click)="emit(p)"
+        class="min-w-[36px] h-9 px-2 rounded-lg border text-sm font-semibold transition-colors cursor-pointer"
+        [class]="p === page ? 'bg-ink text-white border-ink' : 'bg-white text-ink-mute border-rule hover:text-ink hover:border-ink/30'">
+        {{ p }}
+      </button>
+    }
+  }
+  <button type="button" (click)="emit(page + 1)" [disabled]="page >= pageCount"
+    class="p-2 rounded-lg border border-rule bg-white text-ink-mute hover:text-ink hover:border-ink/30 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
+    <span class="material-symbols-outlined text-[16px] leading-none">chevron_right</span>
+  </button>
+  <button type="button" (click)="emit(pageCount)" [disabled]="page >= pageCount"
+    class="p-2 rounded-lg border border-rule bg-white text-ink-mute hover:text-ink hover:border-ink/30 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
+    <span class="material-symbols-outlined text-[16px] leading-none">last_page</span>
+  </button>
+</div>
