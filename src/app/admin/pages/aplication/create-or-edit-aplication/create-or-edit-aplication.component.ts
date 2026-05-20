@@ -38,7 +38,7 @@ export class CreateOrEditAplicationComponent implements OnInit, OnDestroy {
   private readonly _organizationService: OrganizationalService = inject(OrganizationalService);
   private readonly _uploadService: UploadService = inject(UploadService);
   readonly _previewSvc: ImagePreviewService = inject(ImagePreviewService);
-  private readonly _destroy$ = new Subject<void>();
+  private readonly _destroy$: Subject<void> = new Subject<void>();
 
   @ViewChild('logoInput') logoInputRef!: ElementRef<HTMLInputElement>;
   @ViewChild('faviconInput') faviconInputRef!: ElementRef<HTMLInputElement>;
@@ -152,7 +152,10 @@ export class CreateOrEditAplicationComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: ([variant]) => {
-          if (variant) this.form.get('logoUrl')?.setValue(variant.md);
+          if (variant) {
+            this.form.get('logoUrl')?.setValue(variant.md);
+            this.form.markAsDirty();
+          }
           this._uploadingLogo.set(false);
         },
         error: () => this._uploadingLogo.set(false),
@@ -168,7 +171,10 @@ export class CreateOrEditAplicationComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: ([variant]) => {
-          if (variant) this.form.get('faviconUrl')?.setValue(variant.thumb);
+          if (variant) {
+            this.form.get('faviconUrl')?.setValue(variant.thumb);
+            this.form.markAsDirty();
+          }
           this._uploadingFavicon.set(false);
         },
         error: () => this._uploadingFavicon.set(false),

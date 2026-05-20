@@ -40,6 +40,22 @@ export class ProductService {
       .pipe(map((r) => ({ ...r.data, data: r.data.data.map(resolveProduct) })));
   }
 
+  getPublic(params: ProductParams): Observable<{ data: Product[]; pagination: PaginationInterface }> {
+    const httpParams = this._httpUtils.httpParamsFromObject(params);
+    return this._http
+      .get<ApiResponseInterface<{ data: Product[]; pagination: PaginationInterface }>>(
+        `${environment.apiUrl}/public/products`,
+        { params: httpParams },
+      )
+      .pipe(map((r) => ({ ...r.data, data: r.data.data.map(resolveProduct) })));
+  }
+
+  getPublicOne(id: number): Observable<Product> {
+    return this._http
+      .get<ApiResponseInterface<Product>>(`${environment.apiUrl}/public/products/${id}`)
+      .pipe(map((r) => resolveProduct(r.data)));
+  }
+
   getOne(id: number): Observable<Product> {
     return this._http
       .get<ApiResponseInterface<Product>>(`${environment.apiUrl}/products/${id}`)

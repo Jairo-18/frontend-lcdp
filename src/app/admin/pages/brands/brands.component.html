@@ -1,13 +1,13 @@
-<div class="p-8">
+<div class="p-4 sm:p-6 lg:p-8">
 
   <!-- Header -->
-  <div class="flex items-center justify-between mb-6">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
     <div>
       <h1 class="font-display font-bold text-ink text-2xl">Marcas</h1>
       <p class="text-ink-mute text-sm mt-1">Gestiona las marcas del catálogo.</p>
     </div>
     <button type="button" (click)="openCreate()"
-      class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-ink text-white text-sm font-semibold hover:bg-black transition-colors cursor-pointer border-0">
+      class="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-ink text-white text-sm font-semibold hover:bg-black transition-colors cursor-pointer border-0">
       <span class="material-symbols-outlined text-[18px] leading-none">add</span>
       Nueva marca
     </button>
@@ -23,7 +23,7 @@
         class="w-full pl-9 pr-3 py-2 rounded-xl border border-rule text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" />
     </div>
     <select [value]="_perPage()" (change)="onPerPageChange($any($event.target).value)"
-      class="rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 cursor-pointer">
+      class="w-full sm:w-auto rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 cursor-pointer">
       <option value="10">10 por página</option>
       <option value="25">25 por página</option>
       <option value="50">50 por página</option>
@@ -99,8 +99,13 @@
                       <span class="material-symbols-outlined text-[18px] leading-none">edit</span>
                     </button>
                     <button type="button" (click)="confirmDelete(brand.id, brand.name)"
-                      class="p-1.5 rounded-lg hover:bg-red-50 text-ink-mute hover:text-red-500 transition-colors cursor-pointer border-0 bg-transparent" title="Eliminar">
-                      <span class="material-symbols-outlined text-[18px] leading-none">delete</span>
+                      [disabled]="_deletingId() === brand.id"
+                      class="p-1.5 rounded-lg hover:bg-red-50 text-ink-mute hover:text-red-500 transition-colors cursor-pointer border-0 bg-transparent disabled:opacity-50" title="Eliminar">
+                      @if (_deletingId() === brand.id) {
+                        <span class="material-symbols-outlined text-[18px] leading-none animate-spin">progress_activity</span>
+                      } @else {
+                        <span class="material-symbols-outlined text-[18px] leading-none">delete</span>
+                      }
                     </button>
                   </div>
                 </td>
@@ -111,17 +116,35 @@
       </div>
 
       <!-- Pagination -->
-      <div class="flex items-center justify-between px-6 py-4 border-t border-rule">
+      <div class="flex flex-col items-center gap-3 px-6 py-4 border-t border-rule">
         <p class="text-sm text-ink-mute">{{ _from() }}–{{ _to() }} de {{ _total() }} marcas</p>
-        <div class="flex items-center gap-2">
-          <button type="button" (click)="prevPage()" [disabled]="_page() <= 1"
-            class="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-rule text-sm text-ink hover:bg-[rgba(26,28,44,0.04)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer bg-white">
-            <span class="material-symbols-outlined text-[16px] leading-none">chevron_left</span>Anterior
+        <div class="flex items-center flex-wrap justify-center gap-1.5">
+          <button type="button" (click)="goToPage(1)" [disabled]="_page() <= 1"
+            class="p-2 rounded-lg border border-rule bg-white text-ink-mute hover:text-ink hover:border-ink/30 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
+            <span class="material-symbols-outlined text-[16px] leading-none">first_page</span>
           </button>
-          <span class="text-sm text-ink-mute px-2">{{ _page() }} / {{ _pageCount() }}</span>
+          <button type="button" (click)="prevPage()" [disabled]="_page() <= 1"
+            class="p-2 rounded-lg border border-rule bg-white text-ink-mute hover:text-ink hover:border-ink/30 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
+            <span class="material-symbols-outlined text-[16px] leading-none">chevron_left</span>
+          </button>
+          @for (p of pageNumbers(); track $index) {
+            @if (p === null) {
+              <span class="px-1 text-ink-mute text-sm">…</span>
+            } @else {
+              <button type="button" (click)="goToPage(p)"
+                class="min-w-[36px] h-9 px-2 rounded-lg border text-sm font-semibold transition-colors cursor-pointer"
+                [class]="p === _page() ? 'bg-ink text-white border-ink' : 'bg-white text-ink-mute border-rule hover:text-ink hover:border-ink/30'">
+                {{ p }}
+              </button>
+            }
+          }
           <button type="button" (click)="nextPage()" [disabled]="_page() >= _pageCount()"
-            class="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-rule text-sm text-ink hover:bg-[rgba(26,28,44,0.04)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer bg-white">
-            Siguiente<span class="material-symbols-outlined text-[16px] leading-none">chevron_right</span>
+            class="p-2 rounded-lg border border-rule bg-white text-ink-mute hover:text-ink hover:border-ink/30 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
+            <span class="material-symbols-outlined text-[16px] leading-none">chevron_right</span>
+          </button>
+          <button type="button" (click)="goToPage(_pageCount())" [disabled]="_page() >= _pageCount()"
+            class="p-2 rounded-lg border border-rule bg-white text-ink-mute hover:text-ink hover:border-ink/30 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
+            <span class="material-symbols-outlined text-[16px] leading-none">last_page</span>
           </button>
         </div>
       </div>

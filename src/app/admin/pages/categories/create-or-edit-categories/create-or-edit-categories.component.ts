@@ -67,6 +67,11 @@ export class CreateOrEditCategoriesComponent implements OnInit, OnDestroy {
     this._router.navigate(['/admin/categories']);
   }
 
+  onImagesChange(images: ImageVariant[]): void {
+    this._images.set(images);
+    this.form.markAsDirty();
+  }
+
   save(): void {
     if (this.form.invalid || this._saving()) return;
     this._saving.set(true);

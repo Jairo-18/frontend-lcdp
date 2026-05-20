@@ -25,7 +25,7 @@ export class NewProductsComponent implements OnInit {
 
   ngOnInit(): void {
     this._productService
-      .getAll({ page: 1, perPage: 10, orderBy: 'createdAt', order: 'DESC' })
+      .getPublic({ page: 1, perPage: 10, orderBy: 'createdAt', order: 'DESC' })
       .subscribe({
         next: (res): void => {
           this.products.set(res.data);
@@ -45,5 +45,19 @@ export class NewProductsComponent implements OnInit {
 
   firstSku(product: Product): string {
     return product.presentations[0]?.sku ?? '—';
+  }
+
+  webPrice(product: Product): number | null {
+    const base = product.presentations[0]?.priceSale ?? product.priceSale;
+    if (base == null) return null;
+    const markup = product.markupPercentage ?? 0;
+    return Number(base) * (1 + markup / 100);
+  }
+
+  formatPrice(value: number): string {
+    return '$' + new Intl.NumberFormat('es-CO', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
   }
 }

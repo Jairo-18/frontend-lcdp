@@ -11,6 +11,4 @@ export interface Brand {
   name: string;
   code: string;
   images: ImageVariant[];
-  createdAt: string;
-  updatedAt: string | null;
 }

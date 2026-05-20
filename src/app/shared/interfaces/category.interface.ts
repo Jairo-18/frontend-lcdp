@@ -11,8 +11,6 @@ export interface Category {
   name: string;
   code: string;
   images: ImageVariant[];
-  createdAt: string;
-  updatedAt: string | null;
 }
 
 export interface CategoryPill {

@@ -30,6 +30,7 @@ import { ImagePreviewService } from '@shared/services/image-preview.service';
 import {
   UnitOfMeasure,
   CreateProductDto,
+  PresentationFormRaw,
 } from '@shared/interfaces/product.interface';
 import { Category } from '@shared/interfaces/category.interface';
 import { Brand } from '@shared/interfaces/brand.interface';
@@ -38,12 +39,19 @@ import { ImageVariant } from '@shared/interfaces/image-variant.interface';
 @Component({
   selector: 'app-create-or-edit-products',
   standalone: true,
-  imports: [ReactiveFormsModule, InputFieldComponent, TextareaFieldComponent, SelectFieldComponent],
+  imports: [
+    ReactiveFormsModule,
+    InputFieldComponent,
+    TextareaFieldComponent,
+    SelectFieldComponent,
+  ],
   templateUrl: './create-or-edit-products.component.html',
 })
 export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
   private readonly _productService: ProductService = inject(ProductService);
-  private readonly _organizationalService: OrganizationalService = inject(OrganizationalService);
+  private readonly _organizationalService: OrganizationalService = inject(
+    OrganizationalService,
+  );
   private readonly _uploadService: UploadService = inject(UploadService);
   private readonly _sanitizer: DomSanitizer = inject(DomSanitizer);
   readonly _previewSvc: ImagePreviewService = inject(ImagePreviewService);
@@ -66,9 +74,13 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
   readonly _presImages = signal<ImageVariant[][]>([]);
   readonly _uploadingForIndex = signal<number | null>(null);
 
-  // Preview state
   readonly _previewPresIndex = signal(0);
   readonly _previewImageIndex = signal(0);
+
+  readonly percentageOptions: SelectOption[] = Array.from(
+    { length: 100 },
+    (_, i) => ({ value: i + 1, label: `${i + 1}%` }),
+  );
 
   readonly categoryOptions = computed<SelectOption[]>(() =>
     this._categories().map((c) => ({ value: c.id, label: c.name })),
@@ -94,13 +106,13 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
     isActive: [true],
     videoUrl: [''],
     presentations: this._fb.array([]),
+    markupPercentage: [null as number | null],
+    discountPercentage: [null as number | null],
   });
 
   get presentationsArray(): FormArray<FormGroup> {
     return this.form.get('presentations') as FormArray<FormGroup>;
   }
-
-  // --- Preview helpers ---
 
   get previewBrandName(): string {
     const id = this.form.get('brandId')?.value;
@@ -112,7 +124,9 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
     const presForm = this.presentationsArray.at(pi) as FormGroup | null;
     const unitId = presForm?.get('unitOfMeasureId')?.value;
     if (!unitId) return '';
-    return this._units().find((u) => String(u.id) === String(unitId))?.name ?? '';
+    return (
+      this._units().find((u) => String(u.id) === String(unitId))?.name ?? ''
+    );
   }
 
   thumbnailPlaceholders(presIndex: number): number[] {
@@ -122,16 +136,38 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
 
   formatPrice(value: number | null | undefined): string {
     if (value == null) return '—';
-    return '$' + new Intl.NumberFormat('es-CO', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(value);
+    return (
+      '$' +
+      new Intl.NumberFormat('es-CO', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(value)
+    );
+  }
+
+  webPriceForPresentation(base: number | null | undefined): string {
+    if (base == null) return '—';
+    const markup = Number(this.form.get('markupPercentage')?.value) || 0;
+    return this.formatPrice(Number(base) * (1 + markup / 100));
+  }
+
+  previewWebPrice(): string {
+    const base =
+      this.presentationsArray.length > 0
+        ? this.presentationsArray.at(this._previewPresIndex()).get('priceSale')
+            ?.value
+        : this.form.get('priceSale')?.value;
+    if (base == null) return '—';
+    const markup = Number(this.form.get('markupPercentage')?.value) || 0;
+    return this.formatPrice(Number(base) * (1 + markup / 100));
   }
 
   get previewVideoEmbedUrl(): SafeResourceUrl | null {
     const url = this.form.get('videoUrl')?.value;
     if (!url) return null;
-    const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    const ytMatch = url.match(
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+    );
     if (ytMatch) {
       return this._sanitizer.bypassSecurityTrustResourceUrl(
         `https://www.youtube.com/embed/${ytMatch[1]}`,
@@ -148,8 +184,6 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
   selectPreviewImage(index: number): void {
     this._previewImageIndex.set(index);
   }
-
-  // --- End preview helpers ---
 
   ngOnInit(): void {
     const idParam = this._route.snapshot.paramMap.get('id');
@@ -184,6 +218,8 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
                     taxTypeId: p.taxTypeId ? String(p.taxTypeId) : '',
                     isActive: p.isActive,
                     videoUrl: p.videoUrl ?? '',
+                    markupPercentage: p.markupPercentage ?? null,
+                    discountPercentage: p.discountPercentage ?? null,
                   });
                   (p.presentations ?? []).forEach((pres) =>
                     this._addPresentationRow(
@@ -225,6 +261,7 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
 
   removePresentation(index: number): void {
     this.presentationsArray.removeAt(index);
+    this.form.markAsDirty();
     this._presImages.update((imgs) => imgs.filter((_, i) => i !== index));
     const newLen = this.presentationsArray.length;
     if (newLen === 0) {
@@ -258,6 +295,7 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
             updated[index] = [...(updated[index] ?? []), ...variants];
             return updated;
           });
+          this.form.markAsDirty();
           this._uploadingForIndex.set(null);
         },
         error: () => this._uploadingForIndex.set(null),
@@ -269,12 +307,15 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
   }
 
   removeImage(presIndex: number, imgIndex: number): void {
+    this.form.markAsDirty();
     this._presImages.update((imgs) => {
       const updated = [...imgs];
       updated[presIndex] = updated[presIndex].filter((_, i) => i !== imgIndex);
       return updated;
     });
-    if (this._previewImageIndex() >= (this._presImages()[presIndex]?.length ?? 0)) {
+    if (
+      this._previewImageIndex() >= (this._presImages()[presIndex]?.length ?? 0)
+    ) {
       this._previewImageIndex.set(0);
     }
   }
@@ -284,7 +325,11 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
     if (urls.length) this._previewSvc.open(urls, imageIndex);
   }
 
-  private _addPresentationRow(unitOfMeasureId: string, sku: string, priceSale: number | null): void {
+  private _addPresentationRow(
+    unitOfMeasureId: string,
+    sku: string,
+    priceSale: number | null,
+  ): void {
     this.presentationsArray.push(
       this._fb.nonNullable.group({
         unitOfMeasureId: [unitOfMeasureId, Validators.required],
@@ -299,8 +344,7 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
     this._saving.set(true);
 
     const raw = this.form.getRawValue();
-    const presImages = this._presImages();
-    type PresentationRaw = { unitOfMeasureId: string; sku: string; priceSale: number | null };
+    const presImages: ImageVariant[][] = this._presImages();
     const dto: CreateProductDto = {
       name: raw.name,
       code: raw.code || undefined,
@@ -311,25 +355,42 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
       taxTypeId: raw.taxTypeId ? Number(raw.taxTypeId) : undefined,
       isActive: raw.isActive,
       videoUrl: raw.videoUrl || undefined,
-      presentations: (raw.presentations as PresentationRaw[]).map((p, i) => ({
-        unitOfMeasureId: Number(p.unitOfMeasureId),
-        sku: p.sku || undefined,
-        priceSale: p.priceSale ?? undefined,
-        images: presImages[i] ?? [],
-      })),
+      presentations: (raw.presentations as PresentationFormRaw[]).map(
+        (p, i) => ({
+          unitOfMeasureId: Number(p.unitOfMeasureId),
+          sku: p.sku || undefined,
+          priceSale: p.priceSale ?? undefined,
+          images: presImages[i] ?? [],
+        }),
+      ),
+      markupPercentage: raw.markupPercentage ?? undefined,
+      discountPercentage: raw.discountPercentage ?? undefined,
     };
 
-    const onSuccess = (): void => {
-      this._saving.set(false);
-      this.goBack();
-    };
     const onError = (): void => this._saving.set(false);
 
     const editingId = this._editingId();
     if (editingId) {
-      this._productService.update(editingId, dto).pipe(takeUntil(this._destroy$)).subscribe({ next: onSuccess, error: onError });
+      this._productService
+        .update(editingId, dto)
+        .pipe(takeUntil(this._destroy$))
+        .subscribe({
+          next: () => this._saving.set(false),
+          error: onError,
+        });
     } else {
-      this._productService.create(dto).pipe(takeUntil(this._destroy$)).subscribe({ next: onSuccess, error: onError });
+      this._productService
+        .create(dto)
+        .pipe(takeUntil(this._destroy$))
+        .subscribe({
+          next: ({ rowId }) => {
+            this._saving.set(false);
+            this._router.navigate(['/admin/products/edit', rowId], {
+              replaceUrl: true,
+            });
+          },
+          error: onError,
+        });
     }
   }
 }

@@ -28,22 +28,29 @@ export interface CreateProductDto {
   videoUrl?: string;
   technicalSheet?: Record<string, string | number | boolean>;
   presentations?: CreatePresentationDto[];
+  markupPercentage?: number;
+  discountPercentage?: number;
 }
 
 export type UpdateProductDto = Partial<CreateProductDto>;
+
+export interface PresentationFormRaw {
+  unitOfMeasureId: string;
+  sku: string;
+  priceSale: number | null;
+}
 
 export interface ProductParams extends BasePaginationParams {
   search?: string;
   categoryId?: number;
   brandId?: number;
+  orderBy?: 'name' | 'createdAt';
 }
 
 export interface UnitOfMeasure {
   id: number;
   name: string;
   code: string;
-  createdAt: string;
-  updatedAt: string | null;
 }
 
 export interface ProductImage {
@@ -51,7 +58,6 @@ export interface ProductImage {
   presentationId: number;
   variants: ImageVariant;
   order: number;
-  createdAt: string;
 }
 
 export interface ProductPresentation {
@@ -62,8 +68,6 @@ export interface ProductPresentation {
   sku: string | null;
   priceSale: number | null;
   images: ProductImage[];
-  createdAt: string;
-  updatedAt: string | null;
 }
 
 export interface Product {
@@ -82,6 +86,6 @@ export interface Product {
   technicalSheet: Record<string, string | number | boolean> | null;
   videoUrl: string | null;
   presentations: ProductPresentation[];
-  createdAt: string;
-  updatedAt: string | null;
+  markupPercentage: number | null;
+  discountPercentage: number | null;
 }

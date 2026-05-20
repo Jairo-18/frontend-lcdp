@@ -48,7 +48,7 @@
           class="px-4 py-2 rounded-xl border border-rule text-sm font-semibold text-ink hover:bg-[rgba(26,28,44,0.04)] transition-colors cursor-pointer bg-white">
           Cancelar
         </button>
-        <button type="submit" [disabled]="_saving() || form.invalid"
+        <button type="submit" [disabled]="_saving() || form.invalid || form.pristine"
           class="flex items-center gap-2 px-5 py-2 rounded-xl bg-ink text-white text-sm font-semibold hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer border-0">
           @if (_saving()) {
             <span class="material-symbols-outlined text-[16px] leading-none animate-spin">progress_activity</span>

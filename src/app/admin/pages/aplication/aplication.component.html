@@ -220,7 +220,7 @@
       <div class="flex justify-end mt-6">
         <button
           type="submit"
-          [disabled]="_saving() || form.invalid"
+          [disabled]="_saving() || form.invalid || form.pristine"
           class="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-ink text-white text-sm font-semibold transition-colors hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer border-0"
         >
           @if (_saving()) {

@@ -7,6 +7,4 @@ export interface TaxType {
   id: number;
   name: string;
   code: string;
-  createdAt: string;
-  updatedAt: string | null;
 }

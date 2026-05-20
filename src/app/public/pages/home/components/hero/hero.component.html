@@ -1,11 +1,10 @@
 <!-- ── Hero ── -->
 <div class="px-6 py-10 md:px-10 md:py-12">
   <section
-    class="max-w-[1240px] mx-auto rounded-3xl bg-[radial-gradient(ellipse_80%_100%_at_70%_40%,#ffdf4a_0%,#ffcb05_55%,#f5b800_100%)] flex items-center justify-between gap-10 px-12 py-14 overflow-hidden relative max-lg:flex-col max-lg:justify-center max-lg:px-8 max-lg:py-10"
+    class="max-w-[1440px] mx-auto rounded-3xl bg-[radial-gradient(ellipse_80%_100%_at_70%_40%,#ffdf4a_0%,#ffcb05_55%,#f5b800_100%)] flex items-center justify-between gap-10 px-12 py-14 overflow-hidden relative max-lg:flex-col max-lg:justify-center max-lg:px-8 max-lg:py-10"
   >
     <!-- Left -->
     <div class="max-w-[500px] shrink-0 z-10 w-full lg:w-auto">
-
       <!-- Badge -->
       <span
         class="inline-block text-[11px] font-semibold tracking-[0.1em] uppercase text-ink border border-ink/25 rounded-full px-4 py-1.5 mb-6"
@@ -65,7 +64,10 @@
       </p>
 
       <!-- Imágenes — solo mobile (entre párrafo y botones) -->
-      <div class="flex items-end justify-center lg:hidden mb-6" aria-hidden="true">
+      <div
+        class="flex items-end justify-center lg:hidden mb-6"
+        aria-hidden="true"
+      >
         <img
           src="assets/images/hero/pinturaIzquierda.webp"
           alt=""
@@ -84,7 +86,9 @@
       </div>
 
       <!-- CTAs -->
-      <div class="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 mb-10">
+      <div
+        class="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 mb-10"
+      >
         <a
           routerLink="/catalogo"
           class="inline-flex items-center justify-center gap-1.5 bg-ink text-white text-sm font-semibold px-6 py-3 rounded-full no-underline transition-all hover:bg-black hover:-translate-y-px"
@@ -97,7 +101,9 @@
           rel="noopener noreferrer"
           class="inline-flex items-center justify-center gap-2 text-[#128c46] text-sm font-semibold px-5 py-3 rounded-full border border-[#128c46]/40 no-underline transition-all hover:bg-[#25D366]/15 hover:border-[#25D366]"
         >
-          <span class="material-symbols-outlined text-[18px] leading-none">chat</span>
+          <span class="material-symbols-outlined text-[18px] leading-none"
+            >chat</span
+          >
           Pedir por WhatsApp
         </a>
       </div>
@@ -106,12 +112,17 @@
       <div class="flex items-center gap-8">
         @for (stat of stats(); track stat.label) {
           <div class="flex flex-col gap-0.5">
-            <span class="font-display font-extrabold text-[20px] leading-none text-ink">{{ stat.value }}</span>
-            <span class="font-alegreya text-[12px] font-semibold tracking-[0.08em] uppercase text-ink/50">{{ stat.label }}</span>
+            <span
+              class="font-display font-extrabold text-[20px] leading-none text-ink"
+              >{{ stat.value }}</span
+            >
+            <span
+              class="font-alegreya text-[12px] font-semibold tracking-[0.08em] uppercase text-ink/50"
+              >{{ stat.label }}</span
+            >
           </div>
         }
       </div>
-
     </div>
 
     <!-- Imágenes — solo desktop (columna derecha) -->
@@ -132,6 +143,5 @@
         class="h-[220px] w-auto object-contain drop-shadow-2xl rotate-[4deg] translate-y-4 -ml-14 z-0"
       />
     </div>
-
   </section>
 </div>

@@ -1,20 +1,27 @@
 <div class="p-8">
-
   <!-- Header -->
   <div class="mb-6">
-    <h1 class="font-display font-bold text-ink text-2xl">Gestionar aplicación</h1>
-    <p class="text-ink-mute text-sm mt-1">Configura la información, branding y contenido de la tienda.</p>
+    <h1 class="font-display font-bold text-ink text-2xl">
+      Gestionar aplicación
+    </h1>
+    <p class="text-ink-mute text-sm mt-1">
+      Configura la información, branding y contenido de la tienda.
+    </p>
   </div>
 
   @if (_loading()) {
     <div class="flex items-center justify-center py-20 text-ink-mute gap-3">
-      <span class="material-symbols-outlined text-[28px] leading-none animate-spin">progress_activity</span>
+      <span
+        class="material-symbols-outlined text-[28px] leading-none animate-spin"
+        >progress_activity</span
+      >
       Cargando...
     </div>
   } @else {
-
     <!-- Tabs -->
-    <div class="flex gap-1 bg-[rgba(26,28,44,0.04)] border border-rule rounded-xl p-1 mb-6 overflow-x-auto">
+    <div
+      class="flex gap-1 bg-[rgba(26,28,44,0.04)] border border-rule rounded-xl p-1 mb-6 overflow-x-auto"
+    >
       @for (tab of tabs; track tab.id) {
         <button
           type="button"
@@ -26,119 +33,245 @@
           [class.bg-transparent]="_tab() !== tab.id"
           [class.text-ink-mute]="_tab() !== tab.id"
         >
-          <span class="material-symbols-outlined text-[18px] leading-none">{{ tab.icon }}</span>
+          <span class="material-symbols-outlined text-[18px] leading-none">{{
+            tab.icon
+          }}</span>
           {{ tab.label }}
         </button>
       }
     </div>
 
     <form [formGroup]="form" (ngSubmit)="save()">
-
       <!-- ── General ── -->
       @if (_tab() === 'general') {
         <div class="bg-white border border-rule rounded-2xl p-6">
-          <h2 class="font-semibold text-ink text-base mb-5">Información general</h2>
+          <h2 class="font-semibold text-ink text-base mb-5">
+            Información general
+          </h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="md:col-span-2">
-              <app-input-field formControlName="name" label="Nombre del negocio" placeholder="La Casa del Pintor" [required]="true" [control]="form.get('name')" />
+              <app-input-field
+                formControlName="name"
+                label="Nombre del negocio"
+                placeholder="La Casa del Pintor"
+                [required]="true"
+                [control]="form.get('name')"
+              />
             </div>
-            <app-input-field formControlName="legalName" label="Razón social" placeholder="Nombre legal" />
-            <app-input-field formControlName="nit" label="NIT / RUT" placeholder="900.000.000-0" />
-            <app-input-field formControlName="email" type="email" label="Correo electrónico" placeholder="contacto@empresa.com" />
-            <app-input-field formControlName="phone" label="Teléfono" placeholder="+57 300 000 0000" />
-            <app-input-field formControlName="whatsappNumber" label="WhatsApp" placeholder="+57 300 000 0000" />
-            <app-input-field formControlName="website" label="Sitio web" placeholder="https://www.empresa.com" />
+            <app-input-field
+              formControlName="legalName"
+              label="Razón social"
+              placeholder="Nombre legal"
+            />
+            <app-input-field
+              formControlName="nit"
+              label="NIT / RUT"
+              placeholder="900.000.000-0"
+            />
+            <app-input-field
+              formControlName="email"
+              type="email"
+              label="Correo electrónico"
+              placeholder="contacto@empresa.com"
+            />
+            <app-input-field
+              formControlName="phone"
+              label="Teléfono"
+              placeholder="+57 300 000 0000"
+            />
+            <app-input-field
+              formControlName="whatsappNumber"
+              label="WhatsApp"
+              placeholder="+57 300 000 0000"
+            />
+            <app-input-field
+              formControlName="website"
+              label="Sitio web"
+              placeholder="https://www.empresa.com"
+            />
             <div class="md:col-span-2">
-              <app-input-field formControlName="address" label="Dirección" placeholder="Calle 10 # 5-20" />
+              <app-input-field
+                formControlName="address"
+                label="Dirección"
+                placeholder="Calle 10 # 5-20"
+              />
             </div>
-            <app-input-field formControlName="city" label="Ciudad" placeholder="Mocoa" />
-            <app-input-field formControlName="department" label="Departamento" placeholder="Putumayo" />
+            <app-input-field
+              formControlName="city"
+              label="Ciudad"
+              placeholder="Mocoa"
+            />
+            <app-input-field
+              formControlName="department"
+              label="Departamento"
+              placeholder="Putumayo"
+            />
           </div>
         </div>
       }
 
       <!-- Hidden file inputs -->
-      <input #logoInput type="file" accept="image/*" class="hidden" (change)="onLogoSelected($event)" />
-      <input #faviconInput type="file" accept="image/*" class="hidden" (change)="onFaviconSelected($event)" />
+      <input
+        #logoInput
+        type="file"
+        accept="image/*"
+        class="hidden"
+        (change)="onLogoSelected($event)"
+      />
+      <input
+        #faviconInput
+        type="file"
+        accept="image/*"
+        class="hidden"
+        (change)="onFaviconSelected($event)"
+      />
 
       <!-- ── Identidad visual ── -->
       @if (_tab() === 'branding') {
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-
           <!-- Form -->
-          <div class="lg:col-span-2 bg-white border border-rule rounded-2xl p-6 space-y-6">
+          <div
+            class="lg:col-span-2 bg-white border border-rule rounded-2xl p-6 space-y-6"
+          >
             <h2 class="font-semibold text-ink text-base">Identidad visual</h2>
 
             <!-- Logo -->
             <div>
-              <p class="text-xs font-semibold text-ink-mute uppercase tracking-wide mb-3">Logotipo</p>
+              <p
+                class="text-xs font-semibold text-ink-mute uppercase tracking-wide mb-3"
+              >
+                Logotipo
+              </p>
               <div class="flex items-center gap-4">
-                <div class="w-32 h-16 rounded-xl border border-rule bg-[rgba(26,28,44,0.02)] flex items-center justify-center overflow-hidden shrink-0"
+                <div
+                  class="w-32 h-16 rounded-xl border border-rule bg-[rgba(26,28,44,0.02)] flex items-center justify-center overflow-hidden shrink-0"
                   [class.cursor-zoom-in]="!!form.get('logoUrl')?.value"
-                  (click)="form.get('logoUrl')?.value && _previewSvc.open([form.get('logoUrl')!.value])">
+                  (click)="
+                    form.get('logoUrl')?.value &&
+                      _previewSvc.open([form.get('logoUrl')!.value])
+                  "
+                >
                   @if (form.get('logoUrl')?.value) {
-                    <img [src]="form.get('logoUrl')!.value" alt="Logo" class="w-full h-full object-contain p-2" />
+                    <img
+                      [src]="form.get('logoUrl')!.value"
+                      alt="Logo"
+                      class="w-full h-full object-contain p-2"
+                    />
                   } @else {
-                    <span class="material-symbols-outlined text-[28px] leading-none opacity-15">image</span>
+                    <span
+                      class="material-symbols-outlined text-[28px] leading-none opacity-15"
+                      >image</span
+                    >
                   }
                 </div>
                 <div class="flex-1 space-y-1.5">
-                  <button type="button" (click)="triggerLogoUpload()" [disabled]="_uploadingLogo()"
-                    class="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-rule text-sm font-medium text-ink-mute hover:text-ink hover:border-ink/30 transition-colors cursor-pointer bg-white disabled:opacity-50">
+                  <button
+                    type="button"
+                    (click)="triggerLogoUpload()"
+                    [disabled]="_uploadingLogo()"
+                    class="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-rule text-sm font-medium text-ink-mute hover:text-ink hover:border-ink/30 transition-colors cursor-pointer bg-white disabled:opacity-50"
+                  >
                     @if (_uploadingLogo()) {
-                      <span class="material-symbols-outlined text-[16px] leading-none animate-spin">progress_activity</span>
+                      <span
+                        class="material-symbols-outlined text-[16px] leading-none animate-spin"
+                        >progress_activity</span
+                      >
                       Subiendo...
                     } @else {
-                      <span class="material-symbols-outlined text-[16px] leading-none">upload</span>
+                      <span
+                        class="material-symbols-outlined text-[16px] leading-none"
+                        >upload</span
+                      >
                       Subir logotipo
                     }
                   </button>
-                  <p class="text-xs text-ink-mute">PNG o SVG con fondo transparente. Recomendado: 400×120 px.</p>
+                  <p class="text-xs text-ink-mute">
+                    PNG o SVG con fondo transparente. Recomendado: 400×120 px.
+                  </p>
                 </div>
               </div>
             </div>
 
             <!-- Favicon -->
             <div>
-              <p class="text-xs font-semibold text-ink-mute uppercase tracking-wide mb-3">Favicon</p>
+              <p
+                class="text-xs font-semibold text-ink-mute uppercase tracking-wide mb-3"
+              >
+                Favicon
+              </p>
               <div class="flex items-center gap-4">
-                <div class="w-16 h-16 rounded-xl border border-rule bg-[rgba(26,28,44,0.02)] flex items-center justify-center overflow-hidden shrink-0"
+                <div
+                  class="w-16 h-16 rounded-xl border border-rule bg-[rgba(26,28,44,0.02)] flex items-center justify-center overflow-hidden shrink-0"
                   [class.cursor-zoom-in]="!!form.get('faviconUrl')?.value"
-                  (click)="form.get('faviconUrl')?.value && _previewSvc.open([form.get('faviconUrl')!.value])">
+                  (click)="
+                    form.get('faviconUrl')?.value &&
+                      _previewSvc.open([form.get('faviconUrl')!.value])
+                  "
+                >
                   @if (form.get('faviconUrl')?.value) {
-                    <img [src]="form.get('faviconUrl')!.value" alt="Favicon" class="w-full h-full object-contain p-2" />
+                    <img
+                      [src]="form.get('faviconUrl')!.value"
+                      alt="Favicon"
+                      class="w-full h-full object-contain p-2"
+                    />
                   } @else {
-                    <span class="material-symbols-outlined text-[24px] leading-none opacity-15">web</span>
+                    <span
+                      class="material-symbols-outlined text-[24px] leading-none opacity-15"
+                      >web</span
+                    >
                   }
                 </div>
                 <div class="flex-1 space-y-1.5">
-                  <button type="button" (click)="triggerFaviconUpload()" [disabled]="_uploadingFavicon()"
-                    class="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-rule text-sm font-medium text-ink-mute hover:text-ink hover:border-ink/30 transition-colors cursor-pointer bg-white disabled:opacity-50">
+                  <button
+                    type="button"
+                    (click)="triggerFaviconUpload()"
+                    [disabled]="_uploadingFavicon()"
+                    class="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-rule text-sm font-medium text-ink-mute hover:text-ink hover:border-ink/30 transition-colors cursor-pointer bg-white disabled:opacity-50"
+                  >
                     @if (_uploadingFavicon()) {
-                      <span class="material-symbols-outlined text-[16px] leading-none animate-spin">progress_activity</span>
+                      <span
+                        class="material-symbols-outlined text-[16px] leading-none animate-spin"
+                        >progress_activity</span
+                      >
                       Subiendo...
                     } @else {
-                      <span class="material-symbols-outlined text-[16px] leading-none">upload</span>
+                      <span
+                        class="material-symbols-outlined text-[16px] leading-none"
+                        >upload</span
+                      >
                       Subir favicon
                     }
                   </button>
-                  <p class="text-xs text-ink-mute">PNG o ICO cuadrado. Recomendado: 64×64 px. Aparece en la pestaña del navegador.</p>
+                  <p class="text-xs text-ink-mute">
+                    PNG o ICO cuadrado. Recomendado: 64×64 px. Aparece en la
+                    pestaña del navegador.
+                  </p>
                 </div>
               </div>
             </div>
 
             <!-- Colors -->
             <div>
-              <p class="text-xs font-semibold text-ink-mute uppercase tracking-wide mb-3">Paleta de colores</p>
+              <p
+                class="text-xs font-semibold text-ink-mute uppercase tracking-wide mb-3"
+              >
+                Paleta de colores
+              </p>
               <div class="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-5">
                 @for (color of colorFields; track color.key) {
                   <div>
-                    <label class="block text-sm font-medium text-ink mb-1.5">{{ color.label }}</label>
+                    <label class="block text-sm font-medium text-ink mb-1.5">{{
+                      color.label
+                    }}</label>
                     <div class="flex gap-2 items-center">
                       <input
                         type="color"
                         [value]="form.get(color.key)?.value || '#000000'"
-                        (input)="form.get(color.key)?.setValue($any($event.target).value)"
+                        (input)="
+                          form
+                            .get(color.key)
+                            ?.setValue($any($event.target).value)
+                        "
                         class="w-9 h-9 rounded-lg border border-rule cursor-pointer p-0.5 bg-white shrink-0"
                       />
                       <input
@@ -154,19 +287,32 @@
           </div>
 
           <!-- Preview panel -->
-          <div class="bg-white border border-rule rounded-2xl p-6 space-y-5 lg:sticky lg:top-4">
+          <div
+            class="bg-white border border-rule rounded-2xl p-6 space-y-5 lg:sticky lg:top-4"
+          >
             <p class="text-sm font-semibold text-ink">Vista previa</p>
 
             <!-- Logo -->
             <div>
               <p class="text-xs text-ink-mute mb-2">Logotipo</p>
               @if (form.get('logoUrl')?.value) {
-                <div class="h-16 bg-[rgba(26,28,44,0.03)] rounded-xl border border-rule flex items-center justify-center p-3 overflow-hidden">
-                  <img [src]="form.get('logoUrl')?.value" alt="Logo" class="max-h-full max-w-full object-contain" />
+                <div
+                  class="h-16 bg-[rgba(26,28,44,0.03)] rounded-xl border border-rule flex items-center justify-center p-3 overflow-hidden"
+                >
+                  <img
+                    [src]="form.get('logoUrl')?.value"
+                    alt="Logo"
+                    class="max-h-full max-w-full object-contain"
+                  />
                 </div>
               } @else {
-                <div class="h-16 bg-[rgba(26,28,44,0.03)] rounded-xl border border-dashed border-rule flex items-center justify-center gap-2 text-ink-mute">
-                  <span class="material-symbols-outlined text-[18px] leading-none opacity-30">image</span>
+                <div
+                  class="h-16 bg-[rgba(26,28,44,0.03)] rounded-xl border border-dashed border-rule flex items-center justify-center gap-2 text-ink-mute"
+                >
+                  <span
+                    class="material-symbols-outlined text-[18px] leading-none opacity-30"
+                    >image</span
+                  >
                   <span class="text-xs">Sin logotipo</span>
                 </div>
               }
@@ -177,15 +323,28 @@
               <p class="text-xs text-ink-mute mb-2">Favicon</p>
               <div class="flex items-center gap-3">
                 @if (form.get('faviconUrl')?.value) {
-                  <div class="w-10 h-10 shrink-0 bg-[rgba(26,28,44,0.03)] rounded-xl border border-rule flex items-center justify-center p-1 overflow-hidden">
-                    <img [src]="form.get('faviconUrl')?.value" alt="Favicon" class="w-full h-full object-contain" />
+                  <div
+                    class="w-10 h-10 shrink-0 bg-[rgba(26,28,44,0.03)] rounded-xl border border-rule flex items-center justify-center p-1 overflow-hidden"
+                  >
+                    <img
+                      [src]="form.get('faviconUrl')?.value"
+                      alt="Favicon"
+                      class="w-full h-full object-contain"
+                    />
                   </div>
                 } @else {
-                  <div class="w-10 h-10 shrink-0 bg-[rgba(26,28,44,0.03)] rounded-xl border border-dashed border-rule flex items-center justify-center text-ink-mute">
-                    <span class="material-symbols-outlined text-[16px] leading-none opacity-30">web</span>
+                  <div
+                    class="w-10 h-10 shrink-0 bg-[rgba(26,28,44,0.03)] rounded-xl border border-dashed border-rule flex items-center justify-center text-ink-mute"
+                  >
+                    <span
+                      class="material-symbols-outlined text-[16px] leading-none opacity-30"
+                      >web</span
+                    >
                   </div>
                 }
-                <span class="text-xs text-ink-mute leading-snug">Pestaña del navegador</span>
+                <span class="text-xs text-ink-mute leading-snug"
+                  >Pestaña del navegador</span
+                >
               </div>
             </div>
 
@@ -195,38 +354,70 @@
               <div class="grid grid-cols-5 gap-1 mb-3">
                 @for (color of colorFields; track color.key) {
                   <div class="text-center">
-                    <div class="h-7 rounded-lg border border-rule transition-colors"
-                      [style.background-color]="form.get(color.key)?.value || '#f3f4f6'"></div>
-                    <span class="text-[10px] text-ink-mute leading-none mt-1 block truncate">{{ color.label }}</span>
+                    <div
+                      class="h-7 rounded-lg border border-rule transition-colors"
+                      [style.background-color]="
+                        form.get(color.key)?.value || '#f3f4f6'
+                      "
+                    ></div>
+                    <span
+                      class="text-[10px] text-ink-mute leading-none mt-1 block truncate"
+                      >{{ color.label }}</span
+                    >
                   </div>
                 }
               </div>
               <!-- Mini mockup -->
-              <div class="rounded-xl border border-rule overflow-hidden text-[10px] shadow-sm">
-                <div class="px-3 py-2 flex items-center justify-between"
-                  [style.background-color]="form.get('primaryColor')?.value || '#1a1c2c'">
+              <div
+                class="rounded-xl border border-rule overflow-hidden text-[10px] shadow-sm"
+              >
+                <div
+                  class="px-3 py-2 flex items-center justify-between"
+                  [style.background-color]="
+                    form.get('primaryColor')?.value || '#1a1c2c'
+                  "
+                >
                   @if (form.get('logoUrl')?.value) {
-                    <img [src]="form.get('logoUrl')?.value" alt="logo" class="h-4 object-contain max-w-[80px]" />
+                    <img
+                      [src]="form.get('logoUrl')?.value"
+                      alt="logo"
+                      class="h-4 object-contain max-w-[80px]"
+                    />
                   } @else {
                     <span class="font-bold text-white">Mi Tienda</span>
                   }
                   <span class="text-white/70">Menú</span>
                 </div>
-                <div class="px-3 py-4 flex flex-col items-center gap-2"
-                  [style.background-color]="form.get('bgColor')?.value || '#f9fafb'">
-                  <span class="text-[9px] font-medium"
-                    [style.color]="form.get('textColor')?.value || '#1a1c2c'">Bienvenido a la tienda</span>
-                  <span class="inline-block px-3 py-1 rounded-lg text-[9px] font-semibold text-white"
-                    [style.background-color]="form.get('accentColor')?.value || '#3b82f6'">Ver catálogo</span>
+                <div
+                  class="px-3 py-4 flex flex-col items-center gap-2"
+                  [style.background-color]="
+                    form.get('bgColor')?.value || '#f9fafb'
+                  "
+                >
+                  <span
+                    class="text-[9px] font-medium"
+                    [style.color]="form.get('textColor')?.value || '#1a1c2c'"
+                    >Bienvenido a la tienda</span
+                  >
+                  <span
+                    class="inline-block px-3 py-1 rounded-lg text-[9px] font-semibold text-white"
+                    [style.background-color]="
+                      form.get('accentColor')?.value || '#3b82f6'
+                    "
+                    >Ver catálogo</span
+                  >
                 </div>
-                <div class="px-3 py-1.5 flex items-center justify-center"
-                  [style.background-color]="form.get('secondaryColor')?.value || '#374151'">
+                <div
+                  class="px-3 py-1.5 flex items-center justify-center"
+                  [style.background-color]="
+                    form.get('secondaryColor')?.value || '#374151'
+                  "
+                >
                   <span class="text-white/60 text-[9px]">Pie de página</span>
                 </div>
               </div>
             </div>
           </div>
-
         </div>
       }
 
@@ -250,13 +441,42 @@
       @if (_tab() === 'contenido') {
         <div class="bg-white border border-rule rounded-2xl p-6 space-y-4">
           <h2 class="font-semibold text-ink text-base mb-1">Contenido</h2>
-          <app-textarea-field formControlName="description" label="Descripción general" placeholder="Descripción breve del negocio..." [rows]="3" />
-          <app-input-field formControlName="aboutTitle" label="Título — Quiénes somos" placeholder="Quiénes somos" />
-          <app-textarea-field formControlName="aboutDescription" label="Descripción — Quiénes somos" [rows]="3" />
-          <app-input-field formControlName="missionTitle" label="Título — Misión" placeholder="Nuestra misión" />
-          <app-textarea-field formControlName="missionDescription" label="Descripción — Misión" [rows]="3" />
-          <app-input-field formControlName="visionTitle" label="Título — Visión" placeholder="Nuestra visión" />
-          <app-textarea-field formControlName="visionDescription" label="Descripción — Visión" [rows]="3" />
+          <app-textarea-field
+            formControlName="description"
+            label="Descripción general"
+            placeholder="Descripción breve del negocio..."
+            [rows]="3"
+          />
+          <app-input-field
+            formControlName="aboutTitle"
+            label="Título — Quiénes somos"
+            placeholder="Quiénes somos"
+          />
+          <app-textarea-field
+            formControlName="aboutDescription"
+            label="Descripción — Quiénes somos"
+            [rows]="3"
+          />
+          <app-input-field
+            formControlName="missionTitle"
+            label="Título — Misión"
+            placeholder="Nuestra misión"
+          />
+          <app-textarea-field
+            formControlName="missionDescription"
+            label="Descripción — Misión"
+            [rows]="3"
+          />
+          <app-input-field
+            formControlName="visionTitle"
+            label="Título — Visión"
+            placeholder="Nuestra visión"
+          />
+          <app-textarea-field
+            formControlName="visionDescription"
+            label="Descripción — Visión"
+            [rows]="3"
+          />
         </div>
       }
 
@@ -270,8 +490,18 @@
             placeholder="La Casa del Pintor — Pinturas y suministros"
             hint="Máx. 200 caracteres. Aparece en el título del navegador y resultados de búsqueda."
           />
-          <app-textarea-field formControlName="metaDescription" label="Meta descripción" placeholder="Encuentra las mejores pinturas..." [rows]="3" />
-          <app-input-field formControlName="metaKeywords" label="Palabras clave" placeholder="pintura, esmalte, laca, Mocoa" hint="Separadas por coma." />
+          <app-textarea-field
+            formControlName="metaDescription"
+            label="Meta descripción"
+            placeholder="Encuentra las mejores pinturas..."
+            [rows]="3"
+          />
+          <app-input-field
+            formControlName="metaKeywords"
+            label="Palabras clave"
+            placeholder="pintura, esmalte, laca, Mocoa"
+            hint="Separadas por coma."
+          />
         </div>
       }
 
@@ -279,19 +509,22 @@
       <div class="flex justify-end mt-6">
         <button
           type="submit"
-          [disabled]="_saving() || form.invalid"
+          [disabled]="_saving() || form.invalid || form.pristine"
           class="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-ink text-white text-sm font-semibold transition-colors hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer border-0"
         >
           @if (_saving()) {
-            <span class="material-symbols-outlined text-[18px] leading-none animate-spin">progress_activity</span>
+            <span
+              class="material-symbols-outlined text-[18px] leading-none animate-spin"
+              >progress_activity</span
+            >
           } @else {
-            <span class="material-symbols-outlined text-[18px] leading-none">save</span>
+            <span class="material-symbols-outlined text-[18px] leading-none"
+              >save</span
+            >
           }
           Guardar cambios
         </button>
       </div>
-
     </form>
   }
-
 </div>

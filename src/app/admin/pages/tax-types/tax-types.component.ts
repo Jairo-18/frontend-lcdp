@@ -41,10 +41,22 @@ export class TaxTypesComponent implements OnInit, OnDestroy {
   readonly _to = computed(() =>
     Math.min(this._page() * this._perPage(), this._total()),
   );
+  readonly pageNumbers = computed(() => {
+    const total = this._pageCount();
+    const current = this._page();
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1) as (number | null)[];
+    const pages: (number | null)[] = [1];
+    if (current > 3) pages.push(null);
+    for (let p = Math.max(2, current - 1); p <= Math.min(total - 1, current + 1); p++) pages.push(p);
+    if (current < total - 2) pages.push(null);
+    pages.push(total);
+    return pages;
+  });
 
   readonly _hasFilters = computed(() => !!this._search());
 
-  readonly _panelOpen = signal(false);
+  readonly _deletingId = signal<number | null>(null);
+  readonly _panelOpen  = signal(false);
   readonly _saving    = signal(false);
   readonly _editingId = signal<number | null>(null);
 
@@ -103,17 +115,14 @@ export class TaxTypesComponent implements OnInit, OnDestroy {
     this._load();
   }
 
-  prevPage(): void {
-    if (this._page() <= 1) return;
-    this._page.update((p) => p - 1);
+  goToPage(page: number | null): void {
+    if (page === null || page < 1 || page > this._pageCount() || page === this._page()) return;
+    this._page.set(page);
     this._load();
   }
 
-  nextPage(): void {
-    if (this._page() >= this._pageCount()) return;
-    this._page.update((p) => p + 1);
-    this._load();
-  }
+  prevPage(): void { this.goToPage(this._page() - 1); }
+  nextPage(): void { this.goToPage(this._page() + 1); }
 
   clearFilters(): void {
     this._search.set('');
@@ -172,9 +181,13 @@ export class TaxTypesComponent implements OnInit, OnDestroy {
   }
 
   private doDelete(id: number): void {
+    this._deletingId.set(id);
     this._taxTypeService
       .remove(id)
       .pipe(takeUntil(this._destroy$))
-      .subscribe({ next: () => this._load() });
+      .subscribe({
+        next: () => { this._deletingId.set(null); this._load(); },
+        error: () => this._deletingId.set(null),
+      });
   }
 }

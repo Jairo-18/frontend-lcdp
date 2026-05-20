@@ -1,0 +1,194 @@
+<div class="min-h-screen bg-paper">
+
+  <!-- Breadcrumb -->
+  <div class="px-6 md:px-10 pt-6 pb-2">
+    <div class="max-w-[1440px] mx-auto">
+      <p class="text-xs font-semibold text-ink-mute tracking-widest uppercase">
+        <a routerLink="/" class="hover:text-ink transition-colors">Inicio</a>
+        <span class="mx-2">/</span>
+        <a routerLink="/catalogo" class="hover:text-ink transition-colors">Catálogo</a>
+        @if (product()) {
+          <span class="mx-2">/</span>
+          <span class="text-ink">{{ product()!.name }}</span>
+        }
+      </p>
+    </div>
+  </div>
+
+  <div class="px-6 md:px-10 pb-16">
+    <div class="max-w-[1440px] mx-auto">
+
+      @if (loading()) {
+        <div class="flex items-center justify-center py-32 text-ink-mute gap-3">
+          <span class="material-symbols-outlined text-[28px] leading-none animate-spin">progress_activity</span>
+          Cargando producto...
+        </div>
+      }
+
+      @if (!loading() && !product()) {
+        <div class="flex flex-col items-center justify-center py-32 text-ink-mute gap-3">
+          <span class="material-symbols-outlined text-[48px] leading-none opacity-20">inventory_2</span>
+          <p class="text-sm">Producto no encontrado.</p>
+          <a routerLink="/catalogo" class="text-sm font-semibold text-ink underline-offset-2 hover:underline">
+            Volver al catálogo
+          </a>
+        </div>
+      }
+
+      @if (!loading() && product(); as p) {
+        <div class="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-8 lg:gap-16 mt-4 lg:mt-6">
+
+          <!-- ── Galería ── -->
+          <div class="space-y-3">
+
+            <!-- Imagen principal -->
+            <div class="aspect-[4/3] lg:aspect-square rounded-2xl border border-rule bg-paper-alt overflow-hidden flex items-center justify-center">
+              @if (currentImages()[selectedImage()]; as img) {
+                <img [src]="img.variants.lg" [alt]="p.name"
+                  class="w-full h-full object-cover" />
+              } @else {
+                <div class="flex flex-col items-center gap-2 text-ink-mute select-none">
+                  <span class="material-symbols-outlined text-[56px] leading-none opacity-15">image</span>
+                  <span class="text-xs opacity-30 font-mono">sin imagen</span>
+                </div>
+              }
+            </div>
+
+            <!-- Miniaturas -->
+            @if (currentImages().length > 1) {
+              <div class="flex gap-2 overflow-x-auto pb-1" style="scrollbar-width:none">
+                @for (img of currentImages(); track $index; let ii = $index) {
+                  <button type="button" (click)="selectImage(ii)"
+                    class="w-16 h-16 shrink-0 rounded-xl border-2 overflow-hidden transition-all cursor-pointer bg-transparent p-0"
+                    [class.border-ink]="selectedImage() === ii"
+                    [class.border-rule]="selectedImage() !== ii">
+                    <img [src]="img.variants.thumb" [alt]="p.name"
+                      class="w-full h-full object-cover" />
+                  </button>
+                }
+              </div>
+            }
+
+          </div>
+
+          <!-- ── Info ── -->
+          <div class="flex flex-col gap-4 lg:gap-5 py-1">
+
+            <!-- Marca · Ref -->
+            <p class="text-xs font-semibold text-ink-mute tracking-widest uppercase">
+              {{ p.brand.name }}
+              @if (p.code) { · REF {{ p.code }} }
+            </p>
+
+            <!-- Nombre -->
+            <h1 class="font-display font-bold text-ink text-[clamp(20px,3.5vw,36px)] leading-tight -mt-1">
+              {{ p.name }}
+            </h1>
+
+            <!-- Descripción corta -->
+            @if (p.description) {
+              <p class="text-ink-mute text-sm leading-relaxed -mt-1">{{ p.description }}</p>
+            }
+
+            <!-- Precio -->
+            <div class="space-y-1">
+              <div class="flex items-baseline gap-2 flex-wrap">
+                <span class="font-display font-bold text-ink text-[clamp(26px,5vw,36px)]">
+                  {{ formatPrice(webPrice()) }}
+                </span>
+                @if (unitName()) {
+                  <span class="text-ink-mute text-sm font-medium">/ {{ unitName() }}</span>
+                }
+              </div>
+              @if (p.discountPercentage) {
+                <p class="text-sm font-semibold text-green-600">
+                  ¡{{ p.discountPercentage }}% de descuento si cotizas con nosotros!
+                </p>
+              }
+            </div>
+
+            <!-- Presentaciones -->
+            @if (p.presentations.length > 0) {
+              <div class="space-y-2">
+                <p class="text-[10px] font-bold text-ink-mute tracking-widest uppercase">Presentación</p>
+                <div class="flex flex-wrap gap-2">
+                  @for (pres of p.presentations; track pres.id; let pi = $index) {
+                    <button type="button" (click)="selectPres(pi)"
+                      class="px-3 py-2 lg:px-4 lg:py-2.5 rounded-xl border-2 text-sm font-medium transition-all cursor-pointer"
+                      [class.border-ink]="selectedPres() === pi"
+                      [class.bg-ink]="selectedPres() === pi"
+                      [class.text-white]="selectedPres() === pi"
+                      [class.border-rule]="selectedPres() !== pi"
+                      [class.text-ink]="selectedPres() !== pi">
+                      <div class="font-semibold leading-none">{{ pres.unitOfMeasure.name }}</div>
+                      @if (pres.priceSale) {
+                        <div class="text-xs mt-1 opacity-75">
+                          desde {{ formatPrice(+pres.priceSale * (1 + (p.markupPercentage ?? 0) / 100)) }}
+                        </div>
+                      }
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- Disponibilidad -->
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full shrink-0"
+                [class.bg-green-500]="p.isActive"
+                [class.bg-[rgba(26,28,44,0.25)]]="!p.isActive">
+              </span>
+              <span class="text-sm text-ink-mute">
+                {{ p.isActive ? 'Disponible' : 'No disponible' }}
+              </span>
+            </div>
+
+            <!-- CTA -->
+            <div class="flex gap-3 pt-1">
+              <button type="button"
+                class="flex-1 py-3 rounded-xl bg-coral text-white text-sm font-semibold cursor-not-allowed opacity-80 border-0 flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[18px] leading-none">shopping_cart</span>
+                Añadir al carrito
+              </button>
+              <a routerLink="/catalogo"
+                class="py-3 px-3 lg:px-4 rounded-xl border border-rule text-sm font-semibold text-ink hover:bg-white transition-colors no-underline flex items-center gap-1">
+                <span class="material-symbols-outlined text-[18px] leading-none">arrow_back</span>
+                <span class="hidden sm:inline">Catálogo</span>
+              </a>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ── Video ── -->
+        @if (safeVideoUrl(); as embedUrl) {
+          <div class="mt-12 pt-8 border-t border-rule">
+            <p class="text-[10px] font-bold text-ink-mute tracking-widest uppercase mb-4">Video del producto</p>
+            <div class="aspect-video rounded-2xl overflow-hidden bg-black max-w-2xl">
+              <iframe [src]="embedUrl" class="w-full h-full" frameborder="0"
+                allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen>
+              </iframe>
+            </div>
+          </div>
+        }
+
+        <!-- ── Ficha técnica ── -->
+        @if (techSheetEntries().length > 0) {
+          <div class="mt-10 pt-8 border-t border-rule">
+            <p class="text-[10px] font-bold text-ink-mute tracking-widest uppercase mb-4">Ficha técnica</p>
+            <div class="bg-white border border-rule rounded-2xl overflow-hidden max-w-2xl">
+              @for (entry of techSheetEntries(); track entry.key; let last = $last) {
+                <div class="flex gap-4 px-5 py-3" [class.border-b]="!last" [class.border-rule]="!last">
+                  <span class="text-sm font-semibold text-ink w-40 shrink-0">{{ entry.key }}</span>
+                  <span class="text-sm text-ink-mute">{{ entry.value }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+      }
+
+    </div>
+  </div>
+</div>

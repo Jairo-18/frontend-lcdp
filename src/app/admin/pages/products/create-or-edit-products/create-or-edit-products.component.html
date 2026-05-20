@@ -1,4 +1,4 @@
-<div class="p-8">
+<div class="p-4 md:p-8">
 
   <!-- Header -->
   <div class="flex items-center gap-4 mb-6">
@@ -48,7 +48,7 @@
           [rows]="3"
         />
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <app-select-field
             formControlName="categoryId"
             label="Categoría"
@@ -67,7 +67,7 @@
           />
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <app-input-field
             formControlName="priceSale"
             label="Precio de venta base"
@@ -82,6 +82,28 @@
           />
         </div>
 
+        <!-- Precios web -->
+        <div class="rounded-xl border border-rule bg-[rgba(26,28,44,0.02)] p-4 space-y-3">
+          <p class="text-xs font-bold text-ink-mute tracking-widest uppercase">Precios web</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <app-select-field
+              formControlName="markupPercentage"
+              label="Aumento de precio en web"
+              placeholder="Sin configurar"
+              [options]="percentageOptions"
+            />
+            <app-select-field
+              formControlName="discountPercentage"
+              label="Descuento al cotizar"
+              placeholder="Sin configurar"
+              [options]="percentageOptions"
+            />
+          </div>
+          <p class="text-[11px] text-ink-mute leading-relaxed">
+            El aumento se aplica al precio base para mostrarlo en la web. El descuento se le comunica al cliente si realiza una cotización.
+          </p>
+        </div>
+
         <!-- Estado activo/inactivo -->
         <div class="flex items-center justify-between py-2 px-3 rounded-xl border border-rule bg-[rgba(26,28,44,0.02)]">
           <div>
@@ -89,7 +111,7 @@
             <p class="text-xs text-ink-mute mt-0.5">Si está inactivo no aparecerá en el catálogo.</p>
           </div>
           <button type="button"
-            (click)="form.get('isActive')!.setValue(!form.get('isActive')!.value)"
+            (click)="form.get('isActive')!.setValue(!form.get('isActive')!.value); form.markAsDirty()"
             class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none"
             [class.bg-ink]="form.get('isActive')!.value"
             [class.bg-[rgba(26,28,44,0.15)]]="!form.get('isActive')!.value">
@@ -124,8 +146,8 @@
             <div [formGroupName]="pi" class="rounded-xl border border-rule bg-[rgba(26,28,44,0.02)] overflow-hidden">
 
               <!-- Presentation header row -->
-              <div class="flex gap-2 items-center p-3">
-                <div class="flex-1">
+              <div class="flex flex-wrap gap-2 items-center p-3">
+                <div class="flex-1 min-w-[140px]">
                   <app-select-field
                     formControlName="unitOfMeasureId"
                     placeholder="Unidad..."
@@ -198,7 +220,7 @@
           class="px-4 py-2 rounded-xl border border-rule text-sm font-semibold text-ink hover:bg-[rgba(26,28,44,0.04)] transition-colors cursor-pointer bg-white">
           Cancelar
         </button>
-        <button type="submit" [disabled]="_saving() || form.invalid"
+        <button type="submit" [disabled]="_saving() || form.invalid || form.pristine"
           class="flex items-center gap-2 px-5 py-2 rounded-xl bg-ink text-white text-sm font-semibold hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer border-0">
           @if (_saving()) {
             <span class="material-symbols-outlined text-[16px] leading-none animate-spin">progress_activity</span>
@@ -221,8 +243,8 @@
         <span class="text-xs text-ink-mute ml-1">— así se verá en el catálogo</span>
       </div>
 
-      <div class="p-8">
-        <div class="grid grid-cols-[400px_1fr] gap-12">
+      <div class="p-4 md:p-8">
+        <div class="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-8 lg:gap-12">
 
           <!-- Left: images -->
           <div class="space-y-3">
@@ -286,18 +308,27 @@
             }
 
             <!-- Price -->
-            <div class="flex items-baseline gap-2">
-              <span class="font-display font-bold text-ink text-4xl">
-                @if (presentationsArray.length > 0) {
-                  {{ formatPrice(presentationsArray.at(_previewPresIndex()).get('priceSale')?.value) }}
-                } @else {
-                  {{ formatPrice(form.get('priceSale')?.value) }}
-                }
-              </span>
-              @if (presentationsArray.length > 0 && presentationsArray.at(_previewPresIndex()).get('priceSale')?.value && previewUnitName(_previewPresIndex())) {
-                <span class="text-ink-mute text-sm font-medium">
-                  / {{ previewUnitName(_previewPresIndex()) }}
+            <div class="space-y-1">
+              <div class="flex items-baseline gap-2">
+                <span class="font-display font-bold text-ink text-4xl">
+                  {{ previewWebPrice() }}
                 </span>
+                @if (presentationsArray.length > 0 && presentationsArray.at(_previewPresIndex()).get('priceSale')?.value && previewUnitName(_previewPresIndex())) {
+                  <span class="text-ink-mute text-sm font-medium">
+                    / {{ previewUnitName(_previewPresIndex()) }}
+                  </span>
+                }
+              </div>
+              @if (form.get('markupPercentage')?.value) {
+                <p class="text-xs text-ink-mute">
+                  Precio base: {{ formatPrice(presentationsArray.length > 0 ? presentationsArray.at(_previewPresIndex()).get('priceSale')?.value : form.get('priceSale')?.value) }}
+                  · +{{ form.get('markupPercentage')?.value }}% web
+                </p>
+              }
+              @if (form.get('discountPercentage')?.value) {
+                <p class="text-[12px] font-semibold text-green-600">
+                  ¡{{ form.get('discountPercentage')?.value }}% de descuento al cotizar!
+                </p>
               }
             </div>
 
@@ -319,7 +350,7 @@
                         {{ previewUnitName(pi) || ('Presentación ' + (pi + 1)) }}
                       </div>
                       @if (pres.get('priceSale')?.value) {
-                        <div class="text-xs mt-1 opacity-75">{{ formatPrice(pres.get('priceSale')?.value) }}</div>
+                        <div class="text-xs mt-1 opacity-75">{{ webPriceForPresentation(pres.get('priceSale')?.value) }}</div>
                       }
                     </button>
                   }

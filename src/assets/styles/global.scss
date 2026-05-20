@@ -23,6 +23,11 @@ html.fonts-loaded .material-symbols-outlined {
     width: calc(100vw - var(--sidebar-width));
     margin-left: var(--sidebar-width);
   }
+
+  &.no-sidebar {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
 }
 
 .main {
@@ -46,7 +51,10 @@ html.fonts-loaded .material-symbols-outlined {
   z-index: 100;
   height: $heigth-nav-bar;
   position: sticky;
+  background-color: rgb(250 248 243 / 0.9);
   top: 0;
+  --tw-border-opacity: 1;
+  border-color: rgb(239 233 214 / var(--tw-border-opacity, 1));
 
   @media (max-width: 768px) {
     height: 72px;

@@ -1,0 +1,270 @@
+<div class="min-h-screen bg-paper">
+
+  <!-- Breadcrumb -->
+  <div class="px-6 md:px-10 pt-6 pb-2">
+    <div class="max-w-[1440px] mx-auto">
+      <p class="text-xs font-semibold text-ink-mute tracking-widest uppercase">
+        <a routerLink="/" class="hover:text-ink transition-colors">Inicio</a>
+        <span class="mx-2">/</span>
+        <span class="text-ink">Catálogo</span>
+      </p>
+    </div>
+  </div>
+
+  <div class="px-6 md:px-10 pb-16">
+    <div class="max-w-[1440px] mx-auto">
+
+      <h1 class="font-display font-bold text-ink text-[clamp(26px,4vw,40px)] leading-tight mt-3 mb-6">
+        {{ pageTitle() }}
+      </h1>
+
+      <!-- ── Filtros mobile (select bar) ── -->
+      <div class="flex flex-wrap gap-3 mb-6 lg:hidden">
+
+        <select (change)="onCategorySelect($any($event.target).value)"
+          class="w-full sm:w-auto rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 cursor-pointer">
+          <option value="">Todas las categorías</option>
+          @for (cat of categories(); track cat.id) {
+            <option [value]="cat.code" [selected]="selectedCategory() === cat.code">{{ cat.name }}</option>
+          }
+        </select>
+
+        <select (change)="onBrandSelect($any($event.target).value)"
+          class="w-full sm:w-auto rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 cursor-pointer">
+          <option value="">Todas las marcas</option>
+          @for (brand of brands(); track brand.id) {
+            <option [value]="brand.code" [selected]="selectedBrand() === brand.code">{{ brand.name }}</option>
+          }
+        </select>
+
+        <select (change)="onOrderChange($any($event.target).value)"
+          class="w-full sm:w-auto rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 cursor-pointer">
+          <option value="createdAt">Más recientes</option>
+          <option value="name">Nombre A–Z</option>
+        </select>
+
+        @if (hasFilters()) {
+          <button type="button" (click)="clearFilters()"
+            class="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-rule text-sm text-ink-mute hover:text-ink hover:bg-[rgba(26,28,44,0.04)] transition-colors cursor-pointer bg-white">
+            <span class="material-symbols-outlined text-[16px] leading-none">filter_list_off</span>
+            Limpiar filtros
+          </button>
+        }
+
+      </div>
+
+      <!-- ── Layout desktop: sidebar + grid ── -->
+      <div class="flex gap-8 items-start">
+
+        <!-- Sidebar (solo desktop) -->
+        <aside class="hidden lg:block w-52 shrink-0 sticky top-6">
+
+          @if (hasFilters()) {
+            <button type="button" (click)="clearFilters()"
+              class="w-full mb-5 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-rule text-xs font-semibold text-ink-mute hover:text-ink hover:border-ink/30 transition-colors bg-white cursor-pointer">
+              <span class="material-symbols-outlined text-[14px] leading-none">filter_list_off</span>
+              Limpiar filtros
+            </button>
+          }
+
+          <!-- Categorías -->
+          <p class="text-[10px] font-extrabold tracking-[0.12em] uppercase text-ink-mute mb-3">Categoría</p>
+          <ul class="space-y-1 mb-6">
+            @for (cat of categories(); track cat.id) {
+              <li>
+                <button type="button" (click)="toggleCategory(cat.code)"
+                  class="w-full flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-sm text-left transition-colors cursor-pointer border-0 bg-transparent"
+                  [class.font-semibold]="selectedCategory() === cat.code"
+                  [class.text-ink]="selectedCategory() === cat.code"
+                  [class.text-ink-mute]="selectedCategory() !== cat.code"
+                  [class.bg-[rgba(26,28,44,0.06)]]="selectedCategory() === cat.code">
+                  <span class="w-4 h-4 rounded border shrink-0 flex items-center justify-center transition-colors"
+                    [class.bg-ink]="selectedCategory() === cat.code"
+                    [class.border-ink]="selectedCategory() === cat.code"
+                    [class.border-rule]="selectedCategory() !== cat.code">
+                    @if (selectedCategory() === cat.code) {
+                      <span class="material-symbols-outlined text-white text-[11px] leading-none">check</span>
+                    }
+                  </span>
+                  {{ cat.name }}
+                </button>
+              </li>
+            }
+          </ul>
+
+          <!-- Marcas -->
+          <p class="text-[10px] font-extrabold tracking-[0.12em] uppercase text-ink-mute mb-3">Marca</p>
+          <ul class="space-y-1 mb-6">
+            @for (brand of brands(); track brand.id) {
+              <li>
+                <button type="button" (click)="toggleBrand(brand.code)"
+                  class="w-full flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-sm text-left transition-colors cursor-pointer border-0 bg-transparent"
+                  [class.font-semibold]="selectedBrand() === brand.code"
+                  [class.text-ink]="selectedBrand() === brand.code"
+                  [class.text-ink-mute]="selectedBrand() !== brand.code"
+                  [class.bg-[rgba(26,28,44,0.06)]]="selectedBrand() === brand.code">
+                  <span class="w-4 h-4 rounded border shrink-0 flex items-center justify-center transition-colors"
+                    [class.bg-ink]="selectedBrand() === brand.code"
+                    [class.border-ink]="selectedBrand() === brand.code"
+                    [class.border-rule]="selectedBrand() !== brand.code">
+                    @if (selectedBrand() === brand.code) {
+                      <span class="material-symbols-outlined text-white text-[11px] leading-none">check</span>
+                    }
+                  </span>
+                  {{ brand.name }}
+                </button>
+              </li>
+            }
+          </ul>
+
+        </aside>
+
+        <!-- ── Contenido ── -->
+        <div class="flex-1 min-w-0">
+
+          <!-- Conteo + Orden (desktop) -->
+          <div class="flex items-center justify-between mb-4">
+            <p class="text-sm text-ink-mute">
+              @if (loading()) { Cargando... }
+              @else { <span class="font-semibold text-ink">{{ totalItems() }}</span> productos encontrados }
+            </p>
+            <select (change)="onOrderChange($any($event.target).value)"
+              class="hidden lg:block rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 cursor-pointer">
+              <option value="createdAt">Más recientes</option>
+              <option value="name">Nombre A–Z</option>
+            </select>
+          </div>
+
+          <!-- Skeletons -->
+          @if (loading()) {
+            <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
+              @for (s of skeletons; track $index) {
+                <div class="bg-white border border-rule rounded-2xl overflow-hidden animate-pulse">
+                  <div class="bg-paper-alt aspect-[4/3]"></div>
+                  <div class="p-4 space-y-2">
+                    <div class="h-2.5 w-16 bg-rule rounded-full"></div>
+                    <div class="h-4 w-full bg-rule rounded-full"></div>
+                    <div class="h-3 w-20 bg-rule rounded-full"></div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Grid productos -->
+          @if (!loading()) {
+            @if (products().length === 0) {
+              <div class="flex flex-col items-center justify-center py-24 text-ink-mute gap-3">
+                <span class="material-symbols-outlined text-[48px] leading-none opacity-20">inventory_2</span>
+                <p class="text-sm">No hay productos con estos filtros.</p>
+                <button type="button" (click)="clearFilters()"
+                  class="text-sm font-semibold text-ink underline-offset-2 hover:underline cursor-pointer border-0 bg-transparent">
+                  Limpiar filtros
+                </button>
+              </div>
+            } @else {
+              <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
+                @for (product of products(); track product.id; let i = $index) {
+                  <div class="bg-white border border-rule rounded-2xl overflow-hidden group hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 flex flex-col">
+
+                    <a [routerLink]="['/producto', product.id]"
+                      class="relative bg-paper-alt aspect-[4/3] overflow-hidden flex items-center justify-center no-underline block">
+                      @if (product.discountPercentage) {
+                        <span class="absolute top-3 left-3 z-10 bg-green-500 text-white text-[10px] font-extrabold tracking-widest uppercase px-2.5 py-1 rounded-md leading-none">
+                          -{{ product.discountPercentage }}%
+                        </span>
+                      }
+                      @if (firstImage(product)) {
+                        <img [src]="firstImage(product)!" [alt]="product.name"
+                          class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          loading="lazy" />
+                      } @else {
+                        <div class="relative w-[80px] h-[105px] rounded-[8px_8px_12px_12px] shadow-xl flex flex-col items-center transition-transform duration-300 group-hover:scale-105"
+                          [style.background-color]="placeholderColor(i)">
+                          <div class="absolute -top-2 w-8 h-3.5 bg-ink/75 rounded-sm"></div>
+                          <div class="mt-6 mx-2 bg-white/95 rounded-md p-1.5 w-[calc(100%-16px)] flex flex-col gap-1">
+                            <p class="text-[6px] font-extrabold tracking-wider text-ink/60 uppercase leading-none">{{ product.brand.name }}</p>
+                            <div class="h-3 rounded" [style.background-color]="placeholderColor(i)"></div>
+                            <p class="text-[5px] font-mono text-ink/40">{{ firstSku(product) }}</p>
+                          </div>
+                        </div>
+                      }
+                    </a>
+
+                    <div class="p-4 flex flex-col gap-1 flex-1">
+                      <p class="text-[10px] font-extrabold tracking-[0.1em] uppercase text-ink-mute leading-none">
+                        {{ product.brand.name }}
+                      </p>
+                      <a [routerLink]="['/producto', product.id]"
+                        class="font-display font-bold text-ink text-[13px] leading-tight line-clamp-2 group-hover:text-coral transition-colors no-underline">
+                        {{ product.name }}
+                      </a>
+                      <p class="text-[11px] text-ink-mute">{{ product.category.name }}</p>
+                      @if (webPrice(product); as price) {
+                        <p class="text-[13px] font-bold text-ink mt-1">desde {{ formatPrice(price) }}</p>
+                      }
+                      @if (product.discountPercentage) {
+                        <p class="text-[10px] font-semibold text-green-600">{{ product.discountPercentage }}% dto. al cotizar</p>
+                      }
+                    </div>
+
+                    <div class="px-4 pb-4 flex flex-col gap-2">
+                      <a [routerLink]="['/producto', product.id]"
+                        class="w-full py-2 rounded-xl bg-ink text-white text-xs font-semibold flex items-center justify-center gap-1.5 no-underline hover:bg-black transition-colors">
+                        <span class="material-symbols-outlined text-[14px] leading-none">open_in_new</span>
+                        Ver producto
+                      </a>
+                      <button type="button"
+                        class="w-full py-2 rounded-xl text-xs font-semibold text-ink-mute flex items-center justify-center gap-1.5 cursor-not-allowed opacity-60 border-0 bg-paper-alt">
+                        <span class="material-symbols-outlined text-[14px] leading-none">shopping_cart</span>
+                        Añadir al carrito
+                      </button>
+                    </div>
+
+                  </div>
+                }
+              </div>
+            }
+          }
+
+          <!-- Paginador -->
+          @if (!loading() && totalPages() > 1) {
+            <div class="flex flex-col items-center gap-3 mt-10">
+              <p class="text-xs text-ink-mute">Página {{ currentPage() }} de {{ totalPages() }}</p>
+              <div class="flex items-center flex-wrap justify-center gap-1.5">
+                <button type="button" (click)="goToPage(1)" [disabled]="currentPage() === 1"
+                  class="p-2 rounded-lg border border-rule bg-white text-ink-mute hover:text-ink hover:border-ink/30 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
+                  <span class="material-symbols-outlined text-[16px] leading-none">first_page</span>
+                </button>
+                <button type="button" (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() === 1"
+                  class="p-2 rounded-lg border border-rule bg-white text-ink-mute hover:text-ink hover:border-ink/30 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
+                  <span class="material-symbols-outlined text-[16px] leading-none">chevron_left</span>
+                </button>
+                @for (p of pageNumbers(); track $index) {
+                  @if (p === null) {
+                    <span class="px-1 text-ink-mute text-sm">…</span>
+                  } @else {
+                    <button type="button" (click)="goToPage(p)"
+                      class="min-w-[36px] h-9 px-2 rounded-lg border text-sm font-semibold transition-colors cursor-pointer"
+                      [class]="p === currentPage() ? 'bg-ink text-white border-ink' : 'bg-white text-ink-mute border-rule hover:text-ink hover:border-ink/30'">
+                      {{ p }}
+                    </button>
+                  }
+                }
+                <button type="button" (click)="goToPage(currentPage() + 1)" [disabled]="currentPage() === totalPages()"
+                  class="p-2 rounded-lg border border-rule bg-white text-ink-mute hover:text-ink hover:border-ink/30 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
+                  <span class="material-symbols-outlined text-[16px] leading-none">chevron_right</span>
+                </button>
+                <button type="button" (click)="goToPage(totalPages())" [disabled]="currentPage() === totalPages()"
+                  class="p-2 rounded-lg border border-rule bg-white text-ink-mute hover:text-ink hover:border-ink/30 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
+                  <span class="material-symbols-outlined text-[16px] leading-none">last_page</span>
+                </button>
+              </div>
+            </div>
+          }
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
