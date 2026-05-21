@@ -92,24 +92,36 @@
     <script>
       (function () {
         var loader = document.getElementById('app-loader');
+        var done = false;
 
         function dismiss() {
+          if (done) return;
+          done = true;
           document.documentElement.classList.add('fonts-ready');
           if (loader) {
             loader.classList.add('hidden');
-            // Eliminar del DOM tras el fade
             setTimeout(function () {
               if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
             }, 300);
           }
         }
 
-        var t = setTimeout(dismiss, 2500);
+        // Fallback máximo: 2.5 s
+        var timeout = setTimeout(dismiss, 2500);
 
-        document.fonts.ready.then(function () {
-          clearTimeout(t);
-          dismiss();
-        });
+        // Espera específicamente Material Symbols Outlined (el que causa el flash)
+        // document.fonts.load() espera a que el archivo woff2 descargue de verdad
+        var fontReady = (typeof document.fonts !== 'undefined')
+          ? document.fonts.load('400 24px "Material Symbols Outlined"')
+              .then(function (faces) {
+                // Si la fuente no estaba definida aún, caer a fonts.ready
+                return faces.length > 0 ? Promise.resolve() : document.fonts.ready;
+              })
+          : Promise.resolve();
+
+        fontReady
+          .then(function () { clearTimeout(timeout); dismiss(); })
+          .catch(function () { clearTimeout(timeout); dismiss(); });
       })();
     </script>
   </body>
