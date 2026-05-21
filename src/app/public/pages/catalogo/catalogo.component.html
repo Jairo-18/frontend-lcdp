@@ -21,6 +21,27 @@
       <!-- ── Filtros mobile (select bar) ── -->
       <div class="flex flex-wrap gap-3 mb-6 lg:hidden">
 
+        <!-- Buscador mobile -->
+        <div class="w-full flex gap-2">
+          <div class="flex-1 flex items-center gap-2 px-3 py-2 bg-white border border-rule rounded-xl focus-within:border-ink focus-within:shadow-[0_0_0_3px_rgba(26,28,44,0.08)] transition-all">
+            <span class="material-symbols-outlined text-[18px] leading-none text-ink-mute shrink-0">search</span>
+            <input type="text" placeholder="Buscar por nombre, marca, categoría…"
+              class="border-0 outline-none bg-transparent flex-1 text-sm text-ink"
+              [(ngModel)]="mobileSearch"
+              (keydown.enter)="onMobileSearch()" />
+            @if (mobileSearch) {
+              <button type="button" (click)="mobileSearch = ''; onMobileSearch()"
+                class="border-0 bg-transparent p-0 cursor-pointer text-ink-mute hover:text-ink transition-colors shrink-0">
+                <span class="material-symbols-outlined text-[16px] leading-none">close</span>
+              </button>
+            }
+          </div>
+          <button type="button" (click)="onMobileSearch()"
+            class="px-3 py-2 rounded-xl bg-ink text-white text-sm font-semibold border-0 cursor-pointer hover:bg-black transition-colors shrink-0">
+            Buscar
+          </button>
+        </div>
+
         <select (change)="onCategorySelect($any($event.target).value)"
           class="w-full sm:w-auto rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 cursor-pointer">
           <option value="">Todas las categorías</option>

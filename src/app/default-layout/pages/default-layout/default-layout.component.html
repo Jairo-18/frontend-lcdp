@@ -5,7 +5,12 @@
 
   <div class="app-container flex-1 relative" [class.no-sidebar]="!isAdmin">
     @if (!isAdmin) {
-      <app-nav-bar class="brand-nav-bar" [logoUrl]="_org()?.logoUrl ?? ''" />
+      <app-nav-bar
+        class="brand-nav-bar"
+        [logoUrl]="_org()?.logoUrl ?? ''"
+        [cartCount]="cartSvc.count()"
+        (openCart)="cartOpen.set(true)"
+      />
     }
 
     <main class="main w-full">
@@ -17,3 +22,8 @@
     }
   </div>
 </article>
+
+<app-cart-drawer
+  [isOpen]="cartOpen()"
+  (close)="cartOpen.set(false)"
+/>

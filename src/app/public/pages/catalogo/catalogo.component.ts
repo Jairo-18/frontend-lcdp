@@ -59,6 +59,7 @@ export class CatalogoComponent implements OnInit, OnDestroy {
   );
 
   readonly skeletons: null[] = Array<null>(12).fill(null);
+  mobileSearch: string = '';
 
   ngOnInit(): void {
     combineLatest([
@@ -71,6 +72,7 @@ export class CatalogoComponent implements OnInit, OnDestroy {
       this.selectedCategory.set(params['categoria'] ?? null);
       this.selectedBrand.set(params['marca'] ?? null);
       this.searchQuery.set(params['q'] ?? null);
+      this.mobileSearch = params['q'] ?? '';
       this.currentPage.set(1);
       this._load(1);
     });
@@ -160,7 +162,19 @@ export class CatalogoComponent implements OnInit, OnDestroy {
   }
 
   clearFilters(): void {
+    this.mobileSearch = '';
     this._router.navigate([], { relativeTo: this._route, queryParams: {} });
+  }
+
+  onMobileSearch(): void {
+    this._router.navigate([], {
+      relativeTo: this._route,
+      queryParams: {
+        categoria: this.selectedCategory() ?? null,
+        marca: this.selectedBrand() ?? null,
+        q: this.mobileSearch.trim() || null,
+      },
+    });
   }
 
   onOrderChange(val: string): void {

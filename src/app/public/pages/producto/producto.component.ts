@@ -5,6 +5,7 @@ import {
   PLATFORM_ID,
   inject,
   signal,
+  computed,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -12,6 +13,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ProductService } from '@shared/services/product.service';
+import { OrganizationalService } from '@shared/services/organizational.service';
+import { CartService } from '@shared/services/cart.service';
 import { Product } from '@shared/interfaces/product.interface';
 
 @Component({
@@ -26,11 +29,21 @@ export class ProductoComponent implements OnInit, OnDestroy {
   private readonly _sanitizer  = inject(DomSanitizer);
   private readonly _platformId = inject(PLATFORM_ID);
   private readonly _destroy$   = new Subject<void>();
+  private readonly _orgSvc     = inject(OrganizationalService);
+
+  readonly cartSvc = inject(CartService);
 
   readonly loading        = signal(true);
   readonly product        = signal<Product | null>(null);
   readonly selectedPres   = signal(0);
   readonly selectedImage  = signal(0);
+  readonly qty            = signal(1);
+  readonly addedFeedback  = signal(false);
+
+  readonly subtotal = computed(() => {
+    const price = this.webPrice();
+    return price != null ? price * this.qty() : null;
+  });
 
   ngOnInit(): void {
     this._route.params.pipe(takeUntil(this._destroy$)).subscribe(params => {
@@ -46,6 +59,7 @@ export class ProductoComponent implements OnInit, OnDestroy {
 
   private _load(id: number): void {
     this.loading.set(true);
+    this.qty.set(1);
     if (isPlatformBrowser(this._platformId)) {
       window.scrollTo({ top: 0, behavior: 'instant' });
     }
@@ -58,10 +72,49 @@ export class ProductoComponent implements OnInit, OnDestroy {
   selectPres(i: number): void {
     this.selectedPres.set(i);
     this.selectedImage.set(0);
+    this.qty.set(1);
   }
 
   selectImage(i: number): void {
     this.selectedImage.set(i);
+  }
+
+  incQty(): void { this.qty.update(q => q + 1); }
+  decQty(): void { if (this.qty() > 1) this.qty.update(q => q - 1); }
+
+  addToCart(): void {
+    const p = this.product();
+    const price = this.webPrice();
+    if (!p || price == null) return;
+    const pres = p.presentations[this.selectedPres()];
+    this.cartSvc.addItem({
+      productId: p.id,
+      productName: p.name,
+      brandName: p.brand.name,
+      presentationId: pres?.id ?? -1,
+      presentationName: pres?.unitOfMeasure.name ?? '',
+      sku: pres?.sku ?? null,
+      unitPrice: price,
+    }, this.qty());
+    this.addedFeedback.set(true);
+    setTimeout(() => this.addedFeedback.set(false), 1800);
+  }
+
+  get whatsappHref(): string {
+    const p = this.product();
+    const price = this.webPrice();
+    const org = this._orgSvc.org();
+    const num = (org?.whatsappNumber ?? '').replace(/\D/g, '');
+    if (!num || !p || price == null) return '#';
+    const pres = p.presentations[this.selectedPres()];
+    const presName = pres?.unitOfMeasure.name ?? '';
+    const total = this.cartSvc.fmt(price * this.qty());
+    const msg = [
+      '¡Hola! Me gustaría pedir:',
+      '',
+      `• ${p.name}${presName ? ` (${presName})` : ''} x${this.qty()} — ${total}`,
+    ].join('\n');
+    return `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
   }
 
   currentImages() {
@@ -80,9 +133,7 @@ export class ProductoComponent implements OnInit, OnDestroy {
 
   formatPrice(value: number | null): string {
     if (value == null) return '—';
-    return '$' + new Intl.NumberFormat('es-CO', {
-      minimumFractionDigits: 0, maximumFractionDigits: 0,
-    }).format(value);
+    return this.cartSvc.fmt(value);
   }
 
   unitName(): string {

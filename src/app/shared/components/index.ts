@@ -6,3 +6,4 @@ export { ImageUploaderComponent } from './image-uploader/image-uploader.componen
 export { ImagePreviewComponent } from './image-preview/image-preview.component';
 export { PaginatorComponent } from './paginator/paginator.component';
 export { ImageEditorComponent } from './image-editor/image-editor.component';
+export { CartDrawerComponent } from './cart-drawer/cart-drawer.component';
