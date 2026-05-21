@@ -172,37 +172,40 @@
                 </div>
               }
 
-              <!-- Presentation header row -->
-              <div class="flex flex-wrap gap-2 items-center p-3">
-                <!-- Order arrows -->
-                <div class="flex flex-col gap-0.5 shrink-0">
-                  <button type="button" (click)="movePresentationUp(pi)" [disabled]="pi === 0"
-                    class="w-5 h-5 flex items-center justify-center rounded bg-transparent border-0 cursor-pointer text-ink-mute hover:text-ink disabled:opacity-20 disabled:cursor-not-allowed transition-colors">
-                    <span class="material-symbols-outlined text-[14px] leading-none">keyboard_arrow_up</span>
-                  </button>
-                  <button type="button" (click)="movePresentationDown(pi)" [disabled]="pi === presentationsArray.length - 1"
-                    class="w-5 h-5 flex items-center justify-center rounded bg-transparent border-0 cursor-pointer text-ink-mute hover:text-ink disabled:opacity-20 disabled:cursor-not-allowed transition-colors">
-                    <span class="material-symbols-outlined text-[14px] leading-none">keyboard_arrow_down</span>
+              <!-- Presentation fields -->
+              <div class="p-3 space-y-2">
+                <!-- Row 1: arrows + unit + delete -->
+                <div class="flex items-center gap-2">
+                  <div class="flex flex-col gap-0.5 shrink-0">
+                    <button type="button" (click)="movePresentationUp(pi)" [disabled]="pi === 0"
+                      class="w-5 h-5 flex items-center justify-center rounded bg-transparent border-0 cursor-pointer text-ink-mute hover:text-ink disabled:opacity-20 disabled:cursor-not-allowed transition-colors">
+                      <span class="material-symbols-outlined text-[14px] leading-none">keyboard_arrow_up</span>
+                    </button>
+                    <button type="button" (click)="movePresentationDown(pi)" [disabled]="pi === presentationsArray.length - 1"
+                      class="w-5 h-5 flex items-center justify-center rounded bg-transparent border-0 cursor-pointer text-ink-mute hover:text-ink disabled:opacity-20 disabled:cursor-not-allowed transition-colors">
+                      <span class="material-symbols-outlined text-[14px] leading-none">keyboard_arrow_down</span>
+                    </button>
+                  </div>
+                  <div class="flex-1">
+                    <app-select-field
+                      formControlName="unitOfMeasureId"
+                      placeholder="Unidad..."
+                      [options]="unitOptions()"
+                    />
+                  </div>
+                  <button type="button" (click)="removePresentation(pi)"
+                    class="p-1 rounded-lg hover:bg-red-50 text-ink-mute hover:text-red-500 transition-colors cursor-pointer border-0 bg-transparent shrink-0">
+                    <span class="material-symbols-outlined text-[18px] leading-none">remove_circle</span>
                   </button>
                 </div>
-                <div class="flex-1 min-w-[140px]">
-                  <app-select-field
-                    formControlName="unitOfMeasureId"
-                    placeholder="Unidad..."
-                    [options]="unitOptions()"
-                  />
-                </div>
-                <div class="w-32">
+                <!-- Row 2: price -->
+                <div class="pl-7">
                   <app-input-field
                     formControlName="priceSale"
                     placeholder="Precio"
                     type="number"
                   />
                 </div>
-                <button type="button" (click)="removePresentation(pi)"
-                  class="p-1 rounded-lg hover:bg-red-50 text-ink-mute hover:text-red-500 transition-colors cursor-pointer border-0 bg-transparent shrink-0">
-                  <span class="material-symbols-outlined text-[18px] leading-none">remove_circle</span>
-                </button>
               </div>
 
               <!-- Images for this presentation -->
@@ -223,7 +226,7 @@
                 </div>
 
                 @if (presImages(pi).length > 0) {
-                  <div class="grid grid-cols-5 gap-1.5">
+                  <div class="grid grid-cols-4 sm:grid-cols-5 gap-1.5">
                     @for (img of presImages(pi); track $index; let ii = $index) {
                       <div class="relative group aspect-square cursor-zoom-in" (click)="openPresPreview(pi, ii)">
                         <img [src]="img.thumb" alt="imagen"
@@ -253,13 +256,13 @@
       </div>
 
       <!-- Actions -->
-      <div class="flex items-center justify-end gap-3">
+      <div class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3">
         <button type="button" (click)="goBack()"
-          class="px-4 py-2 rounded-xl border border-rule text-sm font-semibold text-ink hover:bg-[rgba(26,28,44,0.04)] transition-colors cursor-pointer bg-white">
+          class="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-rule text-sm font-semibold text-ink hover:bg-[rgba(26,28,44,0.04)] transition-colors cursor-pointer bg-white text-center">
           Cancelar
         </button>
         <button type="submit" [disabled]="_saving() || form.invalid || form.pristine || _categoryIds().length === 0"
-          class="flex items-center gap-2 px-5 py-2 rounded-xl bg-ink text-white text-sm font-semibold hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer border-0">
+          class="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-ink text-white text-sm font-semibold hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer border-0">
           @if (_saving()) {
             <span class="material-symbols-outlined text-[16px] leading-none animate-spin">progress_activity</span>
           } @else {

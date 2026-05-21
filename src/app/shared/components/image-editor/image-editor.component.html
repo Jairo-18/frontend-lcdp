@@ -2,7 +2,7 @@
   <div class="fixed inset-0 z-[200] bg-[#0a0b0f] flex flex-col select-none">
 
     <!-- Header -->
-    <div class="flex items-center justify-between px-5 py-3.5 border-b border-white/10 shrink-0">
+    <div class="flex items-center justify-between px-4 py-3 border-b border-white/10 shrink-0">
       <div class="flex items-center gap-3">
         <span class="material-symbols-outlined text-white/70 text-[20px] leading-none">edit</span>
         <span class="text-white font-medium text-sm">Editor de imagen</span>
@@ -19,18 +19,18 @@
     </div>
 
     <!-- Body -->
-    <div class="flex flex-1 overflow-hidden">
+    <div class="flex flex-col md:flex-row flex-1 overflow-hidden min-h-0">
 
       <!-- Canvas area -->
-      <div #containerRef class="flex-1 flex items-center justify-center overflow-hidden p-6 relative">
+      <div #containerRef class="flex-1 flex items-center justify-center overflow-hidden p-4 relative min-h-0">
         <div #wrapperRef class="relative"
           [class.cursor-crosshair]="_cropMode()"
-          (mousedown)="onWrapperMouseDown($event)">
-          <canvas #canvasRef class="block"></canvas>
+          (mousedown)="onWrapperMouseDown($event)"
+          (touchstart)="onWrapperTouchStart($event)">
+          <canvas #canvasRef class="block max-w-full"></canvas>
 
-          <!-- Crop overlay (always square) -->
+          <!-- Crop overlay -->
           @if (_cropMode()) {
-            <!-- Dark masks -->
             <div class="absolute inset-0 pointer-events-none overflow-hidden">
               <div class="absolute left-0 right-0 top-0 bg-black/55" [style.height.px]="_crop().y"></div>
               <div class="absolute left-0 right-0 bottom-0 bg-black/55" [style.top.px]="_crop().y + _crop().h"></div>
@@ -41,28 +41,28 @@
                 [style.right.px]="0" [style.height.px]="_crop().h"></div>
             </div>
 
-            <!-- Crop border -->
             <div class="absolute border-2 border-white/80 pointer-events-none"
               [style.left.px]="_crop().x" [style.top.px]="_crop().y"
               [style.width.px]="_crop().w" [style.height.px]="_crop().h">
 
-              <!-- Rule-of-thirds -->
               <div class="absolute top-1/3 left-0 right-0 h-px bg-white/20"></div>
               <div class="absolute top-2/3 left-0 right-0 h-px bg-white/20"></div>
               <div class="absolute left-1/3 top-0 bottom-0 w-px bg-white/20"></div>
               <div class="absolute left-2/3 top-0 bottom-0 w-px bg-white/20"></div>
 
-              <!-- Corner handles only (square crop) -->
-              <div class="absolute w-4 h-4 bg-white rounded-sm pointer-events-auto cursor-nw-resize shadow -left-2 -top-2"
-                (mousedown)="onHandleMouseDown($event, 'nw')"></div>
-              <div class="absolute w-4 h-4 bg-white rounded-sm pointer-events-auto cursor-ne-resize shadow -right-2 -top-2"
-                (mousedown)="onHandleMouseDown($event, 'ne')"></div>
-              <div class="absolute w-4 h-4 bg-white rounded-sm pointer-events-auto cursor-sw-resize shadow -left-2 -bottom-2"
-                (mousedown)="onHandleMouseDown($event, 'sw')"></div>
-              <div class="absolute w-4 h-4 bg-white rounded-sm pointer-events-auto cursor-se-resize shadow -right-2 -bottom-2"
-                (mousedown)="onHandleMouseDown($event, 'se')"></div>
+              <div class="absolute w-5 h-5 bg-white rounded-sm pointer-events-auto cursor-nw-resize shadow -left-2.5 -top-2.5 touch-none"
+                (mousedown)="onHandleMouseDown($event, 'nw')"
+                (touchstart)="onHandleTouchStart($event, 'nw')"></div>
+              <div class="absolute w-5 h-5 bg-white rounded-sm pointer-events-auto cursor-ne-resize shadow -right-2.5 -top-2.5 touch-none"
+                (mousedown)="onHandleMouseDown($event, 'ne')"
+                (touchstart)="onHandleTouchStart($event, 'ne')"></div>
+              <div class="absolute w-5 h-5 bg-white rounded-sm pointer-events-auto cursor-sw-resize shadow -left-2.5 -bottom-2.5 touch-none"
+                (mousedown)="onHandleMouseDown($event, 'sw')"
+                (touchstart)="onHandleTouchStart($event, 'sw')"></div>
+              <div class="absolute w-5 h-5 bg-white rounded-sm pointer-events-auto cursor-se-resize shadow -right-2.5 -bottom-2.5 touch-none"
+                (mousedown)="onHandleMouseDown($event, 'se')"
+                (touchstart)="onHandleTouchStart($event, 'se')"></div>
 
-              <!-- Square indicator label -->
               <div class="absolute -bottom-7 left-1/2 -translate-x-1/2 text-[10px] text-white/60 bg-black/70 px-2 py-0.5 rounded whitespace-nowrap pointer-events-none">
                 @if (_outputPx) {
                   {{ _outputPx | number:'1.0-0' }} × {{ _outputPx | number:'1.0-0' }} px
@@ -73,57 +73,87 @@
         </div>
       </div>
 
-      <!-- Right control panel -->
-      <div class="w-56 shrink-0 bg-white/[0.03] border-l border-white/10 flex flex-col gap-1 p-4 overflow-y-auto">
+      <!-- Controls panel — right sidebar on desktop, bottom bar on mobile -->
+      <div class="
+        shrink-0 bg-white/[0.03] border-t border-white/10
+        md:border-t-0 md:border-l
+        flex flex-row md:flex-col
+        overflow-x-auto md:overflow-x-hidden md:overflow-y-auto
+        p-3 md:p-4 gap-3 md:gap-1
+        md:w-56
+      ">
 
         <!-- Rotate -->
-        <p class="text-[10px] font-semibold text-white/30 uppercase tracking-widest mb-1.5">Rotar</p>
-        <div class="flex gap-2 mb-4">
-          <button type="button" (click)="rotate(-90)"
-            class="flex-1 flex flex-col items-center gap-1 py-3 rounded-xl bg-white/8 hover:bg-white/[0.12] text-white transition-colors border-0 cursor-pointer">
-            <span class="material-symbols-outlined text-[22px] leading-none">rotate_left</span>
-            <span class="text-[10px] text-white/40">−90°</span>
-          </button>
-          <button type="button" (click)="rotate(90)"
-            class="flex-1 flex flex-col items-center gap-1 py-3 rounded-xl bg-white/8 hover:bg-white/[0.12] text-white transition-colors border-0 cursor-pointer">
-            <span class="material-symbols-outlined text-[22px] leading-none">rotate_right</span>
-            <span class="text-[10px] text-white/40">+90°</span>
-          </button>
+        <div class="flex flex-row md:flex-col gap-1 shrink-0">
+          <p class="hidden md:block text-[10px] font-semibold text-white/30 uppercase tracking-widest mb-1.5">Rotar</p>
+          <div class="flex gap-1.5">
+            <button type="button" (click)="rotate(-90)"
+              class="flex flex-col items-center gap-1 py-2.5 px-3 md:flex-1 rounded-xl bg-white/8 hover:bg-white/[0.12] text-white transition-colors border-0 cursor-pointer">
+              <span class="material-symbols-outlined text-[20px] leading-none">rotate_left</span>
+              <span class="text-[10px] text-white/40 hidden md:block">−90°</span>
+            </button>
+            <button type="button" (click)="rotate(90)"
+              class="flex flex-col items-center gap-1 py-2.5 px-3 md:flex-1 rounded-xl bg-white/8 hover:bg-white/[0.12] text-white transition-colors border-0 cursor-pointer">
+              <span class="material-symbols-outlined text-[20px] leading-none">rotate_right</span>
+              <span class="text-[10px] text-white/40 hidden md:block">+90°</span>
+            </button>
+          </div>
         </div>
+
+        <!-- Divider -->
+        <div class="hidden md:block border-t border-white/10 my-2"></div>
+        <div class="md:hidden w-px self-stretch bg-white/10 shrink-0"></div>
 
         <!-- Flip -->
-        <p class="text-[10px] font-semibold text-white/30 uppercase tracking-widest mb-1.5">Voltear</p>
-        <div class="flex gap-2 mb-4">
-          <button type="button" (click)="toggleFlipH()"
-            class="flex-1 flex flex-col items-center gap-1 py-3 rounded-xl transition-colors border-0 cursor-pointer"
-            [class]="_flipH() ? 'bg-indigo-600 text-white' : 'bg-white/8 hover:bg-white/[0.12] text-white/70'">
-            <span class="material-symbols-outlined text-[22px] leading-none">flip</span>
-            <span class="text-[10px] opacity-60">H</span>
-          </button>
-          <button type="button" (click)="toggleFlipV()"
-            class="flex-1 flex flex-col items-center gap-1 py-3 rounded-xl transition-colors border-0 cursor-pointer"
-            [class]="_flipV() ? 'bg-indigo-600 text-white' : 'bg-white/8 hover:bg-white/[0.12] text-white/70'">
-            <span class="material-symbols-outlined text-[22px] leading-none" style="transform:rotate(90deg)">flip</span>
-            <span class="text-[10px] opacity-60">V</span>
-          </button>
+        <div class="flex flex-row md:flex-col gap-1 shrink-0">
+          <p class="hidden md:block text-[10px] font-semibold text-white/30 uppercase tracking-widest mb-1.5">Voltear</p>
+          <div class="flex gap-1.5">
+            <button type="button" (click)="toggleFlipH()"
+              class="flex flex-col items-center gap-1 py-2.5 px-3 md:flex-1 rounded-xl transition-colors border-0 cursor-pointer"
+              [class]="_flipH() ? 'bg-indigo-600 text-white' : 'bg-white/8 hover:bg-white/[0.12] text-white/70'">
+              <span class="material-symbols-outlined text-[20px] leading-none">flip</span>
+              <span class="text-[10px] opacity-60 hidden md:block">H</span>
+            </button>
+            <button type="button" (click)="toggleFlipV()"
+              class="flex flex-col items-center gap-1 py-2.5 px-3 md:flex-1 rounded-xl transition-colors border-0 cursor-pointer"
+              [class]="_flipV() ? 'bg-indigo-600 text-white' : 'bg-white/8 hover:bg-white/[0.12] text-white/70'">
+              <span class="material-symbols-outlined text-[20px] leading-none" style="transform:rotate(90deg)">flip</span>
+              <span class="text-[10px] opacity-60 hidden md:block">V</span>
+            </button>
+          </div>
         </div>
 
-        <!-- Crop (always square) -->
-        <p class="text-[10px] font-semibold text-white/30 uppercase tracking-widest mb-1.5">Recortar</p>
-        <button type="button" (click)="toggleCrop()"
-          class="w-full flex items-center justify-center gap-2 py-3 rounded-xl transition-colors border-0 cursor-pointer text-sm mb-1"
-          [class]="_cropMode() ? 'bg-indigo-600 text-white' : 'bg-white/8 hover:bg-white/[0.12] text-white/70'">
-          <span class="material-symbols-outlined text-[18px] leading-none">crop_square</span>
-          {{ _cropMode() ? 'Recorte cuadrado activo' : 'Recorte cuadrado' }}
-        </button>
-        @if (_cropMode()) {
-          <button type="button" (click)="resetCrop()"
-            class="w-full py-1.5 text-xs text-white/30 hover:text-white/60 transition-colors border-0 bg-transparent cursor-pointer mb-2">
-            Centrar selección
-          </button>
+        <!-- Divider -->
+        <div class="hidden md:block border-t border-white/10 my-2"></div>
+        <div class="md:hidden w-px self-stretch bg-white/10 shrink-0"></div>
 
-          <!-- Target pixel size -->
-          <div class="space-y-1.5 mb-2">
+        <!-- Crop -->
+        <div class="flex flex-row md:flex-col gap-1 shrink-0">
+          <p class="hidden md:block text-[10px] font-semibold text-white/30 uppercase tracking-widest mb-1.5">Recortar</p>
+          <button type="button" (click)="toggleCrop()"
+            class="flex items-center gap-2 py-2.5 px-3 rounded-xl transition-colors border-0 cursor-pointer text-sm whitespace-nowrap"
+            [class]="_cropMode() ? 'bg-indigo-600 text-white' : 'bg-white/8 hover:bg-white/[0.12] text-white/70'">
+            <span class="material-symbols-outlined text-[18px] leading-none">crop_square</span>
+            <span class="hidden md:inline">{{ _cropMode() ? 'Recorte activo' : 'Recorte cuadrado' }}</span>
+          </button>
+          @if (_cropMode()) {
+            <button type="button" (click)="resetCrop()"
+              class="py-2 px-3 text-xs text-white/30 hover:text-white/60 transition-colors border-0 bg-transparent cursor-pointer whitespace-nowrap">
+              Centrar
+            </button>
+            <div class="flex items-center gap-1.5 md:hidden">
+              <input type="number" min="50" max="4000" step="50"
+                [value]="_targetPx() ?? ''"
+                (input)="onTargetPxInput($any($event.target).value)"
+                placeholder="px"
+                class="w-20 bg-white/8 border border-white/10 rounded-lg px-2 py-2 text-xs text-white placeholder:text-white/20 focus:outline-none focus:border-white/30" />
+            </div>
+          }
+        </div>
+
+        <!-- Target px (desktop only, shown inside crop section) -->
+        @if (_cropMode()) {
+          <div class="hidden md:flex flex-col gap-1.5 mb-2 shrink-0">
             <p class="text-[10px] text-white/30 uppercase tracking-widest font-semibold">Tamaño de salida</p>
             <div class="flex items-center gap-1.5">
               <input type="number" min="50" max="4000" step="50"
@@ -134,35 +164,39 @@
               <span class="text-[10px] text-white/30">px</span>
             </div>
             @if (_targetPx()) {
-              <p class="text-[10px] text-indigo-400">Exportará a {{ _targetPx() }}×{{ _targetPx() }} px</p>
+              <p class="text-[10px] text-indigo-400">{{ _targetPx() }}×{{ _targetPx() }} px</p>
             } @else if (_outputPx) {
-              <p class="text-[10px] text-white/25">Tamaño natural: {{ _outputPx | number:'1.0-0' }}×{{ _outputPx | number:'1.0-0' }} px</p>
+              <p class="text-[10px] text-white/25">Natural: {{ _outputPx | number:'1.0-0' }}×{{ _outputPx | number:'1.0-0' }} px</p>
             }
           </div>
         }
 
         <!-- Divider -->
-        <div class="border-t border-white/10 my-2"></div>
+        <div class="hidden md:block border-t border-white/10 my-2"></div>
+        <div class="md:hidden w-px self-stretch bg-white/10 shrink-0"></div>
 
         <!-- Reset all -->
-        <button type="button" (click)="resetAll()"
-          class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/35 hover:text-white/60 text-xs transition-colors border-0 cursor-pointer">
-          <span class="material-symbols-outlined text-[16px] leading-none">restart_alt</span>
-          Resetear todo
-        </button>
+        <div class="shrink-0">
+          <button type="button" (click)="resetAll()"
+            class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-white/35 hover:text-white/60 text-xs transition-colors border-0 cursor-pointer md:w-full whitespace-nowrap">
+            <span class="material-symbols-outlined text-[16px] leading-none">restart_alt</span>
+            <span class="hidden md:inline">Resetear todo</span>
+          </button>
+        </div>
 
-        <!-- File name -->
+        <!-- File name (desktop only) -->
         @if (_img) {
-          <div class="mt-auto pt-4 text-[9px] text-white/15 leading-relaxed break-all">
+          <div class="hidden md:block mt-auto pt-4 text-[9px] text-white/15 leading-relaxed break-all">
             {{ _svc.files()[_svc.currentIndex()].name }}
           </div>
         }
+
       </div>
     </div>
 
     <!-- Footer -->
-    <div class="flex items-center justify-between px-5 py-3.5 border-t border-white/10 shrink-0 gap-3">
-      <p class="text-[11px] text-white/25">
+    <div class="flex items-center justify-between px-4 py-3 border-t border-white/10 shrink-0 gap-3">
+      <p class="text-[11px] text-white/25 hidden sm:block">
         @if (_svc.files().length > 1) {
           Imagen {{ _svc.currentIndex() + 1 }} de {{ _svc.files().length }}
         } @else {
@@ -170,9 +204,9 @@
           <kbd class="px-1.5 py-0.5 bg-white/10 rounded text-[10px] font-sans">Esc</kbd> cancelar
         }
       </p>
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2 ml-auto">
         <button type="button" (click)="skip()"
-          class="px-5 py-2 rounded-xl bg-white/8 hover:bg-white/[0.12] text-white/60 hover:text-white text-sm transition-colors border-0 cursor-pointer">
+          class="px-4 py-2 rounded-xl bg-white/8 hover:bg-white/[0.12] text-white/60 hover:text-white text-sm transition-colors border-0 cursor-pointer">
           Omitir
         </button>
         <button type="button" (click)="confirm()" [disabled]="_confirming()"

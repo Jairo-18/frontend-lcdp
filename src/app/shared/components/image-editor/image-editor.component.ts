@@ -225,6 +225,30 @@ export class ImageEditorComponent implements OnDestroy {
     event.preventDefault();
   }
 
+  onWrapperTouchStart(event: TouchEvent): void {
+    if (!this._cropMode()) return;
+    const touch = event.touches[0];
+    this.onWrapperMouseDown({ clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => event.preventDefault() } as MouseEvent);
+  }
+
+  onHandleTouchStart(event: TouchEvent, handle: Handle): void {
+    const touch = event.touches[0];
+    this.onHandleMouseDown({ clientX: touch.clientX, clientY: touch.clientY, stopPropagation: () => event.stopPropagation(), preventDefault: () => event.preventDefault() } as MouseEvent, handle);
+  }
+
+  @HostListener('document:touchmove', ['$event'])
+  onTouchMove(event: TouchEvent): void {
+    if (!this._cropMode() || (!this._dragState && !this._drawStart)) return;
+    event.preventDefault();
+    const touch = event.touches[0];
+    this.onMouseMove({ clientX: touch.clientX, clientY: touch.clientY } as MouseEvent);
+  }
+
+  @HostListener('document:touchend')
+  onTouchEnd(): void {
+    this.onMouseUp();
+  }
+
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent): void {
     if (!this._cropMode() || (!this._dragState && !this._drawStart)) return;

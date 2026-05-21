@@ -1,12 +1,12 @@
 @use 'variables' as *;
 
-/* Oculta iconos hasta que Material Symbols cargue — evita flash de texto */
-.material-symbols-outlined {
+/* Fallback por si el inline de index.html no aplica aún */
+html:not(.fonts-ready) .material-symbols-outlined {
   visibility: hidden;
-}
-
-html.fonts-loaded .material-symbols-outlined {
-  visibility: visible;
+  display: inline-block;
+  overflow: hidden;
+  width: 1em;
+  height: 1em;
 }
 
 .app-container {
@@ -277,9 +277,9 @@ h6 {
   font-family: var(--font-title);
 }
 
-h1 span,
-h2 span,
-h3 span {
+h1 span:not(.material-symbols-outlined),
+h2 span:not(.material-symbols-outlined),
+h3 span:not(.material-symbols-outlined) {
   font-family: inherit !important;
 }
 

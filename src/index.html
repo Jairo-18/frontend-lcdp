@@ -38,22 +38,77 @@
     />
 
     <style>
-      /* Fallback: si fonts.ready tarda más de 2s, muestra igual */
-      html.fonts-loaded .material-symbols-outlined,
-      html.fonts-timeout .material-symbols-outlined { visibility: visible; }
+      /* Iconos ocultos hasta que la fuente cargue */
+      .material-symbols-outlined {
+        visibility: hidden;
+        /* Tamaño fijo: evita que el texto largo desplace el layout */
+        display: inline-block;
+        overflow: hidden;
+        width: 1em;
+        height: 1em;
+        vertical-align: middle;
+      }
+      html.fonts-ready .material-symbols-outlined {
+        visibility: visible;
+        width: auto;
+        height: auto;
+        overflow: visible;
+      }
+
+      /* Loader global — cubre hasta que las fuentes carguen */
+      #app-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #faf8f3;
+        transition: opacity 0.25s ease;
+      }
+      #app-loader.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+      #app-loader__spinner {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 4px solid #efe9d6;
+        border-top-color: #e23e57;
+        animation: shell-spin 0.7s linear infinite;
+      }
+      @keyframes shell-spin { to { transform: rotate(360deg); } }
     </style>
   </head>
   <body>
+    <!-- Loader fuera de app-root: Angular no lo toca -->
+    <div id="app-loader">
+      <div id="app-loader__spinner"></div>
+    </div>
+
     <app-root></app-root>
 
     <script>
       (function () {
-        var t = setTimeout(function () {
-          document.documentElement.classList.add('fonts-timeout');
-        }, 2000);
+        var loader = document.getElementById('app-loader');
+
+        function dismiss() {
+          document.documentElement.classList.add('fonts-ready');
+          if (loader) {
+            loader.classList.add('hidden');
+            // Eliminar del DOM tras el fade
+            setTimeout(function () {
+              if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
+            }, 300);
+          }
+        }
+
+        var t = setTimeout(dismiss, 2500);
+
         document.fonts.ready.then(function () {
           clearTimeout(t);
-          document.documentElement.classList.add('fonts-loaded');
+          dismiss();
         });
       })();
     </script>
