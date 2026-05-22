@@ -3,11 +3,12 @@ import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { Router, RouterModule, RouterLinkActive } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CategoryPill } from '@shared/interfaces/category.interface';
+import { CartPopoverComponent } from '@shared/components/cart-popover/cart-popover.component';
 
 @Component({
   selector: 'app-nav-bar-destok',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, CartPopoverComponent],
   templateUrl: './nav-bar-destok.component.html',
   styleUrl: './nav-bar-destok.component.scss',
 })

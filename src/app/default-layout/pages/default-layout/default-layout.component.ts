@@ -3,7 +3,7 @@ import { RouterOutlet, Router } from '@angular/router';
 import { AdminSidebarComponent } from '../../components/admin-sidebar/admin-sidebar.component';
 import { NavBarComponent } from '../../components/nav-bar/nav-bar.component';
 import { FooterComponent } from '../../components/footer/footer.component';
-import { CartDrawerComponent } from '@shared/components';
+import { AnnouncementBarComponent, CartDrawerComponent } from '@shared/components';
 import { OrganizationalService } from '@shared/services/organizational.service';
 import { CartService } from '@shared/services/cart.service';
 import { SeoService } from '@shared/services/seo.service';
@@ -11,7 +11,7 @@ import { SeoService } from '@shared/services/seo.service';
 @Component({
   selector: 'app-default-layout',
   standalone: true,
-  imports: [RouterOutlet, AdminSidebarComponent, NavBarComponent, FooterComponent, CartDrawerComponent],
+  imports: [RouterOutlet, AdminSidebarComponent, NavBarComponent, FooterComponent, CartDrawerComponent, AnnouncementBarComponent],
   templateUrl: './default-layout.component.html',
   styleUrls: ['./default-layout.component.scss'],
 })

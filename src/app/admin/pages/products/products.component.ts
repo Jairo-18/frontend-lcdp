@@ -8,7 +8,8 @@ import {
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { PaginatorComponent } from '@shared/components';
+import { FormsModule } from '@angular/forms';
+import { PaginatorComponent, SelectFieldComponent } from '@shared/components';
 import { ConfirmDialogService } from '@shared/services/confirm-dialog.service';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
@@ -22,7 +23,7 @@ import { Brand } from '@shared/interfaces/brand.interface';
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [DecimalPipe, PaginatorComponent],
+  imports: [DecimalPipe, FormsModule, PaginatorComponent, SelectFieldComponent],
   templateUrl: './products.component.html',
 })
 export class ProductsComponent implements OnInit, OnDestroy {
@@ -37,14 +38,14 @@ export class ProductsComponent implements OnInit, OnDestroy {
   private readonly _destroy$: Subject<void> = new Subject<void>();
   private readonly _search$: Subject<string> = new Subject<string>();
 
-  readonly _loading = signal(false);
+  readonly _loading = signal<boolean>(false);
   readonly _deletingId = signal<number | null>(null);
   readonly _products = signal<Product[]>([]);
-  readonly _total = signal(0);
-  readonly _pageCount = signal(0);
-  readonly _page = signal(1);
-  readonly _perPage = signal(25);
-  readonly _search = signal('');
+  readonly _total = signal<number>(0);
+  readonly _pageCount = signal<number>(0);
+  readonly _page = signal<number>(1);
+  readonly _perPage = signal<number>(25);
+  readonly _search = signal<string>('');
   readonly _categoryFilter = signal<number | undefined>(undefined);
   readonly _brandFilter = signal<number | undefined>(undefined);
 
@@ -60,6 +61,22 @@ export class ProductsComponent implements OnInit, OnDestroy {
   readonly _hasFilters = computed(
     () => !!this._search() || !!this._categoryFilter() || !!this._brandFilter(),
   );
+
+  readonly perPageOptions = [
+    { value: '10', label: '10 por página' },
+    { value: '25', label: '25 por página' },
+    { value: '50', label: '50 por página' },
+  ];
+
+  readonly categoryOptions = computed(() => [
+    { value: '', label: 'Todas las categorías' },
+    ...this._categories().map((c) => ({ value: String(c.id), label: c.name })),
+  ]);
+
+  readonly brandOptions = computed(() => [
+    { value: '', label: 'Todas las marcas' },
+    ...this._brands().map((b) => ({ value: String(b.id), label: b.name })),
+  ]);
 
   ngOnInit(): void {
     this._search$

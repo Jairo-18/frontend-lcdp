@@ -11,7 +11,7 @@ export const publicRoutes: Routes = [
           import('./pages/home/home.component').then((m) => m.HomeComponent),
       },
       {
-        path: 'about-us',
+        path: 'sobre-nosotros',
         data: { reuse: true },
         loadComponent: () =>
           import('./pages/about-us/about-us.component').then(
@@ -30,6 +30,27 @@ export const publicRoutes: Routes = [
         loadComponent: () =>
           import('./pages/producto/producto.component').then(
             (m) => m.ProductoComponent,
+          ),
+      },
+      {
+        path: 'videos',
+        loadComponent: () =>
+          import('./pages/videos/videos.component').then(
+            (m) => m.VideosComponent,
+          ),
+      },
+      {
+        path: 'ayuda/como-pedir',
+        loadComponent: () =>
+          import('./pages/como-pedir/como-pedir.component').then(
+            (m) => m.ComoPedirComponent,
+          ),
+      },
+      {
+        path: 'ayuda/garantia',
+        loadComponent: () =>
+          import('./pages/garantia/garantia.component').then(
+            (m) => m.GarantiaComponent,
           ),
       },
     ],

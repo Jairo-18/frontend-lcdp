@@ -10,6 +10,7 @@ export interface CartItem {
   sku: string | null;
   unitPrice: number;
   quantity: number;
+  imageUrl: string | null;
 }
 
 const CART_KEY = 'lcdp_cart';
@@ -88,6 +89,32 @@ export class CartService {
       '',
       `*Total estimado: ${this._fmt(this.subtotal())}*`,
     ].join('\n');
+  }
+
+  buildCheckoutMessage(customer: { name: string; phone: string; address: string; notes: string }): string {
+    const items = this._items();
+    if (!items.length) return '';
+    const productLines: string[] = [];
+    items.forEach(it => {
+      const pres = it.sku ? `${it.presentationName} - ${it.sku}` : it.presentationName;
+      productLines.push(`• ${it.productName} (${pres}) x${it.quantity}`);
+      productLines.push(`  💰 ${this._fmt(it.unitPrice * it.quantity)}`);
+      productLines.push('');
+    });
+    return [
+      `🧾 *NUEVA COTIZACIÓN*`,
+      ``,
+      `👤 *Cliente:* ${customer.name}`,
+      `📞 *Celular:* ${customer.phone}`,
+      customer.address ? `📍 *Dirección:* ${customer.address}` : null,
+      ``,
+      `📦 *Productos:*`,
+      ``,
+      ...productLines,
+      `💵 *TOTAL ESTIMADO:*`,
+      `${this._fmt(this.subtotal())}`,
+      customer.notes ? `\n📝 *Notas:* ${customer.notes}` : null,
+    ].filter(v => v !== null).join('\n');
   }
 
   fmt(v: number): string {

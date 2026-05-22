@@ -7,7 +7,8 @@ import {
   signal,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { InputFieldComponent, PaginatorComponent } from '@shared/components';
+import { FormsModule } from '@angular/forms';
+import { InputFieldComponent, PaginatorComponent, SelectFieldComponent } from '@shared/components';
 import { ConfirmDialogService } from '@shared/services/confirm-dialog.service';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
@@ -17,7 +18,7 @@ import { TaxType, TaxTypeDto } from '@shared/interfaces/tax-type.interface';
 @Component({
   selector: 'app-tax-types',
   standalone: true,
-  imports: [ReactiveFormsModule, InputFieldComponent, PaginatorComponent],
+  imports: [FormsModule, ReactiveFormsModule, InputFieldComponent, PaginatorComponent, SelectFieldComponent],
   templateUrl: './tax-types.component.html',
 })
 export class TaxTypesComponent implements OnInit, OnDestroy {
@@ -27,6 +28,12 @@ export class TaxTypesComponent implements OnInit, OnDestroy {
     inject(ConfirmDialogService);
   private readonly _destroy$: Subject<void> = new Subject<void>();
   private readonly _search$: Subject<string> = new Subject<string>();
+
+  readonly perPageOptions = [
+    { value: '10', label: '10 por página' },
+    { value: '25', label: '25 por página' },
+    { value: '50', label: '50 por página' },
+  ];
 
   readonly _loading = signal(false);
   readonly _taxTypes = signal<TaxType[]>([]);

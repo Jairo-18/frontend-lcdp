@@ -14,6 +14,7 @@ let uid = 0;
 @Component({
   selector: 'app-textarea-field',
   standalone: true,
+  host: { style: 'display: block' },
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -21,29 +22,7 @@ let uid = 0;
       multi: true,
     },
   ],
-  template: `
-    @if (label) {
-      <label [for]="id" class="block text-sm font-medium text-ink mb-1">
-        {{ label }}@if (required) {<span class="text-coral"> *</span>}
-      </label>
-    }
-    <textarea
-      [id]="id"
-      [placeholder]="placeholder"
-      [rows]="rows"
-      [disabled]="isDisabled"
-      [readOnly]="readonly"
-      (input)="onInput($event)"
-      (blur)="onTouched()"
-      [class]="textareaClasses"
-    >{{ value }}</textarea>
-    @if (hint && !showError) {
-      <p class="text-xs text-ink-mute mt-1">{{ hint }}</p>
-    }
-    @if (showError) {
-      <p class="text-xs text-coral mt-1">{{ resolvedError }}</p>
-    }
-  `,
+  templateUrl: './textarea-field.component.html',
 })
 export class TextareaFieldComponent implements ControlValueAccessor {
   @Input() label = '';

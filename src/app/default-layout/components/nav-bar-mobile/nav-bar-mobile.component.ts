@@ -11,8 +11,14 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import {
+  NavigationEnd,
+  Router,
+  RouterLink,
+  RouterLinkActive,
+} from '@angular/router';
 import { filter } from 'rxjs';
+import { CartPopoverComponent } from '@shared/components/cart-popover/cart-popover.component';
 
 interface NavLink {
   label: string;
@@ -23,7 +29,7 @@ interface NavLink {
 @Component({
   selector: 'app-nav-bar-mobile',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, CartPopoverComponent],
   templateUrl: './nav-bar-mobile.component.html',
   styleUrl: './nav-bar-mobile.component.scss',
 })
@@ -39,10 +45,12 @@ export class NavBarMobileComponent implements OnInit, OnDestroy {
   readonly _isMenuOpen: WritableSignal<boolean> = signal(false);
 
   readonly navLinks: NavLink[] = [
-    { label: 'Inicio',   icon: 'home',          route: '/' },
-    { label: 'Catálogo', icon: 'format_paint',  route: '/catalogo' },
-    { label: 'Videos',   icon: 'smart_display', route: '/videos' },
-    { label: 'Nosotros', icon: 'info',           route: '/about-us' },
+    { label: 'Inicio',      icon: 'home',          route: '/'                  },
+    { label: 'Catálogo',    icon: 'format_paint',  route: '/catalogo'          },
+    { label: 'Videos',      icon: 'smart_display', route: '/videos'            },
+    { label: 'Cómo pedir',  icon: 'quiz',          route: '/ayuda/como-pedir'  },
+    { label: 'Garantía',    icon: 'verified',      route: '/ayuda/garantia'    },
+    { label: 'Nosotros',    icon: 'storefront',    route: '/sobre-nosotros'    },
   ];
 
   ngOnInit(): void {

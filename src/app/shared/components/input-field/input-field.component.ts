@@ -15,6 +15,7 @@ let uid = 0;
 @Component({
   selector: 'app-input-field',
   standalone: true,
+  host: { style: 'display: block' },
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -22,30 +23,7 @@ let uid = 0;
       multi: true,
     },
   ],
-  template: `
-    @if (label) {
-      <label [for]="id" class="block text-sm font-medium text-ink mb-1">
-        {{ label }}@if (required) {<span class="text-coral"> *</span>}
-      </label>
-    }
-    <input
-      [id]="id"
-      [type]="type"
-      [placeholder]="placeholder"
-      [value]="_value()"
-      [disabled]="isDisabled"
-      [readOnly]="readonly"
-      (input)="onInput($event)"
-      (blur)="onTouched()"
-      [class]="inputClasses"
-    />
-    @if (hint && !showError) {
-      <p class="text-xs text-ink-mute mt-1">{{ hint }}</p>
-    }
-    @if (showError) {
-      <p class="text-xs text-coral mt-1">{{ resolvedError }}</p>
-    }
-  `,
+  templateUrl: './input-field.component.html',
 })
 export class InputFieldComponent implements ControlValueAccessor {
   @Input() label = '';

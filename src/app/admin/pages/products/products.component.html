@@ -37,37 +37,26 @@
       />
     </div>
 
-    <select
-      [value]="_categoryFilter() ?? ''"
-      (change)="onCategoryFilter($any($event.target).value)"
-      class="w-full sm:w-auto rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 cursor-pointer"
-    >
-      <option value="">Todas las categorías</option>
-      @for (cat of _categories(); track cat.id) {
-        <option [value]="cat.id">{{ cat.name }}</option>
-      }
-    </select>
+    <app-select-field
+      class="w-full sm:w-auto"
+      [options]="categoryOptions()"
+      [ngModel]="_categoryFilter()?.toString() ?? ''"
+      (ngModelChange)="onCategoryFilter($event)"
+    />
 
-    <select
-      [value]="_brandFilter() ?? ''"
-      (change)="onBrandFilter($any($event.target).value)"
-      class="w-full sm:w-auto rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 cursor-pointer"
-    >
-      <option value="">Todas las marcas</option>
-      @for (brand of _brands(); track brand.id) {
-        <option [value]="brand.id">{{ brand.name }}</option>
-      }
-    </select>
+    <app-select-field
+      class="w-full sm:w-auto"
+      [options]="brandOptions()"
+      [ngModel]="_brandFilter()?.toString() ?? ''"
+      (ngModelChange)="onBrandFilter($event)"
+    />
 
-    <select
-      [value]="_perPage()"
-      (change)="onPerPageChange($any($event.target).value)"
-      class="w-full sm:w-auto rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 cursor-pointer"
-    >
-      <option value="10">10 por página</option>
-      <option value="25">25 por página</option>
-      <option value="50">50 por página</option>
-    </select>
+    <app-select-field
+      class="w-full sm:w-auto"
+      [options]="perPageOptions"
+      [ngModel]="_perPage().toString()"
+      (ngModelChange)="onPerPageChange($event)"
+    />
 
     @if (_hasFilters()) {
       <button

@@ -1,0 +1,20 @@
+<div class="w-full bg-ink text-white text-[11px] font-medium py-2 select-none marquee-wrapper">
+  <div class="marquee-track">
+    <!-- Primera copia -->
+    @for (item of items; track item.text) {
+      <span class="inline-flex items-center gap-1.5 px-6">
+        <span>{{ item.icon }}</span>
+        <span>{{ item.text }}</span>
+      </span>
+      <span class="text-white/30 px-2">•</span>
+    }
+    <!-- Segunda copia para loop sin corte -->
+    @for (item of items; track item.text) {
+      <span class="inline-flex items-center gap-1.5 px-6">
+        <span>{{ item.icon }}</span>
+        <span>{{ item.text }}</span>
+      </span>
+      <span class="text-white/30 px-2">•</span>
+    }
+  </div>
+</div>

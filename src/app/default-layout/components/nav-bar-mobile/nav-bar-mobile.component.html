@@ -25,17 +25,20 @@
     </div>
 
     <!-- Cart -->
-    <button (click)="openCart.emit()"
-      class="bg-ink text-white p-2 rounded-lg inline-flex items-center gap-1.5 cursor-pointer border-0 transition-all hover:bg-black relative"
-      aria-label="Carrito">
-      <span class="material-symbols-outlined text-[22px] leading-none">shopping_bag</span>
-      @if (cartCount > 0) {
-      <span
-        class="absolute -top-1.5 -right-1.5 bg-yellow text-ink font-mono font-bold text-[10px] min-w-[18px] h-[18px] rounded-full inline-grid place-items-center px-1">
-        {{ cartCount }}
-      </span>
-      }
-    </button>
+    <div class="relative">
+      <button (click)="openCart.emit()"
+        class="bg-ink text-white p-2 rounded-lg inline-flex items-center gap-1.5 cursor-pointer border-0 transition-all hover:bg-black relative"
+        aria-label="Carrito">
+        <span class="material-symbols-outlined text-[22px] leading-none">shopping_bag</span>
+        @if (cartCount > 0) {
+          <span class="absolute -top-1.5 -right-1.5 bg-yellow text-ink font-mono font-bold text-[10px] min-w-[18px] h-[18px] rounded-full inline-grid place-items-center px-1">
+            {{ cartCount }}
+          </span>
+        }
+      </button>
+
+      <app-cart-popover [count]="cartCount" arrowRight="right-3" />
+    </div>
   </div>
 </header>
 

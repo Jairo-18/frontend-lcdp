@@ -1,0 +1,9 @@
+.social-icon-wrap {
+  background: rgba(0,0,0,0.06);
+  color: #555;
+
+  &[data-platform="instagram"] { background: #fce4ec; color: #E1306C; }
+  &[data-platform="facebook"]  { background: #e8f0fe; color: #1877F2; }
+  &[data-platform="tiktok"]    { background: #fce4ec; color: #010101; }
+  &[data-platform="youtube"]   { background: #ffebee; color: #FF0000; }
+}

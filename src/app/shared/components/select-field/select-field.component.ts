@@ -16,6 +16,7 @@ let uid = 0;
 @Component({
   selector: 'app-select-field',
   standalone: true,
+  host: { style: 'display: block' },
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -23,33 +24,7 @@ let uid = 0;
       multi: true,
     },
   ],
-  template: `
-    @if (label) {
-      <label [for]="id" class="block text-sm font-medium text-ink mb-1">
-        {{ label }}@if (required) {<span class="text-coral"> *</span>}
-      </label>
-    }
-    <select
-      [id]="id"
-      [disabled]="isDisabled"
-      (change)="onSelect($event)"
-      (blur)="onTouched()"
-      [class]="selectClasses"
-    >
-      @if (placeholder) {
-        <option value="">{{ placeholder }}</option>
-      }
-      @for (opt of options; track opt.value) {
-        <option [value]="opt.value" [selected]="opt.value == _value()">{{ opt.label }}</option>
-      }
-    </select>
-    @if (hint && !showError) {
-      <p class="text-xs text-ink-mute mt-1">{{ hint }}</p>
-    }
-    @if (showError) {
-      <p class="text-xs text-coral mt-1">{{ resolvedError }}</p>
-    }
-  `,
+  templateUrl: './select-field.component.html',
 })
 export class SelectFieldComponent implements ControlValueAccessor {
   @Input() label = '';
@@ -82,7 +57,7 @@ export class SelectFieldComponent implements ControlValueAccessor {
 
   protected get selectClasses(): string {
     const base =
-      'w-full rounded-xl border px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 transition-colors cursor-pointer';
+      'w-full rounded-xl border pl-3 pr-8 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 transition-colors cursor-pointer appearance-none';
     const border = this.showError
       ? 'border-coral focus:ring-coral/20'
       : 'border-rule focus:ring-black/10';

@@ -36,14 +36,14 @@ export class FooterComponent {
 
   readonly tiendaLinks: FooterLink[] = [
     { label: 'Catálogo', route: '/catalogo' },
-    { label: 'Marcas', route: '/marcas' },
+    { label: 'Categorías', route: '/catalogo' },
+    { label: 'Marcas', route: '/catalogo' },
     { label: 'Videos', route: '/videos' },
+    { label: 'Nosotros', route: '/sobre-nosotros' },
   ];
 
   readonly ayudaLinks: FooterLink[] = [
     { label: 'Cómo pedir', route: '/ayuda/como-pedir' },
-    { label: 'Envíos', route: '/ayuda/envios' },
-    { label: 'Asesoría', route: '/ayuda/asesoria' },
     { label: 'Garantía', route: '/ayuda/garantia' },
   ];
 
@@ -57,13 +57,17 @@ export class FooterComponent {
       this.socialLinks = [];
       return;
     }
-    const candidates: { url: string | undefined; label: string; key: SocialLink['key'] }[] = [
-      { url: org.facebookUrl,  label: 'Facebook',  key: 'facebook'  },
+    const candidates: {
+      url: string | undefined;
+      label: string;
+      key: SocialLink['key'];
+    }[] = [
+      { url: org.facebookUrl, label: 'Facebook', key: 'facebook' },
       { url: org.instagramUrl, label: 'Instagram', key: 'instagram' },
-      { url: org.tiktokUrl,   label: 'TikTok',    key: 'tiktok'    },
-      { url: org.youtubeUrl,  label: 'YouTube',   key: 'youtube'   },
-      { url: org.mapsUrl,     label: 'Ubicación', key: 'maps'      },
-      { url: org.website,     label: 'Sitio web', key: 'website'   },
+      { url: org.tiktokUrl, label: 'TikTok', key: 'tiktok' },
+      { url: org.youtubeUrl, label: 'YouTube', key: 'youtube' },
+      { url: org.mapsUrl, label: 'Ubicación', key: 'maps' },
+      { url: org.website, label: 'Sitio web', key: 'website' },
     ];
     this.socialLinks = candidates
       .filter((c): c is SocialLink & { url: string } => !!c.url)

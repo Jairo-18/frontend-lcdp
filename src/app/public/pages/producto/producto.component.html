@@ -1,12 +1,13 @@
 <div class="min-h-screen bg-paper">
-
   <!-- Breadcrumb -->
   <div class="px-6 md:px-10 pt-6 pb-2">
     <div class="max-w-[1440px] mx-auto">
       <p class="text-xs font-semibold text-ink-mute tracking-widest uppercase">
         <a routerLink="/" class="hover:text-ink transition-colors">Inicio</a>
         <span class="mx-2">/</span>
-        <a routerLink="/catalogo" class="hover:text-ink transition-colors">Catálogo</a>
+        <a routerLink="/catalogo" class="hover:text-ink transition-colors"
+          >Catálogo</a
+        >
         @if (product()) {
           <span class="mx-2">/</span>
           <span class="text-ink">{{ product()!.name }}</span>
@@ -17,75 +18,110 @@
 
   <div class="px-6 md:px-10 pb-16">
     <div class="max-w-[1440px] mx-auto">
-
       @if (loading()) {
         <div class="flex items-center justify-center py-32 text-ink-mute gap-3">
-          <span class="material-symbols-outlined text-[28px] leading-none animate-spin">progress_activity</span>
+          <span
+            class="material-symbols-outlined text-[28px] leading-none animate-spin"
+            >progress_activity</span
+          >
           Cargando producto...
         </div>
       }
 
       @if (!loading() && !product()) {
-        <div class="flex flex-col items-center justify-center py-32 text-ink-mute gap-3">
-          <span class="material-symbols-outlined text-[48px] leading-none opacity-20">inventory_2</span>
+        <div
+          class="flex flex-col items-center justify-center py-32 text-ink-mute gap-3"
+        >
+          <span
+            class="material-symbols-outlined text-[48px] leading-none opacity-20"
+            >inventory_2</span
+          >
           <p class="text-sm">Producto no encontrado.</p>
-          <a routerLink="/catalogo" class="text-sm font-semibold text-ink underline-offset-2 hover:underline">
+          <a
+            routerLink="/catalogo"
+            class="text-sm font-semibold text-ink underline-offset-2 hover:underline"
+          >
             Volver al catálogo
           </a>
         </div>
       }
 
       @if (!loading() && product(); as p) {
-        <div class="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-8 lg:gap-16 mt-4 lg:mt-6">
-
+        <div
+          class="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-8 lg:gap-16 mt-4 lg:mt-6"
+        >
           <!-- ── Galería ── -->
           <div class="space-y-3">
-
-            <div class="aspect-[4/3] lg:aspect-square rounded-2xl border border-rule bg-paper-alt overflow-hidden flex items-center justify-center">
+            <div
+              class="aspect-[4/3] lg:aspect-square rounded-2xl border border-rule bg-paper-alt overflow-hidden flex items-center justify-center"
+            >
               @if (currentImages()[selectedImage()]; as img) {
-                <img [src]="img.variants.lg" [alt]="p.name"
-                  class="w-full h-full object-cover" />
+                <img
+                  [src]="img.variants.lg"
+                  [alt]="p.name"
+                  class="w-full h-full object-cover"
+                />
               } @else {
-                <div class="flex flex-col items-center gap-2 text-ink-mute select-none">
-                  <span class="material-symbols-outlined text-[56px] leading-none opacity-15">image</span>
+                <div
+                  class="flex flex-col items-center gap-2 text-ink-mute select-none"
+                >
+                  <span
+                    class="material-symbols-outlined text-[56px] leading-none opacity-15"
+                    >image</span
+                  >
                   <span class="text-xs opacity-30 font-mono">sin imagen</span>
                 </div>
               }
             </div>
 
             @if (currentImages().length > 1) {
-              <div class="flex gap-2 overflow-x-auto pb-1" style="scrollbar-width:none">
+              <div
+                class="flex gap-2 overflow-x-auto pb-1"
+                style="scrollbar-width: none"
+              >
                 @for (img of currentImages(); track $index; let ii = $index) {
-                  <button type="button" (click)="selectImage(ii)"
+                  <button
+                    type="button"
+                    (click)="selectImage(ii)"
                     class="w-16 h-16 shrink-0 rounded-xl border-2 overflow-hidden transition-all cursor-pointer bg-transparent p-0"
                     [class.border-ink]="selectedImage() === ii"
-                    [class.border-rule]="selectedImage() !== ii">
-                    <img [src]="img.variants.thumb" [alt]="p.name"
-                      class="w-full h-full object-cover" />
+                    [class.border-rule]="selectedImage() !== ii"
+                  >
+                    <img
+                      [src]="img.variants.thumb"
+                      [alt]="p.name"
+                      class="w-full h-full object-cover"
+                    />
                   </button>
                 }
               </div>
             }
-
           </div>
 
           <!-- ── Info ── -->
           <div class="flex flex-col gap-4 lg:gap-5 py-1">
-
             <!-- Marca · Ref -->
-            <p class="text-xs font-semibold text-ink-mute tracking-widest uppercase">
+            <p
+              class="text-xs font-semibold text-ink-mute tracking-widest uppercase"
+            >
               {{ p.brand.name }}
-              @if (p.code) { · REF {{ p.code }} }
+              @if (p.code) {
+                · REF {{ p.code }}
+              }
             </p>
 
             <!-- Nombre -->
-            <h1 class="font-display font-bold text-ink text-[clamp(20px,3.5vw,36px)] leading-tight -mt-1">
-              {{ p.name }}
+            <h1
+              class="font-display font-bold text-ink text-[clamp(20px,3.5vw,36px)] leading-tight -mt-1"
+            >
+              {{ p.name | titleCaseEs }}
             </h1>
 
             <!-- Descripción -->
             @if (p.description) {
-              <p class="text-ink-mute text-sm leading-relaxed -mt-1 italic">{{ p.description }}</p>
+              <p class="text-ink-mute text-sm leading-relaxed -mt-1 italic">
+                {{ p.description }}
+              </p>
             }
 
             <!-- Separador -->
@@ -94,19 +130,45 @@
             <!-- Presentaciones -->
             @if (p.presentations.length > 0) {
               <div class="space-y-2">
-                <p class="text-[10px] font-bold text-ink-mute tracking-widest uppercase">Presentación</p>
+                <p
+                  class="text-[10px] font-bold text-ink-mute tracking-widest uppercase"
+                >
+                  Presentación
+                </p>
                 <div class="flex flex-wrap gap-2">
-                  @for (pres of p.presentations; track pres.id; let pi = $index) {
-                    <button type="button" (click)="selectPres(pi)"
+                  @for (
+                    pres of p.presentations;
+                    track pres.id;
+                    let pi = $index
+                  ) {
+                    <button
+                      type="button"
+                      (click)="selectPres(pi)"
                       class="px-3 py-2.5 lg:px-4 rounded-xl border-2 text-sm font-medium transition-all cursor-pointer text-left"
-                      [class]="selectedPres() === pi ? 'border-yellow bg-amber-100' : 'border-rule bg-white'">
-                      <span class="block text-[9px] font-extrabold tracking-widest uppercase text-ink-mute leading-none mb-1">
+                      [class]="
+                        selectedPres() === pi
+                          ? 'border-yellow bg-amber-100'
+                          : 'border-rule bg-white'
+                      "
+                    >
+                      <span
+                        class="block text-[9px] font-extrabold tracking-widest uppercase text-ink-mute leading-none mb-1"
+                      >
                         {{ pres.unitOfMeasure.code }}
                       </span>
-                      <span class="block font-bold text-ink leading-none">{{ pres.unitOfMeasure.name }}</span>
+                      <span class="block font-bold text-ink leading-none">{{
+                        pres.unitOfMeasure.name
+                      }}</span>
                       @if (pres.priceSale) {
-                        <span class="block text-xs mt-1.5 font-semibold text-ink">
-                          {{ formatPrice(+pres.priceSale * (1 + (p.markupPercentage ?? 0) / 100)) }}
+                        <span
+                          class="block text-xs mt-1.5 font-semibold text-ink"
+                        >
+                          {{
+                            formatPrice(
+                              +pres.priceSale *
+                                (1 + (p.markupPercentage ?? 0) / 100)
+                            )
+                          }}
                         </span>
                       }
                     </button>
@@ -117,29 +179,52 @@
 
             <!-- Cantidad -->
             <div class="space-y-2">
-              <p class="text-[10px] font-bold text-ink-mute tracking-widest uppercase">Cantidad</p>
+              <p
+                class="text-[10px] font-bold text-ink-mute tracking-widest uppercase"
+              >
+                Cantidad
+              </p>
               <div class="flex items-center gap-3">
-                <div class="flex items-center gap-1 bg-white border border-rule rounded-xl p-1">
-                  <button type="button" (click)="decQty()"
+                <div
+                  class="flex items-center gap-1 bg-white border border-rule rounded-xl p-1"
+                >
+                  <button
+                    type="button"
+                    (click)="decQty()"
                     class="w-9 h-9 rounded-lg border-0 cursor-pointer flex items-center justify-center transition-all bg-transparent"
                     [class.text-ink-mute]="qty() <= 1"
                     [class.text-ink]="qty() > 1"
                     [class.hover:bg-paper-alt]="qty() > 1"
-                    [disabled]="qty() <= 1">
-                    <span class="material-symbols-outlined text-[18px] leading-none">remove</span>
+                    [disabled]="qty() <= 1"
+                  >
+                    <span
+                      class="material-symbols-outlined text-[18px] leading-none"
+                      >remove</span
+                    >
                   </button>
-                  <span class="w-10 text-center font-bold text-ink tabular-nums">{{ qty() }}</span>
-                  <button type="button" (click)="incQty()"
-                    class="w-9 h-9 rounded-lg border-0 cursor-pointer text-ink hover:bg-paper-alt flex items-center justify-center transition-all bg-transparent">
-                    <span class="material-symbols-outlined text-[18px] leading-none">add</span>
+                  <span
+                    class="w-10 text-center font-bold text-ink tabular-nums"
+                    >{{ qty() }}</span
+                  >
+                  <button
+                    type="button"
+                    (click)="incQty()"
+                    class="w-9 h-9 rounded-lg border-0 cursor-pointer text-ink hover:bg-paper-alt flex items-center justify-center transition-all bg-transparent"
+                  >
+                    <span
+                      class="material-symbols-outlined text-[18px] leading-none"
+                      >add</span
+                    >
                   </button>
                 </div>
 
                 <!-- Disponibilidad -->
                 <div class="flex items-center gap-1.5">
-                  <span class="w-2 h-2 rounded-full shrink-0"
+                  <span
+                    class="w-2 h-2 rounded-full shrink-0"
                     [class.bg-green-500]="p.isActive"
-                    [class.bg-[rgba(26,28,44,0.25)]]="!p.isActive">
+                    [class.bg-[rgba(26,28,44,0.25)]]="!p.isActive"
+                  >
                   </span>
                   <span class="text-sm text-ink-mute">
                     {{ p.isActive ? 'Disponible' : 'No disponible' }}
@@ -150,23 +235,33 @@
 
             <!-- Subtotal -->
             @if (subtotal() != null) {
-              <div class="flex items-center justify-between px-4 py-3.5 bg-white border border-rule rounded-xl">
-                <p class="text-xs font-bold text-ink-mute tracking-widest uppercase">Subtotal</p>
-                <p class="font-display font-bold text-ink text-[22px]">{{ formatPrice(subtotal()) }}</p>
+              <div
+                class="flex items-center justify-between px-4 py-3.5 bg-white border border-rule rounded-xl"
+              >
+                <p
+                  class="text-xs font-bold text-ink-mute tracking-widest uppercase"
+                >
+                  Subtotal
+                </p>
+                <p class="font-display font-bold text-ink text-[22px]">
+                  {{ formatPrice(subtotal()) }}
+                </p>
               </div>
             }
 
             @if (p.discountPercentage) {
               <p class="text-sm font-semibold text-green-600 -mt-1">
-                ¡{{ p.discountPercentage }}% de descuento si cotizas con nosotros!
+                ¡Obtén un gran descuento y acumula puntos al cotizar con
+                nosotros!
               </p>
             }
 
             <!-- CTA -->
             <div class="flex flex-col gap-2.5 pt-1">
-
               <!-- Agregar al carrito -->
-              <button type="button" (click)="addToCart()"
+              <button
+                type="button"
+                (click)="addToCart()"
                 [disabled]="!p.isActive"
                 class="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl font-semibold text-sm transition-all border-0 cursor-pointer"
                 [class.bg-ink]="!addedFeedback()"
@@ -174,46 +269,80 @@
                 [class.hover:bg-black]="!addedFeedback()"
                 [class.bg-green-600]="addedFeedback()"
                 [class.opacity-50]="!p.isActive"
-                [class.cursor-not-allowed]="!p.isActive">
+                [class.cursor-not-allowed]="!p.isActive"
+              >
                 @if (addedFeedback()) {
-                  <span class="material-symbols-outlined text-[18px] leading-none">check_circle</span>
+                  <span
+                    class="material-symbols-outlined text-[18px] leading-none"
+                    >check_circle</span
+                  >
                   ¡Agregado al carrito!
                 } @else {
-                  <span class="material-symbols-outlined text-[18px] leading-none">shopping_cart</span>
+                  <span
+                    class="material-symbols-outlined text-[18px] leading-none"
+                    >shopping_cart</span
+                  >
                   Agregar al carrito
-                  <span class="material-symbols-outlined text-[16px] leading-none">arrow_forward</span>
+                  <span
+                    class="material-symbols-outlined text-[16px] leading-none"
+                    >arrow_forward</span
+                  >
                 }
               </button>
 
               <!-- Pedir por WhatsApp -->
-              <a [href]="whatsappHref" target="_blank" rel="noopener noreferrer"
-                class="flex items-center justify-center gap-2.5 w-full py-3.5 rounded-xl bg-[#25D366] text-white font-semibold text-sm no-underline hover:bg-[#20c05c] transition-colors">
-                <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              <a
+                [href]="whatsappHref"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center justify-center gap-2.5 w-full py-3.5 rounded-xl bg-[#25D366] text-white font-semibold text-sm no-underline hover:bg-[#20c05c] transition-colors"
+              >
+                <svg
+                  class="w-4 h-4 shrink-0"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"
+                  />
                 </svg>
                 Pedir por WhatsApp
               </a>
 
               <!-- Volver al catálogo (secondary) -->
-              <a routerLink="/catalogo"
-                class="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl border border-rule text-sm font-medium text-ink-mute hover:text-ink hover:bg-white transition-colors no-underline">
-                <span class="material-symbols-outlined text-[16px] leading-none">arrow_back</span>
+              <a
+                routerLink="/catalogo"
+                class="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl border border-rule text-sm font-medium text-ink-mute hover:text-ink hover:bg-white transition-colors no-underline"
+              >
+                <span class="material-symbols-outlined text-[16px] leading-none"
+                  >arrow_back</span
+                >
                 Volver al catálogo
               </a>
             </div>
 
             <p class="text-[11px] text-ink-mute">Precio incluye IVA</p>
-
           </div>
         </div>
 
         <!-- ── Video ── -->
         @if (safeVideoUrl(); as embedUrl) {
           <div class="mt-12 pt-8 border-t border-rule">
-            <p class="text-[10px] font-bold text-ink-mute tracking-widest uppercase mb-4">Video del producto</p>
-            <div class="aspect-video rounded-2xl overflow-hidden bg-black max-w-2xl">
-              <iframe [src]="embedUrl" class="w-full h-full" frameborder="0"
-                allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen>
+            <p
+              class="text-[10px] font-bold text-ink-mute tracking-widest uppercase mb-4"
+            >
+              Video del producto
+            </p>
+            <div
+              class="aspect-video rounded-2xl overflow-hidden bg-black max-w-2xl"
+            >
+              <iframe
+                [src]="embedUrl"
+                class="w-full h-full"
+                frameborder="0"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                allowfullscreen
+              >
               </iframe>
             </div>
           </div>
@@ -222,20 +351,34 @@
         <!-- ── Ficha técnica ── -->
         @if (techSheetEntries().length > 0) {
           <div class="mt-10 pt-8 border-t border-rule">
-            <p class="text-[10px] font-bold text-ink-mute tracking-widest uppercase mb-4">Ficha técnica</p>
-            <div class="bg-white border border-rule rounded-2xl overflow-hidden max-w-2xl">
-              @for (entry of techSheetEntries(); track entry.key; let last = $last) {
-                <div class="flex gap-4 px-5 py-3" [class.border-b]="!last" [class.border-rule]="!last">
-                  <span class="text-sm font-semibold text-ink w-40 shrink-0">{{ entry.key }}</span>
+            <p
+              class="text-[10px] font-bold text-ink-mute tracking-widest uppercase mb-4"
+            >
+              Ficha técnica
+            </p>
+            <div
+              class="bg-white border border-rule rounded-2xl overflow-hidden max-w-2xl"
+            >
+              @for (
+                entry of techSheetEntries();
+                track entry.key;
+                let last = $last
+              ) {
+                <div
+                  class="flex gap-4 px-5 py-3"
+                  [class.border-b]="!last"
+                  [class.border-rule]="!last"
+                >
+                  <span class="text-sm font-semibold text-ink w-40 shrink-0">{{
+                    entry.key
+                  }}</span>
                   <span class="text-sm text-ink-mute">{{ entry.value }}</span>
                 </div>
               }
             </div>
           </div>
         }
-
       }
-
     </div>
   </div>
 </div>

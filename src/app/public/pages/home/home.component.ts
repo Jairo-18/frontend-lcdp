@@ -12,7 +12,7 @@ import { Brand } from '@shared/interfaces/brand.interface';
 import { HeroComponent } from './components/hero/hero.component';
 import { WhatsappBannerComponent } from './components/whatsapp-banner/whatsapp-banner.component';
 import { CategoryGridComponent } from './components/category-grid/category-grid.component';
-// import { BrandGridComponent } from './components/brand-grid/brand-grid.component';
+import { BrandGridComponent } from './components/brand-grid/brand-grid.component';
 import { NewProductsComponent } from './components/new-products/new-products.component';
 
 interface Stat {
@@ -27,14 +27,16 @@ interface Stat {
     HeroComponent,
     WhatsappBannerComponent,
     CategoryGridComponent,
-    // BrandGridComponent,
+    BrandGridComponent,
     NewProductsComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
 export class HomeComponent implements OnInit {
-  private readonly _orgService = inject(OrganizationalService);
+  private readonly _orgService: OrganizationalService = inject(
+    OrganizationalService,
+  );
 
   readonly _org: WritableSignal<Organizational | null> = signal(null);
   readonly _categories: WritableSignal<Category[]> = signal([]);

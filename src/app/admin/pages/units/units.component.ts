@@ -7,7 +7,8 @@ import {
   signal,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { PaginatorComponent } from '@shared/components';
+import { FormsModule } from '@angular/forms';
+import { PaginatorComponent, SelectFieldComponent } from '@shared/components';
 import { ConfirmDialogService } from '@shared/services/confirm-dialog.service';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
@@ -17,7 +18,7 @@ import { UnitOfMeasure } from '@shared/interfaces/product.interface';
 @Component({
   selector: 'app-units',
   standalone: true,
-  imports: [PaginatorComponent],
+  imports: [FormsModule, PaginatorComponent, SelectFieldComponent],
   templateUrl: './units.component.html',
 })
 export class UnitsComponent implements OnInit, OnDestroy {
@@ -26,6 +27,12 @@ export class UnitsComponent implements OnInit, OnDestroy {
   private readonly _router: Router = inject(Router);
   private readonly _destroy$: Subject<void> = new Subject<void>();
   private readonly _search$: Subject<string> = new Subject<string>();
+
+  readonly perPageOptions = [
+    { value: '10', label: '10 por página' },
+    { value: '25', label: '25 por página' },
+    { value: '50', label: '50 por página' },
+  ];
 
   readonly _loading    = signal(false);
   readonly _deletingId = signal<number | null>(null);

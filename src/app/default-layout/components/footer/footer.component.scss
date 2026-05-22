@@ -13,19 +13,20 @@ $footer-border: rgba(255, 255, 255, 0.08);
 }
 
 .footer-grid {
-  max-width: $max-width-layout;
+  max-width: 90%;
   margin-inline: auto;
   padding: 56px 24px 48px;
   display: grid;
   grid-template-columns: 1.4fr 1fr 1fr 1fr;
   gap: 40px;
 
-  @media (max-width: $max-width-tablet) {
+  @media (max-width: 1079.98px) {
     grid-template-columns: 1fr 1fr;
   }
 
   @media (max-width: $max-width-phone) {
     grid-template-columns: 1fr;
+    max-width: 100%;
   }
 }
 
@@ -71,38 +72,70 @@ $footer-border: rgba(255, 255, 255, 0.08);
     transform 0.18s ease;
   text-decoration: none;
 
-  svg { display: block; flex-shrink: 0; }
+  svg {
+    display: block;
+    flex-shrink: 0;
+  }
 
-  &:hover { transform: translateY(-2px); }
+  &:hover {
+    transform: translateY(-2px);
+  }
 
   /* ── Brand colors ── */
-  &[data-platform="facebook"] {
-    color: #1877F2;
-    &:hover { background: #1877F2; color: #fff; border-color: #1877F2; }
-  }
-  &[data-platform="instagram"] {
-    color: #E1306C;
+  &[data-platform='facebook'] {
+    color: #1877f2;
     &:hover {
-      background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      background: #1877f2;
+      color: #fff;
+      border-color: #1877f2;
+    }
+  }
+  &[data-platform='instagram'] {
+    color: #e1306c;
+    &:hover {
+      background: linear-gradient(
+        45deg,
+        #f09433 0%,
+        #e6683c 25%,
+        #dc2743 50%,
+        #cc2366 75%,
+        #bc1888 100%
+      );
       color: #fff;
       border-color: transparent;
     }
   }
-  &[data-platform="tiktok"] {
-    color: #EE1D52;
-    &:hover { background: #010101; color: #fff; border-color: #EE1D52; }
+  &[data-platform='tiktok'] {
+    color: #ee1d52;
+    &:hover {
+      background: #010101;
+      color: #fff;
+      border-color: #ee1d52;
+    }
   }
-  &[data-platform="youtube"] {
-    color: #FF0000;
-    &:hover { background: #FF0000; color: #fff; border-color: #FF0000; }
+  &[data-platform='youtube'] {
+    color: #ff0000;
+    &:hover {
+      background: #ff0000;
+      color: #fff;
+      border-color: #ff0000;
+    }
   }
-  &[data-platform="maps"] {
-    color: #EA4335;
-    &:hover { background: #EA4335; color: #fff; border-color: #EA4335; }
+  &[data-platform='maps'] {
+    color: #ea4335;
+    &:hover {
+      background: #ea4335;
+      color: #fff;
+      border-color: #ea4335;
+    }
   }
-  &[data-platform="website"] {
+  &[data-platform='website'] {
     color: #38bdf8;
-    &:hover { background: #0ea5e9; color: #fff; border-color: #0ea5e9; }
+    &:hover {
+      background: #0ea5e9;
+      color: #fff;
+      border-color: #0ea5e9;
+    }
   }
 }
 
@@ -134,6 +167,12 @@ $footer-border: rgba(255, 255, 255, 0.08);
       color: $footer-hover;
     }
   }
+}
+
+.footer-placeholder {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.2);
+  font-style: italic;
 }
 
 /* ── Contact column ── */
@@ -172,7 +211,7 @@ $footer-border: rgba(255, 255, 255, 0.08);
 }
 
 .footer-bottom-inner {
-  max-width: $max-width-layout;
+  max-width: 90%;
   margin-inline: auto;
   padding: 16px 24px;
   display: flex;
@@ -185,13 +224,16 @@ $footer-border: rgba(255, 255, 255, 0.08);
   @media (max-width: $max-width-phone) {
     flex-direction: column;
     text-align: center;
+    max-width: 100%;
   }
 }
 
 .footer-credits-highlight {
   color: var(--yellow);
   text-decoration: none;
-  transition: opacity .2s;
+  transition: opacity 0.2s;
 
-  &:hover { opacity: .75; }
+  &:hover {
+    opacity: 0.75;
+  }
 }
