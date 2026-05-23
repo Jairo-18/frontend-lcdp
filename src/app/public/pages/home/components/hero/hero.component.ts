@@ -1,4 +1,5 @@
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, PLATFORM_ID, computed, inject, input, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Organizational } from '@shared/interfaces/organizational.interface';
 import { VideoVariant } from '@shared/interfaces/image-variant.interface';
@@ -12,6 +13,9 @@ interface Stat { value: string; label: string }
   templateUrl: './hero.component.html',
 })
 export class HeroComponent {
+  private readonly _platformId = inject(PLATFORM_ID);
+  readonly _isBrowser = isPlatformBrowser(this._platformId);
+
   readonly org          = input<Organizational | null>(null);
   readonly whatsappHref = input<string>('#');
   readonly stats        = input<Stat[]>([]);

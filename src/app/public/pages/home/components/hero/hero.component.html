@@ -5,7 +5,7 @@
     [style.background]="!_hasVideos() ? 'radial-gradient(ellipse 80% 100% at 70% 40%, #ffdf4a 0%, #ffcb05 55%, #f5b800 100%)' : 'transparent'"
   >
     <!-- Fondo: video cuando hay videos, gradiente cuando no -->
-    @if (_hasVideos() && _currentVideo(); as video) {
+    @if (_isBrowser && _hasVideos() && _currentVideo(); as video) {
       <!-- @for con track _currentIndex() fuerza recrear el <video> al cambiar de índice -->
       @for (_ of [1]; track _currentIndex()) {
         <video
