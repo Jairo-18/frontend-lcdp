@@ -22,12 +22,15 @@ import {
   UpdateOrganizationalDto,
   CreateOrganizationalDto,
 } from '@shared/interfaces/organizational.interface';
+import { VideoVariant } from '@shared/interfaces/image-variant.interface';
+import { resolveVideoVariant } from '@shared/utilities/image-url.utils';
 import {
   Tab,
   TabItem,
   ColorField,
   SocialField,
 } from '@shared/interfaces/aplication.interface';
+
 @Component({
   selector: 'app-create-or-edit-aplication',
   standalone: true,
@@ -44,72 +47,80 @@ export class CreateOrEditAplicationComponent implements OnInit, OnDestroy {
 
   @ViewChild('logoInput') logoInputRef!: ElementRef<HTMLInputElement>;
   @ViewChild('faviconInput') faviconInputRef!: ElementRef<HTMLInputElement>;
+  @ViewChild('heroVideoInput') heroVideoInputRef!: ElementRef<HTMLInputElement>;
+  @ViewChild('aboutVideoInput') aboutVideoInputRef!: ElementRef<HTMLInputElement>;
 
   readonly _loading: WritableSignal<boolean> = signal(false);
   readonly _saving: WritableSignal<boolean> = signal(false);
   readonly _tab: WritableSignal<Tab> = signal('general');
   readonly _uploadingLogo = signal(false);
   readonly _uploadingFavicon = signal(false);
+  readonly _uploadingHeroVideo = signal(false);
+  readonly _uploadingAboutVideo = signal(false);
+
+  readonly _heroVideos = signal<VideoVariant[]>([]);
+  readonly _aboutVideos = signal<VideoVariant[]>([]);
 
   private _orgId: string | null = null;
 
   readonly tabs: TabItem[] = [
-    { id: 'general', label: 'General', icon: 'storefront' },
-    { id: 'branding', label: 'Identidad visual', icon: 'palette' },
-    { id: 'redes', label: 'Redes sociales', icon: 'share' },
-    { id: 'contenido', label: 'Contenido', icon: 'article' },
-    { id: 'seo', label: 'SEO', icon: 'travel_explore' },
+    { id: 'general',   label: 'General',          icon: 'storefront' },
+    { id: 'branding',  label: 'Identidad visual',  icon: 'palette' },
+    { id: 'media',     label: 'Media',             icon: 'videocam' },
+    { id: 'redes',     label: 'Redes sociales',    icon: 'share' },
+    { id: 'contenido', label: 'Contenido',         icon: 'article' },
+    { id: 'seo',       label: 'SEO',               icon: 'travel_explore' },
   ];
 
   readonly colorFields: ColorField[] = [
-    { key: 'primaryColor', label: 'Primario' },
+    { key: 'primaryColor',   label: 'Primario' },
     { key: 'secondaryColor', label: 'Secundario' },
-    { key: 'accentColor', label: 'Acento' },
-    { key: 'bgColor', label: 'Fondo' },
-    { key: 'textColor', label: 'Texto' },
+    { key: 'accentColor',    label: 'Acento' },
+    { key: 'bgColor',        label: 'Fondo' },
+    { key: 'textColor',      label: 'Texto' },
   ];
 
   readonly socialFields: SocialField[] = [
-    { key: 'facebookUrl', label: 'Facebook', icon: 'thumb_up', placeholder: 'https://facebook.com/...' },
-    { key: 'instagramUrl', label: 'Instagram', icon: 'photo_camera', placeholder: 'https://instagram.com/...' },
-    { key: 'youtubeUrl', label: 'YouTube', icon: 'play_circle', placeholder: 'https://youtube.com/...' },
-    { key: 'tiktokUrl', label: 'TikTok', icon: 'music_note', placeholder: 'https://tiktok.com/@...' },
-    { key: 'mapsUrl', label: 'Google Maps', icon: 'location_on', placeholder: 'https://maps.google.com/...' },
+    { key: 'facebookUrl',  label: 'Facebook',     icon: 'thumb_up',    placeholder: 'https://facebook.com/...' },
+    { key: 'instagramUrl', label: 'Instagram',    icon: 'photo_camera', placeholder: 'https://instagram.com/...' },
+    { key: 'youtubeUrl',   label: 'YouTube',      icon: 'play_circle', placeholder: 'https://youtube.com/...' },
+    { key: 'tiktokUrl',    label: 'TikTok',       icon: 'music_note',  placeholder: 'https://tiktok.com/@...' },
+    { key: 'mapsUrl',      label: 'Google Maps',  icon: 'location_on', placeholder: 'https://maps.google.com/...' },
   ];
 
   readonly form = this._formBuilder.nonNullable.group({
-    name: ['', [Validators.required, Validators.maxLength(150)]],
-    legalName: ['', Validators.maxLength(150)],
-    nit: ['', Validators.maxLength(50)],
-    email: ['', [Validators.email, Validators.maxLength(150)]],
-    phone: ['', Validators.maxLength(25)],
-    whatsappNumber: ['', Validators.maxLength(25)],
-    website: ['', Validators.maxLength(200)],
-    address: ['', Validators.maxLength(200)],
-    city: ['', Validators.maxLength(100)],
-    department: ['', Validators.maxLength(100)],
-    logoUrl: ['', Validators.maxLength(500)],
-    faviconUrl: ['', Validators.maxLength(500)],
-    primaryColor: ['', Validators.maxLength(20)],
-    secondaryColor: ['', Validators.maxLength(20)],
-    accentColor: ['', Validators.maxLength(20)],
-    bgColor: ['', Validators.maxLength(20)],
-    textColor: ['', Validators.maxLength(20)],
-    facebookUrl: ['', Validators.maxLength(500)],
-    instagramUrl: ['', Validators.maxLength(500)],
-    youtubeUrl: ['', Validators.maxLength(500)],
-    tiktokUrl: ['', Validators.maxLength(500)],
-    mapsUrl: ['', Validators.maxLength(500)],
-    description: [''],
-    aboutTitle: ['', Validators.maxLength(200)],
-    aboutDescription: [''],
-    missionTitle: ['', Validators.maxLength(200)],
+    name:               ['', [Validators.required, Validators.maxLength(150)]],
+    legalName:          ['', Validators.maxLength(150)],
+    nit:                ['', Validators.maxLength(50)],
+    email:              ['', [Validators.email, Validators.maxLength(150)]],
+    phone:              ['', Validators.maxLength(25)],
+    whatsappNumber:     ['', Validators.maxLength(25)],
+    website:            ['', Validators.maxLength(200)],
+    address:            ['', Validators.maxLength(200)],
+    city:               ['', Validators.maxLength(100)],
+    department:         ['', Validators.maxLength(100)],
+    logoUrl:            ['', Validators.maxLength(500)],
+    faviconUrl:         ['', Validators.maxLength(500)],
+    primaryColor:       ['', Validators.maxLength(20)],
+    secondaryColor:     ['', Validators.maxLength(20)],
+    accentColor:        ['', Validators.maxLength(20)],
+    bgColor:            ['', Validators.maxLength(20)],
+    textColor:          ['', Validators.maxLength(20)],
+    facebookUrl:        ['', Validators.maxLength(500)],
+    instagramUrl:       ['', Validators.maxLength(500)],
+    youtubeUrl:         ['', Validators.maxLength(500)],
+    tiktokUrl:          ['', Validators.maxLength(500)],
+    mapsUrl:            ['', Validators.maxLength(500)],
+    description:        [''],
+    aboutTitle:         ['', Validators.maxLength(200)],
+    aboutDescription:   [''],
+    missionTitle:       ['', Validators.maxLength(200)],
     missionDescription: [''],
-    visionTitle: ['', Validators.maxLength(200)],
-    visionDescription: [''],
-    metaTitle: ['', Validators.maxLength(200)],
-    metaDescription: [''],
-    metaKeywords: ['', Validators.maxLength(500)],
+    visionTitle:        ['', Validators.maxLength(200)],
+    visionDescription:  [''],
+    metaTitle:          ['', Validators.maxLength(200)],
+    metaDescription:    [''],
+    metaKeywords:       ['', Validators.maxLength(500)],
   });
 
   ngOnInit(): void {
@@ -118,6 +129,12 @@ export class CreateOrEditAplicationComponent implements OnInit, OnDestroy {
       next: (data: Organizational): void => {
         this._orgId = data.id;
         this.form.patchValue(data);
+        if (data.heroVideos?.length) {
+          this._heroVideos.set(data.heroVideos.map(resolveVideoVariant));
+        }
+        if (data.aboutVideos?.length) {
+          this._aboutVideos.set(data.aboutVideos.map(resolveVideoVariant));
+        }
         this._loading.set(false);
       },
       error: (): void => {
@@ -134,6 +151,8 @@ export class CreateOrEditAplicationComponent implements OnInit, OnDestroy {
   setTab(tab: Tab): void {
     this._tab.set(tab);
   }
+
+  // ── Logo / Favicon ──────────────────────────────────────────────────────
 
   triggerLogoUpload(): void {
     this.logoInputRef.nativeElement.value = '';
@@ -187,11 +206,76 @@ export class CreateOrEditAplicationComponent implements OnInit, OnDestroy {
       });
   }
 
+  // ── Hero videos ─────────────────────────────────────────────────────────
+
+  triggerHeroVideoUpload(): void {
+    this.heroVideoInputRef.nativeElement.value = '';
+    this.heroVideoInputRef.nativeElement.click();
+  }
+
+  onHeroVideoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+    this._uploadingHeroVideo.set(true);
+    this._uploadService
+      .uploadVideo(input.files[0])
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (video) => {
+          this._heroVideos.update((list) => [...list, video]);
+          this._uploadingHeroVideo.set(false);
+          this.form.markAsDirty();
+        },
+        error: () => this._uploadingHeroVideo.set(false),
+      });
+  }
+
+  removeHeroVideo(index: number): void {
+    this._heroVideos.update((list) => list.filter((_, i) => i !== index));
+    this.form.markAsDirty();
+  }
+
+  // ── About videos ────────────────────────────────────────────────────────
+
+  triggerAboutVideoUpload(): void {
+    this.aboutVideoInputRef.nativeElement.value = '';
+    this.aboutVideoInputRef.nativeElement.click();
+  }
+
+  onAboutVideoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+    this._uploadingAboutVideo.set(true);
+    this._uploadService
+      .uploadVideo(input.files[0])
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (video) => {
+          this._aboutVideos.update((list) => [...list, video]);
+          this._uploadingAboutVideo.set(false);
+          this.form.markAsDirty();
+        },
+        error: () => this._uploadingAboutVideo.set(false),
+      });
+  }
+
+  removeAboutVideo(index: number): void {
+    this._aboutVideos.update((list) => list.filter((_, i) => i !== index));
+    this.form.markAsDirty();
+  }
+
+  // ── Save ─────────────────────────────────────────────────────────────────
+
   save(): void {
     if (this.form.invalid || this._saving()) return;
     this._saving.set(true);
 
-    const body: UpdateOrganizationalDto = this.form.getRawValue();
+    const body: UpdateOrganizationalDto = {
+      ...this.form.getRawValue(),
+      heroVideos: this._heroVideos(),
+      aboutVideos: this._aboutVideos(),
+    };
+
     const req$: Observable<Organizational> = this._orgId
       ? this._organizationService.update(this._orgId, body)
       : this._organizationService.create(body as CreateOrganizationalDto);

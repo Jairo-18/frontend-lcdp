@@ -12,7 +12,7 @@ import {
   CreateOrganizationalDto,
   UpdateOrganizationalDto,
 } from '@shared/interfaces/organizational.interface';
-import { resolveVariant } from '@shared/utilities/image-url.utils';
+import { resolveVariant, resolveVideoVariant } from '@shared/utilities/image-url.utils';
 
 const BOOTSTRAP_KEY = makeStateKey<BootstrapData>('org_bootstrap');
 
@@ -27,6 +27,8 @@ const resolveOrg = (org: Organizational | null): Organizational | null => {
     ...org,
     logoUrl: resolveUrl(org.logoUrl),
     faviconUrl: resolveUrl(org.faviconUrl),
+    heroVideos: org.heroVideos?.map(resolveVideoVariant) ?? [],
+    aboutVideos: org.aboutVideos?.map(resolveVideoVariant) ?? [],
   };
 };
 

@@ -1,7 +1,7 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { UpdateOrganizationalDto } from '@shared/interfaces/organizational.interface';
 
-export type Tab = 'general' | 'branding' | 'redes' | 'contenido' | 'seo';
+export type Tab = 'general' | 'branding' | 'redes' | 'contenido' | 'seo' | 'media';
 
 export interface TabItem {
   id: Tab;

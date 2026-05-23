@@ -72,14 +72,14 @@
           @for (video of _paged(); track video.id) {
             <div class="bg-white border border-rule rounded-2xl overflow-hidden flex flex-col">
 
-              <!-- Embed or external link card -->
               @if (isEmbed(video)) {
                 <div class="relative w-full" style="padding-top: 56.25%">
                   <iframe
                     [src]="embedUrl(video)"
                     class="absolute inset-0 w-full h-full border-0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen
+                    scrolling="no"
+                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                    allowfullscreen="true"
                     loading="lazy">
                   </iframe>
                 </div>

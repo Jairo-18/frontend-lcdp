@@ -2,6 +2,7 @@ import { Category } from './category.interface';
 import { UnitOfMeasure } from './product.interface';
 import { Brand } from './brand.interface';
 import { TaxType } from './tax-type.interface';
+import { VideoVariant } from './image-variant.interface';
 
 export interface Organizational {
   id: string;
@@ -37,6 +38,8 @@ export interface Organizational {
   metaTitle?: string;
   metaDescription?: string;
   metaKeywords?: string;
+  heroVideos?: VideoVariant[];
+  aboutVideos?: VideoVariant[];
   status?: boolean;
 }
 

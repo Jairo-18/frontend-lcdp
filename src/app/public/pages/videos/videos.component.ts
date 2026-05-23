@@ -13,7 +13,7 @@ import { Video } from '@shared/interfaces/video.interface';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-type Platform = 'all' | 'youtube' | 'tiktok' | 'instagram' | 'facebook';
+type Platform = 'all' | 'youtube' | 'tiktok' | 'instagram';
 
 interface Tab {
   id: Platform;
@@ -24,11 +24,10 @@ interface Tab {
 const PER_PAGE = 12;
 
 const TABS: Tab[] = [
-  { id: 'all',       label: 'Todos',     icon: 'play_circle'  },
+  { id: 'all',       label: 'Todos',     icon: 'play_circle'   },
   { id: 'youtube',   label: 'YouTube',   icon: 'smart_display' },
-  { id: 'tiktok',    label: 'TikTok',    icon: 'music_video'  },
-  { id: 'instagram', label: 'Instagram', icon: 'camera_roll'  },
-  { id: 'facebook',  label: 'Facebook',  icon: 'thumb_up'     },
+  { id: 'tiktok',    label: 'TikTok',    icon: 'music_video'   },
+  { id: 'instagram', label: 'Instagram', icon: 'camera_roll'   },
 ];
 
 @Component({
@@ -42,10 +41,10 @@ export class VideosComponent implements OnInit, OnDestroy {
   private readonly _sanitizer: DomSanitizer = inject(DomSanitizer);
   private readonly _destroy$: Subject<void> = new Subject<void>();
 
-  readonly _loading      = signal(false);
-  readonly _allVideos    = signal<Video[]>([]);
-  readonly _activeTab    = signal<Platform>('all');
-  readonly _page         = signal(1);
+  readonly _loading   = signal(false);
+  readonly _allVideos = signal<Video[]>([]);
+  readonly _activeTab = signal<Platform>('all');
+  readonly _page      = signal(1);
 
   readonly _filtered = computed(() => {
     const tab = this._activeTab();
@@ -76,9 +75,11 @@ export class VideosComponent implements OnInit, OnDestroy {
       return this._allVideos().some((v) => this._platform(v.url) === t.id);
     }).map((t) => ({
       ...t,
-      count: t.id === 'all'
-        ? this._allVideos().length
-        : this._allVideos().filter((v) => this._platform(v.url) === t.id).length,
+      count:
+        t.id === 'all'
+          ? this._allVideos().length
+          : this._allVideos().filter((v) => this._platform(v.url) === t.id)
+              .length,
     })),
   );
 
@@ -113,10 +114,9 @@ export class VideosComponent implements OnInit, OnDestroy {
   }
 
   private _platform(url: string): Platform {
-    if (/youtube\.com|youtu\.be/i.test(url))  return 'youtube';
-    if (/tiktok\.com/i.test(url))              return 'tiktok';
-    if (/instagram\.com/i.test(url))           return 'instagram';
-    if (/facebook\.com|fb\.watch/i.test(url))  return 'facebook';
+    if (/youtube\.com|youtu\.be/i.test(url)) return 'youtube';
+    if (/tiktok\.com/i.test(url)) return 'tiktok';
+    if (/instagram\.com/i.test(url)) return 'instagram';
     return 'all';
   }
 
@@ -133,6 +133,7 @@ export class VideosComponent implements OnInit, OnDestroy {
   embedUrl(video: Video): SafeResourceUrl | null {
     const url = video.url;
 
+    // YouTube
     const ytMatch = url.match(
       /(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/,
     );
@@ -141,11 +142,20 @@ export class VideosComponent implements OnInit, OnDestroy {
         `https://www.youtube.com/embed/${ytMatch[1]}`,
       );
 
-    const fbMatch = url.match(/facebook\.com\/.*\/videos\/(\d+)|fb\.watch\//);
-    if (fbMatch)
+    // TikTok
+    const ttMatch = url.match(/\/video\/(\d+)/);
+    if (ttMatch)
       return this._sanitizer.bypassSecurityTrustResourceUrl(
-        `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false`,
+        `https://www.tiktok.com/embed/v2/${ttMatch[1]}`,
       );
+
+    // Instagram — construye /embed/ desde la URL limpia
+    if (/instagram\.com/i.test(url)) {
+      const clean = url.split('?')[0].replace(/\/$/, '');
+      return this._sanitizer.bypassSecurityTrustResourceUrl(
+        `${clean}/embed/`,
+      );
+    }
 
     return null;
   }

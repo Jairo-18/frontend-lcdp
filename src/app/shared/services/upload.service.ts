@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '@env/environment';
-import { ImageVariant } from '@shared/interfaces/image-variant.interface';
+import { ImageVariant, VideoVariant } from '@shared/interfaces/image-variant.interface';
 import { UploadFolder } from '@shared/interfaces/upload.interface';
-import { resolveUrl, resolveVariant } from '@shared/utilities/image-url.utils';
+import { resolveUrl, resolveVariant, resolveVideoVariant } from '@shared/utilities/image-url.utils';
 
 @Injectable({ providedIn: 'root' })
 export class UploadService {
@@ -20,6 +20,17 @@ export class UploadService {
         formData,
       )
       .pipe(map((r) => r.data.images.map(resolveVariant)));
+  }
+
+  uploadVideo(file: File): Observable<VideoVariant> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this._http
+      .post<{ statusCode: number; data: { video: VideoVariant } }>(
+        `${environment.apiUrl}/uploads/organizational/videos`,
+        formData,
+      )
+      .pipe(map((r) => resolveVideoVariant(r.data.video)));
   }
 
   uploadDocument(folder: UploadFolder, file: File): Observable<string> {

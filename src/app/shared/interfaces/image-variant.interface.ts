@@ -3,3 +3,8 @@ export interface ImageVariant {
   md: string;
   lg: string;
 }
+
+export interface VideoVariant {
+  url: string;
+  poster: string;
+}

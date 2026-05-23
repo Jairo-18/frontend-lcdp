@@ -125,6 +125,20 @@
         class="hidden"
         (change)="onFaviconSelected($event)"
       />
+      <input
+        #heroVideoInput
+        type="file"
+        accept="video/mp4,video/webm,video/quicktime"
+        class="hidden"
+        (change)="onHeroVideoSelected($event)"
+      />
+      <input
+        #aboutVideoInput
+        type="file"
+        accept="video/mp4,video/webm,video/quicktime"
+        class="hidden"
+        (change)="onAboutVideoSelected($event)"
+      />
 
       <!-- ── Identidad visual ── -->
       @if (_tab() === 'branding') {
@@ -418,6 +432,127 @@
               </div>
             </div>
           </div>
+        </div>
+      }
+
+      <!-- ── Media ── -->
+      @if (_tab() === 'media') {
+        <div class="space-y-6">
+
+          <!-- Hero videos -->
+          <div class="bg-white border border-rule rounded-2xl p-6">
+            <div class="flex items-start justify-between gap-4 mb-5">
+              <div>
+                <h2 class="font-semibold text-ink text-base">Videos del hero</h2>
+                <p class="text-xs text-ink-mute mt-0.5">
+                  Slider de la página de inicio. MP4, WebM o MOV · máx. 200 MB · recomendado 10–15 seg.
+                </p>
+              </div>
+              <button
+                type="button"
+                (click)="triggerHeroVideoUpload()"
+                [disabled]="_uploadingHeroVideo()"
+                class="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl border border-rule text-sm font-medium text-ink-mute hover:text-ink hover:border-ink/30 transition-colors cursor-pointer bg-white disabled:opacity-50"
+              >
+                @if (_uploadingHeroVideo()) {
+                  <span class="material-symbols-outlined text-[16px] leading-none animate-spin">progress_activity</span>
+                  Procesando…
+                } @else {
+                  <span class="material-symbols-outlined text-[16px] leading-none">add</span>
+                  Agregar video
+                }
+              </button>
+            </div>
+
+            @if (_heroVideos().length) {
+              <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                @for (v of _heroVideos(); track v.url; let i = $index) {
+                  <div class="relative group rounded-xl overflow-hidden border border-rule bg-black aspect-video">
+                    <img
+                      [src]="v.poster"
+                      alt="Poster hero"
+                      class="w-full h-full object-cover opacity-80"
+                    />
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <span class="material-symbols-outlined text-white text-[36px] drop-shadow">play_circle</span>
+                    </div>
+                    <button
+                      type="button"
+                      (click)="removeHeroVideo(i)"
+                      class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer border-0"
+                      title="Eliminar"
+                    >
+                      <span class="material-symbols-outlined text-[14px] leading-none">close</span>
+                    </button>
+                    <span class="absolute bottom-1.5 left-1.5 text-[10px] text-white/70 font-mono">{{ i + 1 }}</span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="h-28 rounded-xl border-2 border-dashed border-rule flex flex-col items-center justify-center gap-1.5 text-ink-mute">
+                <span class="material-symbols-outlined text-[28px] leading-none opacity-20">videocam</span>
+                <span class="text-sm">Sin videos. Agrega el primero.</span>
+              </div>
+            }
+          </div>
+
+          <!-- About videos -->
+          <div class="bg-white border border-rule rounded-2xl p-6">
+            <div class="flex items-start justify-between gap-4 mb-5">
+              <div>
+                <h2 class="font-semibold text-ink text-base">Videos de "Sobre nosotros"</h2>
+                <p class="text-xs text-ink-mute mt-0.5">
+                  Slider en la sección quiénes somos. MP4, WebM o MOV · máx. 200 MB · recomendado 10–15 seg.
+                </p>
+              </div>
+              <button
+                type="button"
+                (click)="triggerAboutVideoUpload()"
+                [disabled]="_uploadingAboutVideo()"
+                class="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl border border-rule text-sm font-medium text-ink-mute hover:text-ink hover:border-ink/30 transition-colors cursor-pointer bg-white disabled:opacity-50"
+              >
+                @if (_uploadingAboutVideo()) {
+                  <span class="material-symbols-outlined text-[16px] leading-none animate-spin">progress_activity</span>
+                  Procesando…
+                } @else {
+                  <span class="material-symbols-outlined text-[16px] leading-none">add</span>
+                  Agregar video
+                }
+              </button>
+            </div>
+
+            @if (_aboutVideos().length) {
+              <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                @for (v of _aboutVideos(); track v.url; let i = $index) {
+                  <div class="relative group rounded-xl overflow-hidden border border-rule bg-black aspect-video">
+                    <img
+                      [src]="v.poster"
+                      alt="Poster about"
+                      class="w-full h-full object-cover opacity-80"
+                    />
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <span class="material-symbols-outlined text-white text-[36px] drop-shadow">play_circle</span>
+                    </div>
+                    <button
+                      type="button"
+                      (click)="removeAboutVideo(i)"
+                      class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer border-0"
+                      title="Eliminar"
+                    >
+                      <span class="material-symbols-outlined text-[14px] leading-none">close</span>
+                    </button>
+                    <span class="absolute bottom-1.5 left-1.5 text-[10px] text-white/70 font-mono">{{ i + 1 }}</span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="h-28 rounded-xl border-2 border-dashed border-rule flex flex-col items-center justify-center gap-1.5 text-ink-mute">
+                <span class="material-symbols-outlined text-[28px] leading-none opacity-20">videocam</span>
+                <span class="text-sm">Sin videos. Agrega el primero.</span>
+              </div>
+            }
+          </div>
+
         </div>
       }
 

@@ -1,8 +1,40 @@
 <!-- ── Hero ── -->
 <div class="px-6 py-10 md:px-10 md:py-12">
   <section
-    class="max-w-[1440px] mx-auto rounded-3xl bg-[radial-gradient(ellipse_80%_100%_at_70%_40%,#ffdf4a_0%,#ffcb05_55%,#f5b800_100%)] flex items-center justify-between gap-10 px-12 py-14 overflow-hidden relative max-lg:flex-col max-lg:justify-center max-lg:px-8 max-lg:py-10"
+    class="max-w-[1440px] mx-auto rounded-3xl flex items-center justify-between gap-10 px-12 py-14 overflow-hidden relative max-lg:flex-col max-lg:justify-center max-lg:px-8 max-lg:py-10"
+    [style.background]="!_hasVideos() ? 'radial-gradient(ellipse 80% 100% at 70% 40%, #ffdf4a 0%, #ffcb05 55%, #f5b800 100%)' : 'transparent'"
   >
+    <!-- Fondo: video cuando hay videos, gradiente cuando no -->
+    @if (_hasVideos() && _currentVideo(); as video) {
+      <!-- @for con track _currentIndex() fuerza recrear el <video> al cambiar de índice -->
+      @for (_ of [1]; track _currentIndex()) {
+        <video
+          class="absolute inset-0 w-full h-full object-cover z-0"
+          [src]="video.url"
+          autoplay
+          muted
+          playsinline
+          loop
+          (ended)="onVideoEnded()"
+        ></video>
+      }
+      <!-- Scrim: oscurece la zona izquierda para que el texto sea legible -->
+      <div class="absolute inset-0 bg-gradient-to-r from-black/65 via-black/30 to-transparent z-[1] pointer-events-none"></div>
+      <!-- Dots de navegación -->
+      @if (_heroVideos().length > 1) {
+        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20">
+          @for (v of _heroVideos(); track v.url; let i = $index) {
+            <button
+              type="button"
+              (click)="goTo(i)"
+              class="rounded-full border-0 cursor-pointer transition-all p-0"
+              [class]="_currentIndex() === i ? 'w-5 h-2 bg-ink' : 'w-2 h-2 bg-ink/30 hover:bg-ink/60'"
+            ></button>
+          }
+        </div>
+      }
+    }
+
     <!-- Left -->
     <div class="max-w-[500px] shrink-0 z-10 w-full lg:w-auto">
 
@@ -51,7 +83,7 @@
 
       <!-- Sub -->
       <p
-        class="font-alegreya text-[17px] leading-[1.7] text-ink/70 mb-6 max-w-[420px]"
+        [class]="'font-alegreya text-[17px] leading-[1.7] mb-6 max-w-[420px] ' + (_hasVideos() ? 'text-white/85' : 'text-ink/70')"
       >
         Pinturas, esmaltes, brochas y todo lo que necesitas para terminar el
         trabajo. Pedido directo a WhatsApp, sin filas ni complicaciones.
@@ -107,11 +139,11 @@
         @for (stat of stats(); track stat.label) {
           <div class="flex flex-col gap-0.5">
             <span
-              class="font-display font-extrabold text-[20px] leading-none text-ink"
+              [class]="'font-display font-extrabold text-[20px] leading-none ' + (_hasVideos() ? 'text-white' : 'text-ink')"
               >{{ stat.value }}</span
             >
             <span
-              class="font-alegreya text-[12px] font-semibold tracking-[0.08em] uppercase text-ink/50"
+              [class]="'font-alegreya text-[12px] font-semibold tracking-[0.08em] uppercase ' + (_hasVideos() ? 'text-white/60' : 'text-ink/50')"
               >{{ stat.label }}</span
             >
           </div>
@@ -120,7 +152,7 @@
     </div>
 
     <!-- Imágenes — solo desktop (columna derecha) -->
-    <div class="hidden lg:flex items-end shrink-0" aria-hidden="true">
+    <div class="hidden lg:flex items-end shrink-0 z-10" aria-hidden="true">
       <img
         src="assets/images/hero/pinturaIzquierda.webp"
         alt=""
