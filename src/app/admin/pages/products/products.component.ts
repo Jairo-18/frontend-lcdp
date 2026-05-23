@@ -16,9 +16,10 @@ import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { ProductService } from '@shared/services/product.service';
 import { OrganizationalService } from '@shared/services/organizational.service';
 import { ImagePreviewService } from '@shared/services/image-preview.service';
-import { Product } from '@shared/interfaces/product.interface';
+import { Product, UnitOfMeasure } from '@shared/interfaces/product.interface';
 import { Category } from '@shared/interfaces/category.interface';
 import { Brand } from '@shared/interfaces/brand.interface';
+import { TaxType } from '@shared/interfaces/tax-type.interface';
 
 @Component({
   selector: 'app-products',
@@ -48,6 +49,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
   readonly _search = signal<string>('');
   readonly _categoryFilter = signal<number | undefined>(undefined);
   readonly _brandFilter = signal<number | undefined>(undefined);
+  readonly _taxTypeFilter = signal<number | undefined>(undefined);
+  readonly _unitFilter = signal<number | undefined>(undefined);
 
   readonly _from = computed(() =>
     this._total() === 0 ? 0 : (this._page() - 1) * this._perPage() + 1,
@@ -57,9 +60,16 @@ export class ProductsComponent implements OnInit, OnDestroy {
   );
   readonly _categories = signal<Category[]>([]);
   readonly _brands = signal<Brand[]>([]);
+  readonly _taxTypes = signal<TaxType[]>([]);
+  readonly _units = signal<UnitOfMeasure[]>([]);
 
   readonly _hasFilters = computed(
-    () => !!this._search() || !!this._categoryFilter() || !!this._brandFilter(),
+    () =>
+      !!this._search() ||
+      !!this._categoryFilter() ||
+      !!this._brandFilter() ||
+      !!this._taxTypeFilter() ||
+      !!this._unitFilter(),
   );
 
   readonly perPageOptions = [
@@ -76,6 +86,16 @@ export class ProductsComponent implements OnInit, OnDestroy {
   readonly brandOptions = computed(() => [
     { value: '', label: 'Todas las marcas' },
     ...this._brands().map((b) => ({ value: String(b.id), label: b.name })),
+  ]);
+
+  readonly taxTypeOptions = computed(() => [
+    { value: '', label: 'Todos los impuestos' },
+    ...this._taxTypes().map((t) => ({ value: String(t.id), label: t.name })),
+  ]);
+
+  readonly unitOptions = computed(() => [
+    { value: '', label: 'Todas las unidades' },
+    ...this._units().map((u) => ({ value: String(u.id), label: u.name })),
   ]);
 
   ngOnInit(): void {
@@ -97,6 +117,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
       .subscribe((bootstrap) => {
         this._categories.set(bootstrap.categories);
         this._brands.set(bootstrap.brands);
+        this._taxTypes.set(bootstrap.taxTypes);
+        this._units.set(bootstrap.units);
         this._loadProducts();
       });
   }
@@ -115,6 +137,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
         search: this._search() || undefined,
         categoryId: this._categoryFilter(),
         brandId: this._brandFilter(),
+        taxTypeId: this._taxTypeFilter(),
+        unitOfMeasureId: this._unitFilter(),
       })
       .pipe(takeUntil(this._destroy$))
       .subscribe({
@@ -144,6 +168,18 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this._loadProducts();
   }
 
+  onTaxTypeFilter(value: string): void {
+    this._taxTypeFilter.set(value ? Number(value) : undefined);
+    this._page.set(1);
+    this._loadProducts();
+  }
+
+  onUnitFilter(value: string): void {
+    this._unitFilter.set(value ? Number(value) : undefined);
+    this._page.set(1);
+    this._loadProducts();
+  }
+
   onPerPageChange(value: string): void {
     this._perPage.set(Number(value));
     this._page.set(1);
@@ -160,12 +196,19 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this._search.set('');
     this._categoryFilter.set(undefined);
     this._brandFilter.set(undefined);
+    this._taxTypeFilter.set(undefined);
+    this._unitFilter.set(undefined);
     this._page.set(1);
     this._loadProducts();
   }
 
   productThumb(product: Product): string | null {
     return product.presentations[0]?.images[0]?.variants.thumb ?? null;
+  }
+
+  productUnits(product: Product): string {
+    const names = [...new Set(product.presentations.map((p) => p.unitOfMeasure?.name).filter(Boolean))];
+    return names.join(', ') || '—';
   }
 
   openProductPreview(product: Product): void {

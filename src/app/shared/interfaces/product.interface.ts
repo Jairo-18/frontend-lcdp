@@ -44,6 +44,8 @@ export interface ProductParams extends BasePaginationParams {
   search?: string;
   categoryId?: number;
   brandId?: number;
+  taxTypeId?: number;
+  unitOfMeasureId?: number;
   orderBy?: 'name' | 'createdAt';
 }
 

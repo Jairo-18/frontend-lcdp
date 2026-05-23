@@ -53,6 +53,20 @@
 
     <app-select-field
       class="w-full sm:w-auto"
+      [options]="taxTypeOptions()"
+      [ngModel]="_taxTypeFilter()?.toString() ?? ''"
+      (ngModelChange)="onTaxTypeFilter($event)"
+    />
+
+    <app-select-field
+      class="w-full sm:w-auto"
+      [options]="unitOptions()"
+      [ngModel]="_unitFilter()?.toString() ?? ''"
+      (ngModelChange)="onUnitFilter($event)"
+    />
+
+    <app-select-field
+      class="w-full sm:w-auto"
       [options]="perPageOptions"
       [ngModel]="_perPage().toString()"
       (ngModelChange)="onPerPageChange($event)"
@@ -114,6 +128,16 @@
                 class="hidden md:table-cell px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide"
               >
                 Marca
+              </th>
+              <th
+                class="hidden lg:table-cell px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide"
+              >
+                Impuesto
+              </th>
+              <th
+                class="hidden lg:table-cell px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide"
+              >
+                Unidad
               </th>
               <th
                 class="hidden sm:table-cell px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide text-center"
@@ -190,6 +214,12 @@
                 </td>
                 <td class="hidden md:table-cell px-4 py-4 text-ink-mute">
                   {{ product.brand.name }}
+                </td>
+                <td class="hidden lg:table-cell px-4 py-4 text-ink-mute">
+                  {{ product.taxType?.name ?? '—' }}
+                </td>
+                <td class="hidden lg:table-cell px-4 py-4 text-ink-mute">
+                  {{ productUnits(product) }}
                 </td>
                 <td class="hidden sm:table-cell px-4 py-4 text-center">
                   <span
