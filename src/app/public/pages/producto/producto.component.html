@@ -328,54 +328,133 @@
         <!-- ── Video ── -->
         @if (safeVideoUrl(); as embedUrl) {
           <div class="mt-12 pt-8 border-t border-rule">
-            <p
-              class="text-[10px] font-bold text-ink-mute tracking-widest uppercase mb-4"
-            >
+            <p class="text-[10px] font-bold text-ink-mute tracking-widest uppercase mb-4">
               Video del producto
             </p>
-            <div
-              class="aspect-video rounded-2xl overflow-hidden bg-black max-w-2xl"
-            >
-              <iframe
-                [src]="embedUrl"
-                class="w-full h-full"
-                frameborder="0"
-                allow="autoplay; encrypted-media; picture-in-picture"
-                allowfullscreen
-              >
+            <div class="aspect-video rounded-2xl overflow-hidden bg-black max-w-2xl">
+              <iframe [src]="embedUrl" class="w-full h-full" frameborder="0"
+                allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen>
               </iframe>
             </div>
           </div>
         }
 
-        <!-- ── Ficha técnica ── -->
-        @if (techSheetEntries().length > 0) {
-          <div class="mt-10 pt-8 border-t border-rule">
-            <p
-              class="text-[10px] font-bold text-ink-mute tracking-widest uppercase mb-4"
-            >
-              Ficha técnica
-            </p>
-            <div
-              class="bg-white border border-rule rounded-2xl overflow-hidden max-w-2xl"
-            >
-              @for (
-                entry of techSheetEntries();
-                track entry.key;
-                let last = $last
-              ) {
-                <div
-                  class="flex gap-4 px-5 py-3"
-                  [class.border-b]="!last"
-                  [class.border-rule]="!last"
-                >
-                  <span class="text-sm font-semibold text-ink w-40 shrink-0">{{
-                    entry.key
-                  }}</span>
-                  <span class="text-sm text-ink-mute">{{ entry.value }}</span>
-                </div>
-              }
-            </div>
+        <!-- ── Paneles expandibles ── -->
+        @if (p.technicalSheet || p.safetySheet || p.modeOfUse || p.performance || p.benefits) {
+          <div class="mt-12 space-y-2">
+
+            <!-- Ficha técnica -->
+            @if (p.technicalSheet) {
+              <div class="bg-white border border-rule rounded-2xl overflow-hidden">
+                <button type="button" (click)="togglePanel('technicalSheet')"
+                  class="w-full flex items-center justify-between px-5 py-4 cursor-pointer border-0 bg-transparent text-left">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-[20px] leading-none text-red-400">picture_as_pdf</span>
+                    <span class="font-semibold text-ink text-sm">Ficha técnica</span>
+                  </div>
+                  <span class="material-symbols-outlined text-[20px] leading-none text-ink-mute transition-transform duration-200"
+                    [class.rotate-180]="isPanelOpen('technicalSheet')">expand_more</span>
+                </button>
+                @if (isPanelOpen('technicalSheet')) {
+                  <div class="border-t border-rule">
+                    <iframe [src]="safePdfUrl(p.technicalSheet)" class="w-full border-0" style="height:580px;"></iframe>
+                    <div class="px-5 py-3 border-t border-rule flex justify-end">
+                      <a [href]="p.technicalSheet" target="_blank" rel="noopener"
+                        class="text-xs font-semibold text-ink-mute hover:text-ink transition-colors no-underline">
+                        Abrir en nueva pestaña ↗
+                      </a>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+
+            <!-- Ficha de seguridad -->
+            @if (p.safetySheet) {
+              <div class="bg-white border border-rule rounded-2xl overflow-hidden">
+                <button type="button" (click)="togglePanel('safetySheet')"
+                  class="w-full flex items-center justify-between px-5 py-4 cursor-pointer border-0 bg-transparent text-left">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-[20px] leading-none text-red-400">picture_as_pdf</span>
+                    <span class="font-semibold text-ink text-sm">Ficha de seguridad</span>
+                  </div>
+                  <span class="material-symbols-outlined text-[20px] leading-none text-ink-mute transition-transform duration-200"
+                    [class.rotate-180]="isPanelOpen('safetySheet')">expand_more</span>
+                </button>
+                @if (isPanelOpen('safetySheet')) {
+                  <div class="border-t border-rule">
+                    <iframe [src]="safePdfUrl(p.safetySheet)" class="w-full border-0" style="height:580px;"></iframe>
+                    <div class="px-5 py-3 border-t border-rule flex justify-end">
+                      <a [href]="p.safetySheet" target="_blank" rel="noopener"
+                        class="text-xs font-semibold text-ink-mute hover:text-ink transition-colors no-underline">
+                        Abrir en nueva pestaña ↗
+                      </a>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+
+            <!-- Modo de uso -->
+            @if (p.modeOfUse) {
+              <div class="bg-white border border-rule rounded-2xl overflow-hidden">
+                <button type="button" (click)="togglePanel('modeOfUse')"
+                  class="w-full flex items-center justify-between px-5 py-4 cursor-pointer border-0 bg-transparent text-left">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-[20px] leading-none text-ink-mute">assignment</span>
+                    <span class="font-semibold text-ink text-sm">Modo de uso</span>
+                  </div>
+                  <span class="material-symbols-outlined text-[20px] leading-none text-ink-mute transition-transform duration-200"
+                    [class.rotate-180]="isPanelOpen('modeOfUse')">expand_more</span>
+                </button>
+                @if (isPanelOpen('modeOfUse')) {
+                  <div class="border-t border-rule px-5 py-5">
+                    <p class="text-sm text-ink leading-relaxed whitespace-pre-line">{{ p.modeOfUse }}</p>
+                  </div>
+                }
+              </div>
+            }
+
+            <!-- Rendimiento -->
+            @if (p.performance) {
+              <div class="bg-white border border-rule rounded-2xl overflow-hidden">
+                <button type="button" (click)="togglePanel('performance')"
+                  class="w-full flex items-center justify-between px-5 py-4 cursor-pointer border-0 bg-transparent text-left">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-[20px] leading-none text-ink-mute">straighten</span>
+                    <span class="font-semibold text-ink text-sm">Rendimiento</span>
+                  </div>
+                  <span class="material-symbols-outlined text-[20px] leading-none text-ink-mute transition-transform duration-200"
+                    [class.rotate-180]="isPanelOpen('performance')">expand_more</span>
+                </button>
+                @if (isPanelOpen('performance')) {
+                  <div class="border-t border-rule px-5 py-5">
+                    <p class="text-sm text-ink">{{ p.performance }}</p>
+                  </div>
+                }
+              </div>
+            }
+
+            <!-- Beneficios -->
+            @if (p.benefits) {
+              <div class="bg-white border border-rule rounded-2xl overflow-hidden">
+                <button type="button" (click)="togglePanel('benefits')"
+                  class="w-full flex items-center justify-between px-5 py-4 cursor-pointer border-0 bg-transparent text-left">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-[20px] leading-none text-ink-mute">star</span>
+                    <span class="font-semibold text-ink text-sm">Beneficios</span>
+                  </div>
+                  <span class="material-symbols-outlined text-[20px] leading-none text-ink-mute transition-transform duration-200"
+                    [class.rotate-180]="isPanelOpen('benefits')">expand_more</span>
+                </button>
+                @if (isPanelOpen('benefits')) {
+                  <div class="border-t border-rule px-5 py-5">
+                    <p class="text-sm text-ink leading-relaxed whitespace-pre-line">{{ p.benefits }}</p>
+                  </div>
+                }
+              </div>
+            }
+
           </div>
         }
       }

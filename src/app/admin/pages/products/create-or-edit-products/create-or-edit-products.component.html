@@ -18,15 +18,10 @@
     </div>
   </div>
 
-  <!-- Hidden shared file input for presentation image uploads -->
-  <input
-    #fileInput
-    type="file"
-    multiple
-    accept="image/*"
-    class="hidden"
-    (change)="onFilesSelected($event)"
-  />
+  <!-- Hidden file inputs -->
+  <input #fileInput type="file" multiple accept="image/*" class="hidden" (change)="onFilesSelected($event)" />
+  <input #techPdfInput type="file" accept=".pdf,application/pdf" class="hidden" (change)="onTechPdfSelected($event)" />
+  <input #safetyPdfInput type="file" accept=".pdf,application/pdf" class="hidden" (change)="onSafetyPdfSelected($event)" />
 
   @if (_loading()) {
     <div class="flex items-center justify-center py-20 text-ink-mute gap-3">
@@ -180,6 +175,94 @@
           label="URL de video"
           placeholder="https://youtube.com/..."
           type="url"
+        />
+      </div>
+
+      <!-- Documentos y contenido -->
+      <div class="bg-white border border-rule rounded-2xl p-6 space-y-5">
+        <div>
+          <h2 class="font-semibold text-ink text-base">Documentos y contenido</h2>
+          <p class="text-[11px] text-ink-mute mt-0.5">Fichas PDF, modo de uso, rendimiento y beneficios.</p>
+        </div>
+
+        <!-- Ficha técnica PDF -->
+        <div>
+          <p class="text-sm font-medium text-ink mb-2">Ficha técnica (PDF)</p>
+          @if (form.get('technicalSheet')?.value) {
+            <div class="flex items-center gap-3 p-3 rounded-xl border border-rule bg-[rgba(26,28,44,0.02)]">
+              <span class="material-symbols-outlined text-[20px] leading-none text-red-400">picture_as_pdf</span>
+              <span class="text-sm text-ink flex-1 truncate">Ficha técnica cargada</span>
+              <a [href]="form.get('technicalSheet')?.value" target="_blank" rel="noopener"
+                class="text-xs font-medium text-ink-mute hover:text-ink transition-colors border-0 bg-transparent cursor-pointer">
+                Ver PDF
+              </a>
+              <button type="button" (click)="removeTechPdf()"
+                class="text-xs font-medium text-red-400 hover:text-red-600 transition-colors border-0 bg-transparent cursor-pointer">
+                Eliminar
+              </button>
+            </div>
+          } @else {
+            <button type="button" (click)="triggerTechPdfUpload()" [disabled]="_uploadingTechPdf()"
+              class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-dashed border-rule text-sm text-ink-mute hover:border-ink/30 hover:text-ink transition-colors cursor-pointer bg-transparent disabled:opacity-50 w-full sm:w-auto">
+              @if (_uploadingTechPdf()) {
+                <span class="material-symbols-outlined text-[16px] leading-none animate-spin">progress_activity</span>
+                Subiendo...
+              } @else {
+                <span class="material-symbols-outlined text-[16px] leading-none">upload_file</span>
+                Subir ficha técnica (PDF)
+              }
+            </button>
+          }
+        </div>
+
+        <!-- Ficha de seguridad PDF -->
+        <div>
+          <p class="text-sm font-medium text-ink mb-2">Ficha de seguridad (PDF)</p>
+          @if (form.get('safetySheet')?.value) {
+            <div class="flex items-center gap-3 p-3 rounded-xl border border-rule bg-[rgba(26,28,44,0.02)]">
+              <span class="material-symbols-outlined text-[20px] leading-none text-red-400">picture_as_pdf</span>
+              <span class="text-sm text-ink flex-1 truncate">Ficha de seguridad cargada</span>
+              <a [href]="form.get('safetySheet')?.value" target="_blank" rel="noopener"
+                class="text-xs font-medium text-ink-mute hover:text-ink transition-colors border-0 bg-transparent cursor-pointer">
+                Ver PDF
+              </a>
+              <button type="button" (click)="removeSafetyPdf()"
+                class="text-xs font-medium text-red-400 hover:text-red-600 transition-colors border-0 bg-transparent cursor-pointer">
+                Eliminar
+              </button>
+            </div>
+          } @else {
+            <button type="button" (click)="triggerSafetyPdfUpload()" [disabled]="_uploadingSafetyPdf()"
+              class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-dashed border-rule text-sm text-ink-mute hover:border-ink/30 hover:text-ink transition-colors cursor-pointer bg-transparent disabled:opacity-50 w-full sm:w-auto">
+              @if (_uploadingSafetyPdf()) {
+                <span class="material-symbols-outlined text-[16px] leading-none animate-spin">progress_activity</span>
+                Subiendo...
+              } @else {
+                <span class="material-symbols-outlined text-[16px] leading-none">upload_file</span>
+                Subir ficha de seguridad (PDF)
+              }
+            </button>
+          }
+        </div>
+
+        <app-textarea-field
+          formControlName="modeOfUse"
+          label="Modo de uso"
+          placeholder="Instrucciones de aplicación del producto..."
+          [rows]="4"
+        />
+
+        <app-input-field
+          formControlName="performance"
+          label="Rendimiento"
+          placeholder="Ej: 40 m² por galón en superficie lisa"
+        />
+
+        <app-textarea-field
+          formControlName="benefits"
+          label="Beneficios"
+          placeholder="Principales beneficios del producto..."
+          [rows]="4"
         />
       </div>
 
@@ -690,6 +773,114 @@
                 >(solo se previsualiza YouTube)</span
               >
             </div>
+          </div>
+        }
+
+        <!-- Preview: paneles expandibles -->
+        @if (
+          form.get('technicalSheet')?.value ||
+          form.get('safetySheet')?.value ||
+          form.get('modeOfUse')?.value ||
+          form.get('performance')?.value ||
+          form.get('benefits')?.value
+        ) {
+          <div class="mt-8 space-y-2">
+
+            @if (form.get('technicalSheet')?.value) {
+              <div class="border border-rule rounded-2xl overflow-hidden bg-white">
+                <button type="button" (click)="togglePreviewPanel('technicalSheet')"
+                  class="w-full flex items-center justify-between px-5 py-4 cursor-pointer border-0 bg-transparent text-left">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-[18px] leading-none text-red-400">picture_as_pdf</span>
+                    <span class="font-semibold text-ink text-sm">Ficha técnica</span>
+                  </div>
+                  <span class="material-symbols-outlined text-[18px] leading-none text-ink-mute transition-transform duration-200"
+                    [class.rotate-180]="isPreviewPanelOpen('technicalSheet')">expand_more</span>
+                </button>
+                @if (isPreviewPanelOpen('technicalSheet') && safePdfUrlPreview(form.get('technicalSheet')?.value); as pdfUrl) {
+                  <div class="border-t border-rule">
+                    <iframe [src]="pdfUrl" class="w-full border-0" style="height:520px;"></iframe>
+                  </div>
+                }
+              </div>
+            }
+
+            @if (form.get('safetySheet')?.value) {
+              <div class="border border-rule rounded-2xl overflow-hidden bg-white">
+                <button type="button" (click)="togglePreviewPanel('safetySheet')"
+                  class="w-full flex items-center justify-between px-5 py-4 cursor-pointer border-0 bg-transparent text-left">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-[18px] leading-none text-red-400">picture_as_pdf</span>
+                    <span class="font-semibold text-ink text-sm">Ficha de seguridad</span>
+                  </div>
+                  <span class="material-symbols-outlined text-[18px] leading-none text-ink-mute transition-transform duration-200"
+                    [class.rotate-180]="isPreviewPanelOpen('safetySheet')">expand_more</span>
+                </button>
+                @if (isPreviewPanelOpen('safetySheet') && safePdfUrlPreview(form.get('safetySheet')?.value); as pdfUrl) {
+                  <div class="border-t border-rule">
+                    <iframe [src]="pdfUrl" class="w-full border-0" style="height:520px;"></iframe>
+                  </div>
+                }
+              </div>
+            }
+
+            @if (form.get('modeOfUse')?.value) {
+              <div class="border border-rule rounded-2xl overflow-hidden bg-white">
+                <button type="button" (click)="togglePreviewPanel('modeOfUse')"
+                  class="w-full flex items-center justify-between px-5 py-4 cursor-pointer border-0 bg-transparent text-left">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-[18px] leading-none text-ink-mute">assignment</span>
+                    <span class="font-semibold text-ink text-sm">Modo de uso</span>
+                  </div>
+                  <span class="material-symbols-outlined text-[18px] leading-none text-ink-mute transition-transform duration-200"
+                    [class.rotate-180]="isPreviewPanelOpen('modeOfUse')">expand_more</span>
+                </button>
+                @if (isPreviewPanelOpen('modeOfUse')) {
+                  <div class="border-t border-rule px-5 py-5">
+                    <p class="text-sm text-ink leading-relaxed whitespace-pre-line">{{ form.get('modeOfUse')?.value }}</p>
+                  </div>
+                }
+              </div>
+            }
+
+            @if (form.get('performance')?.value) {
+              <div class="border border-rule rounded-2xl overflow-hidden bg-white">
+                <button type="button" (click)="togglePreviewPanel('performance')"
+                  class="w-full flex items-center justify-between px-5 py-4 cursor-pointer border-0 bg-transparent text-left">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-[18px] leading-none text-ink-mute">straighten</span>
+                    <span class="font-semibold text-ink text-sm">Rendimiento</span>
+                  </div>
+                  <span class="material-symbols-outlined text-[18px] leading-none text-ink-mute transition-transform duration-200"
+                    [class.rotate-180]="isPreviewPanelOpen('performance')">expand_more</span>
+                </button>
+                @if (isPreviewPanelOpen('performance')) {
+                  <div class="border-t border-rule px-5 py-5">
+                    <p class="text-sm text-ink">{{ form.get('performance')?.value }}</p>
+                  </div>
+                }
+              </div>
+            }
+
+            @if (form.get('benefits')?.value) {
+              <div class="border border-rule rounded-2xl overflow-hidden bg-white">
+                <button type="button" (click)="togglePreviewPanel('benefits')"
+                  class="w-full flex items-center justify-between px-5 py-4 cursor-pointer border-0 bg-transparent text-left">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-[18px] leading-none text-ink-mute">star</span>
+                    <span class="font-semibold text-ink text-sm">Beneficios</span>
+                  </div>
+                  <span class="material-symbols-outlined text-[18px] leading-none text-ink-mute transition-transform duration-200"
+                    [class.rotate-180]="isPreviewPanelOpen('benefits')">expand_more</span>
+                </button>
+                @if (isPreviewPanelOpen('benefits')) {
+                  <div class="border-t border-rule px-5 py-5">
+                    <p class="text-sm text-ink leading-relaxed whitespace-pre-line">{{ form.get('benefits')?.value }}</p>
+                  </div>
+                }
+              </div>
+            }
+
           </div>
         }
       </div>

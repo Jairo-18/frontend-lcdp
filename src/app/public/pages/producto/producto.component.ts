@@ -45,6 +45,7 @@ export class ProductoComponent implements OnInit, OnDestroy {
   readonly selectedImage = signal(0);
   readonly qty = signal(1);
   readonly addedFeedback = signal(false);
+  readonly expandedPanels = signal<Set<string>>(new Set());
 
   readonly subtotal = computed(() => {
     const price = this.webPrice();
@@ -169,6 +170,22 @@ export class ProductoComponent implements OnInit, OnDestroy {
     return p?.presentations[this.selectedPres()]?.unitOfMeasure?.name ?? '';
   }
 
+  togglePanel(key: string): void {
+    this.expandedPanels.update(s => {
+      const next = new Set(s);
+      next.has(key) ? next.delete(key) : next.add(key);
+      return next;
+    });
+  }
+
+  isPanelOpen(key: string): boolean {
+    return this.expandedPanels().has(key);
+  }
+
+  safePdfUrl(url: string): SafeResourceUrl {
+    return this._domSanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
   safeVideoUrl(): SafeResourceUrl | null {
     const url = this.product()?.videoUrl;
     if (!url) return null;
@@ -181,12 +198,4 @@ export class ProductoComponent implements OnInit, OnDestroy {
     );
   }
 
-  techSheetEntries(): { key: string; value: string }[] {
-    const sheet = this.product()?.technicalSheet;
-    if (!sheet) return [];
-    return Object.entries(sheet).map(([key, value]) => ({
-      key,
-      value: String(value),
-    }));
-  }
 }

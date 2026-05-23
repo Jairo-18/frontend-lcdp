@@ -1,7 +1,7 @@
 import { environment } from '@env/environment';
 import { ImageVariant } from '@shared/interfaces/image-variant.interface';
 
-function resolveUrl(url: string): string {
+export function resolveUrl(url: string): string {
   return url.startsWith('http') ? url : `${environment.apiUrl}${url}`;
 }
 

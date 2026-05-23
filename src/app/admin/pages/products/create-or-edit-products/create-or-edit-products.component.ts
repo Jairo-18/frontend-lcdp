@@ -65,6 +65,8 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
   private readonly _destroy$: Subject<void> = new Subject<void>();
 
   @ViewChild('fileInput') fileInputRef!: ElementRef<HTMLInputElement>;
+  @ViewChild('techPdfInput') techPdfInputRef!: ElementRef<HTMLInputElement>;
+  @ViewChild('safetyPdfInput') safetyPdfInputRef!: ElementRef<HTMLInputElement>;
 
   readonly _loading = signal(false);
   readonly _saving = signal(false);
@@ -78,6 +80,9 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
 
   readonly _presImages = signal<ImageVariant[][]>([]);
   readonly _uploadingForIndex = signal<number | null>(null);
+  readonly _uploadingTechPdf = signal(false);
+  readonly _uploadingSafetyPdf = signal(false);
+  readonly _expandedPreviewPanels = signal<Set<string>>(new Set());
 
   readonly _previewPresIndex = signal(0);
   readonly _previewImageIndex = signal(0);
@@ -109,6 +114,11 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
     taxTypeId: [''],
     isActive: [true],
     videoUrl: [''],
+    technicalSheet: [null as string | null],
+    safetySheet: [null as string | null],
+    modeOfUse: [''],
+    performance: [''],
+    benefits: [''],
     presentations: this._fb.array([]),
     markupPercentage: [null as number | null],
     discountPercentage: [null as number | null],
@@ -229,6 +239,11 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
                     taxTypeId: p.taxTypeId ? String(p.taxTypeId) : '',
                     isActive: p.isActive,
                     videoUrl: p.videoUrl ?? '',
+                    technicalSheet: p.technicalSheet ?? null,
+                    safetySheet: p.safetySheet ?? null,
+                    modeOfUse: p.modeOfUse ?? '',
+                    performance: p.performance ?? '',
+                    benefits: p.benefits ?? '',
                     markupPercentage: p.markupPercentage ?? null,
                     discountPercentage: p.discountPercentage ?? null,
                   });
@@ -388,6 +403,75 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
     );
   }
 
+  togglePreviewPanel(key: string): void {
+    this._expandedPreviewPanels.update(s => {
+      const next = new Set(s);
+      next.has(key) ? next.delete(key) : next.add(key);
+      return next;
+    });
+  }
+
+  isPreviewPanelOpen(key: string): boolean {
+    return this._expandedPreviewPanels().has(key);
+  }
+
+  safePdfUrlPreview(url: string | null | undefined): SafeResourceUrl | null {
+    if (!url) return null;
+    return this._sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
+  triggerTechPdfUpload(): void {
+    this.techPdfInputRef.nativeElement.value = '';
+    this.techPdfInputRef.nativeElement.click();
+  }
+
+  triggerSafetyPdfUpload(): void {
+    this.safetyPdfInputRef.nativeElement.value = '';
+    this.safetyPdfInputRef.nativeElement.click();
+  }
+
+  onTechPdfSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this._uploadingTechPdf.set(true);
+    this._uploadService.uploadDocument('products/documents', file)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (url) => {
+          this.form.get('technicalSheet')!.setValue(url);
+          this.form.markAsDirty();
+          this._uploadingTechPdf.set(false);
+        },
+        error: () => this._uploadingTechPdf.set(false),
+      });
+  }
+
+  onSafetyPdfSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this._uploadingSafetyPdf.set(true);
+    this._uploadService.uploadDocument('products/documents', file)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (url) => {
+          this.form.get('safetySheet')!.setValue(url);
+          this.form.markAsDirty();
+          this._uploadingSafetyPdf.set(false);
+        },
+        error: () => this._uploadingSafetyPdf.set(false),
+      });
+  }
+
+  removeTechPdf(): void {
+    this.form.get('technicalSheet')!.setValue(null);
+    this.form.markAsDirty();
+  }
+
+  removeSafetyPdf(): void {
+    this.form.get('safetySheet')!.setValue(null);
+    this.form.markAsDirty();
+  }
+
   save(): void {
     if (this.form.invalid || this._saving() || this._categoryIds().length === 0) return;
     this._saving.set(true);
@@ -404,6 +488,11 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
       taxTypeId: raw.taxTypeId ? Number(raw.taxTypeId) : undefined,
       isActive: raw.isActive,
       videoUrl: raw.videoUrl || undefined,
+      technicalSheet: raw.technicalSheet ?? null,
+      safetySheet: raw.safetySheet ?? null,
+      modeOfUse: raw.modeOfUse || undefined,
+      performance: raw.performance || undefined,
+      benefits: raw.benefits || undefined,
       presentations: (raw.presentations as PresentationFormRaw[]).map(
         (p, i) => ({
           unitOfMeasureId: Number(p.unitOfMeasureId),

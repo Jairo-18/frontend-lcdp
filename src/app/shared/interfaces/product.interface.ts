@@ -26,7 +26,11 @@ export interface CreateProductDto {
   taxTypeId?: number;
   isActive?: boolean;
   videoUrl?: string;
-  technicalSheet?: Record<string, string | number | boolean>;
+  technicalSheet?: string | null;
+  safetySheet?: string | null;
+  modeOfUse?: string;
+  performance?: string;
+  benefits?: string;
   presentations?: CreatePresentationDto[];
   markupPercentage?: number;
   discountPercentage?: number;
@@ -84,7 +88,11 @@ export interface Product {
   taxTypeId: number | null;
   taxType: TaxType | null;
   isActive: boolean;
-  technicalSheet: Record<string, string | number | boolean> | null;
+  technicalSheet: string | null;
+  safetySheet: string | null;
+  modeOfUse: string | null;
+  performance: string | null;
+  benefits: string | null;
   videoUrl: string | null;
   presentations: ProductPresentation[];
   markupPercentage: number | null;

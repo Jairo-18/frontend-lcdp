@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 import { environment } from '@env/environment';
 import { ImageVariant } from '@shared/interfaces/image-variant.interface';
 import { UploadFolder } from '@shared/interfaces/upload.interface';
-import { resolveVariant } from '@shared/utilities/image-url.utils';
+import { resolveUrl, resolveVariant } from '@shared/utilities/image-url.utils';
 
 @Injectable({ providedIn: 'root' })
 export class UploadService {
@@ -20,5 +20,16 @@ export class UploadService {
         formData,
       )
       .pipe(map((r) => r.data.images.map(resolveVariant)));
+  }
+
+  uploadDocument(folder: UploadFolder, file: File): Observable<string> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this._http
+      .post<{ statusCode: number; data: { url: string } }>(
+        `${environment.apiUrl}/uploads/${folder}`,
+        formData,
+      )
+      .pipe(map((r) => resolveUrl(r.data.url)));
   }
 }
