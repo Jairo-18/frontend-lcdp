@@ -182,8 +182,13 @@ export class ProductoComponent implements OnInit, OnDestroy {
     return this.expandedPanels().has(key);
   }
 
+  private readonly _pdfUrlCache = new Map<string, SafeResourceUrl>();
+
   safePdfUrl(url: string): SafeResourceUrl {
-    return this._domSanitizer.bypassSecurityTrustResourceUrl(url);
+    if (!this._pdfUrlCache.has(url)) {
+      this._pdfUrlCache.set(url, this._domSanitizer.bypassSecurityTrustResourceUrl(url));
+    }
+    return this._pdfUrlCache.get(url)!;
   }
 
   safeVideoUrl(): SafeResourceUrl | null {

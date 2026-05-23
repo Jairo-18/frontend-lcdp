@@ -1,0 +1,123 @@
+<div class="p-4 sm:p-6 lg:p-8">
+
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+    <div>
+      <h1 class="font-display font-bold text-ink text-2xl">Videos</h1>
+      <p class="text-ink-mute text-sm mt-1">Gestiona los videos de YouTube, TikTok y Facebook.</p>
+    </div>
+    <button type="button" (click)="openCreate()"
+      class="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-ink text-white text-sm font-semibold hover:bg-black transition-colors cursor-pointer border-0">
+      <span class="material-symbols-outlined text-[18px] leading-none">add</span>
+      Nuevo video
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="flex flex-wrap gap-3 mb-4">
+    <div class="relative flex-1 min-w-[200px]">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-ink-mute leading-none pointer-events-none">search</span>
+      <input type="text" placeholder="Buscar por título..."
+        [value]="_search()"
+        (input)="onSearch($any($event.target).value)"
+        class="w-full pl-9 pr-3 py-2 rounded-xl border border-rule text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10" />
+    </div>
+    <app-select-field
+      class="w-full sm:w-auto"
+      [options]="perPageOptions"
+      [ngModel]="_perPage().toString()"
+      (ngModelChange)="onPerPageChange($event)"
+    />
+    @if (_hasFilters()) {
+      <button type="button" (click)="clearFilters()"
+        class="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-rule text-sm text-ink-mute hover:text-ink hover:bg-[rgba(26,28,44,0.04)] transition-colors cursor-pointer bg-white">
+        <span class="material-symbols-outlined text-[16px] leading-none">filter_list_off</span>
+        Limpiar
+      </button>
+    }
+  </div>
+
+  <!-- Table -->
+  <div class="bg-white border border-rule rounded-2xl overflow-hidden">
+    @if (_loading()) {
+      <div class="flex items-center justify-center py-20 text-ink-mute gap-3">
+        <span class="material-symbols-outlined text-[28px] leading-none animate-spin">progress_activity</span>
+        Cargando...
+      </div>
+    } @else if (_videos().length === 0) {
+      <div class="flex flex-col items-center justify-center py-20 text-ink-mute gap-3">
+        <span class="material-symbols-outlined text-[48px] leading-none opacity-30">smart_display</span>
+        <p class="text-sm">No se encontraron videos.</p>
+      </div>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-rule text-left">
+              <th class="px-6 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Plataforma</th>
+              <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Título</th>
+              <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide hidden md:table-cell">URL</th>
+              <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (video of _videos(); track video.id) {
+              <tr class="border-b border-rule last:border-0 hover:bg-[rgba(26,28,44,0.02)] transition-colors">
+
+                <!-- Platform icon -->
+                <td class="px-6 py-3">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[22px] leading-none text-ink-mute">{{ platformIcon(video.url) }}</span>
+                    <span class="text-xs text-ink-mute hidden sm:inline">{{ platformLabel(video.url) }}</span>
+                  </div>
+                </td>
+
+                <!-- Title -->
+                <td class="px-4 py-3 font-medium text-ink max-w-[260px]">
+                  <span class="line-clamp-2">{{ video.title }}</span>
+                </td>
+
+                <!-- URL -->
+                <td class="px-4 py-3 hidden md:table-cell max-w-[280px]">
+                  <a [href]="video.url" target="_blank" rel="noopener noreferrer"
+                    class="text-xs text-ink-mute hover:text-ink underline truncate block max-w-[260px]">
+                    {{ video.url }}
+                  </a>
+                </td>
+
+                <!-- Actions -->
+                <td class="px-4 py-3">
+                  <div class="flex items-center justify-end gap-1">
+                    <button type="button" (click)="openEdit(video)"
+                      class="p-1.5 rounded-lg hover:bg-[rgba(26,28,44,0.06)] text-ink-mute hover:text-ink transition-colors cursor-pointer border-0 bg-transparent" title="Editar">
+                      <span class="material-symbols-outlined text-[18px] leading-none">edit</span>
+                    </button>
+                    <button type="button" (click)="confirmDelete(video.id, video.title)"
+                      [disabled]="_deletingId() === video.id"
+                      class="p-1.5 rounded-lg hover:bg-red-50 text-ink-mute hover:text-red-500 transition-colors cursor-pointer border-0 bg-transparent disabled:opacity-50" title="Eliminar">
+                      @if (_deletingId() === video.id) {
+                        <span class="material-symbols-outlined text-[18px] leading-none animate-spin">progress_activity</span>
+                      } @else {
+                        <span class="material-symbols-outlined text-[18px] leading-none">delete</span>
+                      }
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <app-paginator
+        class="border-t border-rule px-6 py-4"
+        [page]="_page()"
+        [pageCount]="_pageCount()"
+        [summary]="_from() + '–' + _to() + ' de ' + _total() + ' videos'"
+        (pageChange)="goToPage($event)">
+      </app-paginator>
+    }
+  </div>
+
+</div>

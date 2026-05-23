@@ -1,0 +1,77 @@
+<div class="p-8">
+
+  <!-- Header -->
+  <div class="flex items-center gap-4 mb-6">
+    <button type="button" (click)="goBack()"
+      class="p-1.5 rounded-lg hover:bg-[rgba(26,28,44,0.06)] text-ink-mute transition-colors cursor-pointer border-0 bg-transparent">
+      <span class="material-symbols-outlined text-[22px] leading-none">arrow_back</span>
+    </button>
+    <div>
+      <h1 class="font-display font-bold text-ink text-2xl">
+        {{ _editingId() ? 'Editar video' : 'Nuevo video' }}
+      </h1>
+      <p class="text-ink-mute text-sm mt-0.5">Videos</p>
+    </div>
+  </div>
+
+  @if (_loading()) {
+    <div class="flex items-center justify-center py-20 text-ink-mute gap-3">
+      <span class="material-symbols-outlined text-[28px] leading-none animate-spin">progress_activity</span>
+      Cargando...
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="save()" class="space-y-5">
+
+      <div class="bg-white border border-rule rounded-2xl p-6 space-y-5">
+
+        <!-- URL field with platform hint -->
+        <div class="space-y-1.5">
+          <app-input-field
+            formControlName="url"
+            label="URL del video"
+            placeholder="https://www.youtube.com/watch?v=..."
+            [required]="true"
+            [control]="form.get('url')"
+          />
+          <p class="text-xs text-ink-mute pl-0.5">Soporta YouTube, TikTok, Facebook e Instagram.</p>
+        </div>
+
+        <!-- Title field with fetch indicator -->
+        <div class="relative">
+          <app-input-field
+            formControlName="title"
+            label="Título"
+            placeholder="Tutorial de pintura decorativa"
+            [required]="true"
+            [control]="form.get('title')"
+          />
+          @if (_fetchingTitle()) {
+            <span class="absolute right-3 top-9 text-ink-mute">
+              <span class="material-symbols-outlined text-[16px] leading-none animate-spin">progress_activity</span>
+            </span>
+          }
+          <p class="text-xs text-ink-mute pl-0.5 mt-1">Se intenta obtener automáticamente desde la URL.</p>
+        </div>
+
+      </div>
+
+      <div class="flex items-center justify-end gap-3">
+        <button type="button" (click)="goBack()"
+          class="px-4 py-2 rounded-xl border border-rule text-sm font-semibold text-ink hover:bg-[rgba(26,28,44,0.04)] transition-colors cursor-pointer bg-white">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="_saving() || form.invalid || form.pristine"
+          class="flex items-center gap-2 px-5 py-2 rounded-xl bg-ink text-white text-sm font-semibold hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer border-0">
+          @if (_saving()) {
+            <span class="material-symbols-outlined text-[16px] leading-none animate-spin">progress_activity</span>
+          } @else {
+            <span class="material-symbols-outlined text-[16px] leading-none">save</span>
+          }
+          {{ _editingId() ? 'Guardar cambios' : 'Crear video' }}
+        </button>
+      </div>
+
+    </form>
+  }
+
+</div>

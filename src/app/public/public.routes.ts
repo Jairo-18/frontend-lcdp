@@ -6,13 +6,13 @@ export const publicRoutes: Routes = [
     children: [
       {
         path: '',
-        data: { reuse: true },
+        data: { reuseKey: 'public-home' },
         loadComponent: () =>
           import('./pages/home/home.component').then((m) => m.HomeComponent),
       },
       {
         path: 'sobre-nosotros',
-        data: { reuse: true },
+        data: { reuseKey: 'public-sobre-nosotros' },
         loadComponent: () =>
           import('./pages/about-us/about-us.component').then(
             (m) => m.AboutUsComponent,
@@ -20,6 +20,7 @@ export const publicRoutes: Routes = [
       },
       {
         path: 'catalogo',
+        data: { reuseKey: 'public-catalogo' },
         loadComponent: () =>
           import('./pages/catalogo/catalogo.component').then(
             (m) => m.CatalogoComponent,
@@ -34,6 +35,7 @@ export const publicRoutes: Routes = [
       },
       {
         path: 'videos',
+        data: { reuseKey: 'public-videos' },
         loadComponent: () =>
           import('./pages/videos/videos.component').then(
             (m) => m.VideosComponent,
@@ -41,6 +43,7 @@ export const publicRoutes: Routes = [
       },
       {
         path: 'ayuda/como-pedir',
+        data: { reuseKey: 'public-como-pedir' },
         loadComponent: () =>
           import('./pages/como-pedir/como-pedir.component').then(
             (m) => m.ComoPedirComponent,
@@ -48,6 +51,7 @@ export const publicRoutes: Routes = [
       },
       {
         path: 'ayuda/garantia',
+        data: { reuseKey: 'public-garantia' },
         loadComponent: () =>
           import('./pages/garantia/garantia.component').then(
             (m) => m.GarantiaComponent,

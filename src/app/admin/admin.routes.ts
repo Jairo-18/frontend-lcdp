@@ -124,6 +124,31 @@ export const adminRoutes: Routes = [
         loadComponent: () =>
           import('./pages/tax-types/tax-types.component').then((m) => m.TaxTypesComponent),
       },
+      {
+        path: 'videos',
+        children: [
+          {
+            path: '',
+            data: { reuse: true, reuseKey: 'videos' },
+            loadComponent: () =>
+              import('./pages/videos/videos.component').then((m) => m.VideosComponent),
+          },
+          {
+            path: 'create-or-edit-videos',
+            loadComponent: () =>
+              import('./pages/videos/create-or-edit-videos/create-or-edit-videos.component').then(
+                (m) => m.CreateOrEditVideosComponent,
+              ),
+          },
+          {
+            path: 'create-or-edit-videos/:id',
+            loadComponent: () =>
+              import('./pages/videos/create-or-edit-videos/create-or-edit-videos.component').then(
+                (m) => m.CreateOrEditVideosComponent,
+              ),
+          },
+        ],
+      },
       { path: '',   redirectTo: 'dashboard', pathMatch: 'full' },
       { path: '**', redirectTo: '/'         },
     ],

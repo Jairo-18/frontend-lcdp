@@ -8,3 +8,8 @@ export interface Video {
   createdAt: string;
   updatedAt: string | null;
 }
+
+export interface VideoDto {
+  title: string;
+  url: string;
+}

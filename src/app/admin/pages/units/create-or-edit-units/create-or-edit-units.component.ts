@@ -15,6 +15,7 @@ import {
   UnitOfMeasure,
   UnitOfMeasureDto,
 } from '@shared/interfaces/product.interface';
+import { CacheRouteReuseStrategy } from '@shared/strategies/cache-route-reuse.strategy';
 
 @Component({
   selector: 'app-create-or-edit-units',
@@ -24,6 +25,7 @@ import {
 })
 export class CreateOrEditUnitsComponent implements OnInit, OnDestroy {
   private readonly _unitOfMeasureService: UnitOfMeasureService = inject(UnitOfMeasureService);
+  private readonly _routeReuse: CacheRouteReuseStrategy = inject(CacheRouteReuseStrategy);
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
   private readonly _router: Router = inject(Router);
@@ -78,6 +80,7 @@ export class CreateOrEditUnitsComponent implements OnInit, OnDestroy {
 
     const onSuccess = (): void => {
       this._saving.set(false);
+      this._routeReuse.invalidate('units');
       this.goBack();
     };
     const onError = (): void => this._saving.set(false);
