@@ -15,6 +15,7 @@
           muted
           playsinline
           loop
+          (canplay)="onVideoCanPlay($event)"
           (ended)="onVideoEnded()"
         ></video>
       }

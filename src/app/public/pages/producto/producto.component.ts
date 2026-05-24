@@ -165,6 +165,11 @@ export class ProductoComponent implements OnInit, OnDestroy {
     return this._cartService.fmt(value);
   }
 
+  formatPriceFull(value: number | null): string {
+    if (value == null) return '';
+    return new Intl.NumberFormat('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value) + ' COP';
+  }
+
   unitName(): string {
     const p = this.product();
     return p?.presentations[this.selectedPres()]?.unitOfMeasure?.name ?? '';
@@ -199,7 +204,7 @@ export class ProductoComponent implements OnInit, OnDestroy {
     );
     if (!m) return null;
     return this._domSanitizer.bypassSecurityTrustResourceUrl(
-      `https://www.youtube.com/embed/${m[1]}`,
+      `https://www.youtube-nocookie.com/embed/${m[1]}`,
     );
   }
 

@@ -68,9 +68,12 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
   @ViewChild('techPdfInput') techPdfInputRef!: ElementRef<HTMLInputElement>;
   @ViewChild('safetyPdfInput') safetyPdfInputRef!: ElementRef<HTMLInputElement>;
 
-  readonly _loading = signal(false);
+  readonly _loading = signal(true);
   readonly _saving = signal(false);
   readonly _editingId = signal<number | null>(null);
+
+  private _cachedVideoUrl: string | null = null;
+  private _cachedEmbedUrl: SafeResourceUrl | null = null;
 
   readonly _categories = signal<Category[]>([]);
   readonly _brands = signal<Brand[]>([]);
@@ -168,13 +171,12 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
 
   formatPrice(value: number | null | undefined): string {
     if (value == null) return '—';
-    return (
-      '$' +
-      new Intl.NumberFormat('es-CO', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(value)
-    );
+    return '$' + new Intl.NumberFormat('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(value)) + ' COP';
+  }
+
+  formatPriceFull(value: number | null | undefined): string {
+    if (value == null) return '—';
+    return new Intl.NumberFormat('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(value)) + ' COP';
   }
 
   webPriceForPresentation(base: number | null | undefined): string {
@@ -183,29 +185,40 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
     return this.formatPrice(Number(base) * (1 + markup / 100));
   }
 
-  previewWebPrice(): string {
+  private _previewWebPriceNum(): number | null {
     const base =
       this.presentationsArray.length > 0
-        ? this.presentationsArray.at(this._previewPresIndex()).get('priceSale')
-            ?.value
+        ? this.presentationsArray.at(this._previewPresIndex()).get('priceSale')?.value
         : this.form.get('priceSale')?.value;
-    if (base == null) return '—';
+    if (base == null) return null;
     const markup = Number(this.form.get('markupPercentage')?.value) || 0;
-    return this.formatPrice(Number(base) * (1 + markup / 100));
+    return Number(base) * (1 + markup / 100);
+  }
+
+  previewWebPrice(): string {
+    const n = this._previewWebPriceNum();
+    return n == null ? '—' : this.formatPrice(n);
+  }
+
+  previewWebPriceFull(): string {
+    const n = this._previewWebPriceNum();
+    return n == null ? '' : this.formatPriceFull(n);
   }
 
   get previewVideoEmbedUrl(): SafeResourceUrl | null {
-    const url = this.form.get('videoUrl')?.value;
-    if (!url) return null;
+    const url = this.form.get('videoUrl')?.value || null;
+    if (url === this._cachedVideoUrl) return this._cachedEmbedUrl;
+    this._cachedVideoUrl = url;
+    if (!url) return (this._cachedEmbedUrl = null);
     const ytMatch = url.match(
       /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
     );
-    if (ytMatch) {
-      return this._sanitizer.bypassSecurityTrustResourceUrl(
-        `https://www.youtube.com/embed/${ytMatch[1]}`,
-      );
-    }
-    return null;
+    this._cachedEmbedUrl = ytMatch
+      ? this._sanitizer.bypassSecurityTrustResourceUrl(
+          `https://www.youtube-nocookie.com/embed/${ytMatch[1]}`,
+        )
+      : null;
+    return this._cachedEmbedUrl;
   }
 
   selectPreviewPres(index: number): void {
@@ -275,7 +288,21 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
                 error: () => this._loading.set(false),
               });
           } else {
-            this._loading.set(false);
+            const defaultTax = bootstrap.taxTypes.find(t =>
+              t.name.toLowerCase().includes('iva') && t.name.includes('19'),
+            );
+            if (defaultTax) this.form.get('taxTypeId')!.setValue(String(defaultTax.id));
+
+            this._productService
+              .nextCode()
+              .pipe(takeUntil(this._destroy$))
+              .subscribe({
+                next: (code) => {
+                  this.form.get('code')!.setValue(code);
+                  this._loading.set(false);
+                },
+                error: () => this._loading.set(false),
+              });
           }
         },
         error: () => this._loading.set(false),
@@ -539,9 +566,7 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
           next: ({ rowId }) => {
             this._saving.set(false);
             this._routeReuse.invalidate('products');
-            this._router.navigate(['/admin/products/edit', rowId], {
-              replaceUrl: true,
-            });
+            this._router.navigate(['/admin/products']);
           },
           error: onError,
         });

@@ -206,14 +206,15 @@
         label="Nombre"
         placeholder="IVA 19%"
         [required]="true"
+        [upperCase]="true"
         [control]="form.get('name')"
       />
 
       <app-input-field
         formControlName="code"
-        label="Código (único)"
-        placeholder="IVA_19"
-        hint="Ejemplos: IVA_19, IVA_5, EXENTO"
+        label="Tasa (único)"
+        placeholder="0.19"
+        hint="0.1 = 10% · 0.19 = 19% · 0.5 = 50% · 0 = Exento"
         [required]="true"
         [mono]="true"
         [control]="form.get('code')"

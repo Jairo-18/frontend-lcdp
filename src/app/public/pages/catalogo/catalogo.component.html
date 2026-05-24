@@ -32,7 +32,7 @@
             <input
               type="text"
               placeholder="Buscar por nombre, marca, categoría…"
-              class="border-0 outline-none bg-transparent flex-1 text-sm text-ink"
+              class="border-0 outline-none bg-transparent flex-1 min-w-0 text-sm text-ink"
               [(ngModel)]="mobileSearch"
               (keydown.enter)="onMobileSearch()"
             />
@@ -319,10 +319,20 @@
                         <p class="text-[9px] text-ink-mute leading-none">
                           Precio incluye IVA
                         </p>
+                        @if (product.discountPercentage) {
+                          <p class="text-[10px] font-semibold text-green-600 mt-0.5">
+                            ¡{{ product.discountPercentage }}% dto. al cotizar! {{ formatPriceFull(price) }}
+                          </p>
+                        } @else {
+                          <p class="text-[10px] font-semibold text-green-600 mt-0.5">
+                            Obtén descuento y acumula puntos al cotizar
+                          </p>
+                        }
+                      } @else {
+                        <p class="text-[10px] font-semibold text-green-600 mt-0.5">
+                          Obtén descuento y acumula puntos al cotizar
+                        </p>
                       }
-                      <p class="text-[10px] font-semibold text-green-600">
-                        Obtén descuento y acumula puntos al cotizar
-                      </p>
                     </div>
 
                     <div class="px-4 pb-4 flex flex-col gap-2">

@@ -10,7 +10,7 @@
   [disabled]="isDisabled"
   [readOnly]="readonly"
   (input)="onInput($event)"
-  (blur)="onTouched()"
+  (blur)="onBlur($event)"
   [class]="textareaClasses"
 >{{ value }}</textarea>
 @if (hint && !showError) {

@@ -55,9 +55,10 @@ export class NewProductsComponent implements OnInit {
   }
 
   formatPrice(value: number): string {
-    return '$' + new Intl.NumberFormat('es-CO', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
+    return '$' + new Intl.NumberFormat('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value) + ' COP';
+  }
+
+  formatPriceFull(value: number): string {
+    return new Intl.NumberFormat('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value) + ' COP';
   }
 }

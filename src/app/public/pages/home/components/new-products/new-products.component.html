@@ -98,12 +98,11 @@
                 <p class="text-[13px] font-bold text-ink mt-1">
                   {{ formatPrice(price) }}
                 </p>
-              }
-
-              @if (product.discountPercentage) {
-                <p class="text-[10px] font-semibold text-green-600 mt-0.5">
-                  {{ product.discountPercentage }}% dto. al cotizar
-                </p>
+                @if (product.discountPercentage) {
+                  <p class="text-[10px] font-semibold text-green-600 mt-0.5">
+                    ¡{{ product.discountPercentage }}% dto. al cotizar! {{ formatPriceFull(price) }}
+                  </p>
+                }
               }
             </div>
 

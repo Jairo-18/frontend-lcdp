@@ -118,7 +118,7 @@ export class CartService {
   }
 
   fmt(v: number): string {
-    return '$' + new Intl.NumberFormat('es-CO', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(v);
+    return '$' + new Intl.NumberFormat('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v) + ' COP';
   }
 
   private _fmt(v: number): string { return this.fmt(v); }

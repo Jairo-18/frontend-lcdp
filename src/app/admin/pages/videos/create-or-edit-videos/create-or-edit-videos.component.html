@@ -43,6 +43,7 @@
             label="Título"
             placeholder="Tutorial de pintura decorativa"
             [required]="true"
+            [titleCase]="true"
             [control]="form.get('title')"
           />
           @if (_fetchingTitle()) {

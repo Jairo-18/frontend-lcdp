@@ -139,7 +139,7 @@ export class VideosComponent implements OnInit, OnDestroy {
     );
     if (ytMatch)
       return this._sanitizer.bypassSecurityTrustResourceUrl(
-        `https://www.youtube.com/embed/${ytMatch[1]}`,
+        `https://www.youtube-nocookie.com/embed/${ytMatch[1]}`,
       );
 
     // TikTok

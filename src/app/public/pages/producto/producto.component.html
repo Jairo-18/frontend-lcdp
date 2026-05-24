@@ -125,7 +125,7 @@
             }
 
             <!-- Categorías -->
-            @if (p.categories?.length) {
+            @if (p.categories.length) {
               <div class="flex flex-wrap gap-1.5 -mt-1">
                 @for (cat of p.categories; track cat.id) {
                   <span class="px-2.5 py-1 rounded-lg bg-paper-alt border border-rule text-xs font-medium text-ink-mute">
@@ -262,8 +262,7 @@
 
             @if (p.discountPercentage) {
               <p class="text-sm font-semibold text-green-600 -mt-1">
-                ¡Obtén un gran descuento y acumula puntos al cotizar con
-                nosotros!
+                ¡{{ p.discountPercentage }}% de descuento al cotizar! {{ formatPriceFull(webPrice()) }}
               </p>
             }
 

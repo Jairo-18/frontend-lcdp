@@ -120,6 +120,11 @@
                 Producto
               </th>
               <th
+                class="hidden sm:table-cell px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide"
+              >
+                Código
+              </th>
+              <th
                 class="hidden md:table-cell px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide"
               >
                 Categoría
@@ -203,10 +208,29 @@
                       {{ product.description }}
                     </p>
                   }
-                  @if (product.priceSale) {
-                    <p class="text-xs text-ink mt-0.5 font-mono">
-                      ${{ product.priceSale | number: '1.0-0' }}
+                  @if (product.presentations.length) {
+                    <div class="flex flex-wrap gap-1 mt-1">
+                      @for (pres of product.presentations; track pres.id) {
+                        @if (pres.priceSale) {
+                          <span class="font-mono text-[11px] text-ink bg-paper-alt border border-rule rounded px-1.5 py-0.5">
+                            {{ pres.unitOfMeasure.name }} · {{ formatPrice(pres.priceSale) }}
+                          </span>
+                        }
+                      }
+                    </div>
+                  } @else if (product.priceSale) {
+                    <p class="text-xs text-ink mt-1 font-mono">
+                      {{ formatPrice(product.priceSale) }}
                     </p>
+                  }
+                </td>
+                <td class="hidden sm:table-cell px-4 py-4">
+                  @if (product.code) {
+                    <span class="font-mono text-xs text-ink-mute">
+                      #{{ product.code }}
+                    </span>
+                  } @else {
+                    <span class="text-ink-mute opacity-30">—</span>
                   }
                 </td>
                 <td class="hidden md:table-cell px-4 py-4 text-ink-mute">

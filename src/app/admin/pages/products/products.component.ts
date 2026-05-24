@@ -6,7 +6,6 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { PaginatorComponent, SelectFieldComponent } from '@shared/components';
@@ -24,7 +23,7 @@ import { TaxType } from '@shared/interfaces/tax-type.interface';
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [DecimalPipe, FormsModule, PaginatorComponent, SelectFieldComponent],
+  imports: [FormsModule, PaginatorComponent, SelectFieldComponent],
   templateUrl: './products.component.html',
 })
 export class ProductsComponent implements OnInit, OnDestroy {
@@ -121,6 +120,11 @@ export class ProductsComponent implements OnInit, OnDestroy {
         this._units.set(bootstrap.units);
         this._loadProducts();
       });
+  }
+
+  formatPrice(value: number | null | undefined): string {
+    if (value == null) return '—';
+    return '$' + new Intl.NumberFormat('es-CO', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(Math.round(Number(value)));
   }
 
   ngOnDestroy(): void {

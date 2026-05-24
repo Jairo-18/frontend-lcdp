@@ -12,6 +12,30 @@ import {
 
 let uid = 0;
 
+const FMT = new Intl.NumberFormat('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+function toTitleCase(str: string): string {
+  return str
+    .trim()
+    .replace(/\s+/g, ' ')
+    .split(' ')
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
+}
+
+function formatCurrency(raw: string): string {
+  const clean = raw.replace(/[^0-9,]/g, '');
+  const [intPart = '', decPart] = clean.split(',');
+  const intFormatted = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  return decPart !== undefined ? `${intFormatted},${decPart}` : intFormatted;
+}
+
+function parseRaw(formatted: string): number | null {
+  const clean = formatted.replace(/\./g, '').replace(',', '.');
+  const n = parseFloat(clean);
+  return isNaN(n) ? null : n;
+}
+
 @Component({
   selector: 'app-input-field',
   standalone: true,
@@ -34,14 +58,21 @@ export class InputFieldComponent implements ControlValueAccessor {
   @Input() required = false;
   @Input() readonly = false;
   @Input() mono = false;
+  @Input() currency = false;
+  @Input() titleCase = false;
+  @Input() upperCase = false;
   @Input() control: AbstractControl | null | undefined;
 
   protected readonly id = `field-${++uid}`;
   protected readonly _value = signal('');
   protected isDisabled = false;
 
-  private onChange: (v: string) => void = () => {};
+  private onChange: (v: any) => void = () => {};
   protected onTouched: () => void = () => {};
+
+  protected get resolvedType(): string {
+    return this.currency ? 'text' : this.type;
+  }
 
   protected get showError(): boolean {
     if (this.error) return true;
@@ -68,19 +99,48 @@ export class InputFieldComponent implements ControlValueAccessor {
       : 'border-rule focus:ring-black/10';
     const mono = this.mono ? 'font-mono' : '';
     const disabled = this.isDisabled ? 'opacity-50 cursor-not-allowed' : '';
-    return [base, border, mono, disabled].filter(Boolean).join(' ');
+    const readonly = this.readonly && !this.isDisabled ? 'bg-[#f5f5f5] cursor-default select-all' : '';
+    return [base, border, mono, disabled, readonly].filter(Boolean).join(' ');
   }
 
   protected onInput(event: Event): void {
-    const val = (event.target as HTMLInputElement).value;
-    this._value.set(val);
-    this.onChange(val);
+    const input = event.target as HTMLInputElement;
+    if (this.currency) {
+      const formatted = formatCurrency(input.value);
+      input.value = formatted;
+      this._value.set(formatted);
+      this.onChange(parseRaw(formatted));
+    } else {
+      this._value.set(input.value);
+      this.onChange(input.value);
+    }
   }
 
-  writeValue(val: string | null): void {
-    this._value.set(val ?? '');
+  protected onBlur(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.value && !this.currency && this.type !== 'password') {
+      let v = input.value.trim().replace(/\s+/g, ' ');
+      if (this.titleCase) v = toTitleCase(v);
+      else if (this.upperCase) v = v.toUpperCase();
+      if (v !== input.value) {
+        input.value = v;
+        this._value.set(v);
+        this.onChange(v);
+      }
+    }
+    this.onTouched();
   }
-  registerOnChange(fn: (v: string) => void): void {
+
+  writeValue(val: any): void {
+    if (this.currency && val != null && val !== '') {
+      const n = Number(val);
+      this._value.set(isNaN(n) ? '' : FMT.format(n));
+    } else {
+      this._value.set(val ?? '');
+    }
+  }
+
+  registerOnChange(fn: (v: any) => void): void {
     this.onChange = fn;
   }
   registerOnTouched(fn: () => void): void {

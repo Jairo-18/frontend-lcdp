@@ -62,6 +62,12 @@ export class ProductService {
       .pipe(map((r) => resolveProduct(r.data)));
   }
 
+  nextCode(): Observable<string> {
+    return this._http
+      .get<{ statusCode: number; data: { code: string } }>(`${environment.apiUrl}/products/next-code`)
+      .pipe(map((r) => r.data.code));
+  }
+
   create(dto: CreateProductDto): Observable<{ rowId: number }> {
     return this._http
       .post<CreatedResponseInterface>(`${environment.apiUrl}/products`, dto)

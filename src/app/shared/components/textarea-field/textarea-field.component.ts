@@ -74,6 +74,17 @@ export class TextareaFieldComponent implements ControlValueAccessor {
     this.onChange(val);
   }
 
+  protected onBlur(event: Event): void {
+    if (!this.readonly) {
+      const ta = event.target as HTMLTextAreaElement;
+      const cleaned = ta.value.replace(/\t/g, ' ').replace(/[ \t]+$/gm, '').replace(/^\s+|\s+$/g, '');
+      ta.value = cleaned;
+      this.value = cleaned;
+      this.onChange(cleaned);
+    }
+    this.onTouched();
+  }
+
   writeValue(val: string | null): void {
     this.value = val ?? '';
   }

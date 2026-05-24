@@ -39,14 +39,16 @@
           label="Nombre"
           placeholder="Vinilo Tipo 1 Koraza Blanco"
           [required]="true"
+          [titleCase]="true"
           [control]="form.get('name')"
         />
 
         <app-input-field
           formControlName="code"
           label="Código"
-          placeholder="KOR-VK1-BL"
+          placeholder="—"
           [mono]="true"
+          [readonly]="true"
         />
 
         <app-textarea-field
@@ -94,12 +96,16 @@
               <button
                 type="button"
                 (click)="selectBrand(brand.id)"
-                class="px-3 py-1.5 rounded-xl border text-sm font-medium transition-colors cursor-pointer"
+                [disabled]="selectedBrandId !== null && selectedBrandId !== brand.id"
+                class="px-3 py-1.5 rounded-xl border text-sm font-medium transition-colors"
                 [class.bg-ink]="selectedBrandId === brand.id"
                 [class.text-white]="selectedBrandId === brand.id"
                 [class.border-ink]="selectedBrandId === brand.id"
+                [class.cursor-pointer]="selectedBrandId === null || selectedBrandId === brand.id"
                 [class.border-rule]="selectedBrandId !== brand.id"
                 [class.text-ink]="selectedBrandId !== brand.id"
+                [class.opacity-35]="selectedBrandId !== null && selectedBrandId !== brand.id"
+                [class.cursor-not-allowed]="selectedBrandId !== null && selectedBrandId !== brand.id"
               >
                 {{ brand.name }}
               </button>
@@ -114,8 +120,8 @@
           <app-input-field
             formControlName="priceSale"
             label="Precio de venta base"
-            placeholder="45900"
-            type="number"
+            placeholder="45.900"
+            [currency]="true"
           />
           <app-select-field
             formControlName="taxTypeId"
@@ -384,7 +390,7 @@
                   <app-input-field
                     formControlName="priceSale"
                     placeholder="Precio"
-                    type="number"
+                    [currency]="true"
                   />
                 </div>
               </div>
@@ -631,17 +637,16 @@
 
             <!-- Price -->
             <div class="space-y-1">
-              <div class="flex items-baseline gap-2">
+              <div class="flex items-baseline gap-2 flex-wrap">
                 <span class="font-display font-bold text-ink text-4xl">
                   {{ previewWebPrice() }}
                 </span>
                 @if (
                   presentationsArray.length > 0 &&
-                  presentationsArray.at(_previewPresIndex()).get('priceSale')
-                    ?.value &&
+                  presentationsArray.at(_previewPresIndex()).get('priceSale')?.value &&
                   previewUnitName(_previewPresIndex())
                 ) {
-                  <span class="text-ink-mute text-sm font-medium">
+                  <span class="text-ink-mute text-sm font-medium uppercase tracking-wide">
                     / {{ previewUnitName(_previewPresIndex()) }}
                   </span>
                 }
@@ -652,9 +657,7 @@
                   {{
                     formatPrice(
                       presentationsArray.length > 0
-                        ? presentationsArray
-                            .at(_previewPresIndex())
-                            .get('priceSale')?.value
+                        ? presentationsArray.at(_previewPresIndex()).get('priceSale')?.value
                         : form.get('priceSale')?.value
                     )
                   }}
@@ -663,8 +666,10 @@
               }
               @if (form.get('discountPercentage')?.value) {
                 <p class="text-[12px] font-semibold text-green-600">
-                  ¡{{ form.get('discountPercentage')?.value }}% de descuento al
-                  cotizar!
+                  ¡{{ form.get('discountPercentage')?.value }}% de descuento al cotizar!
+                  @if (previewWebPriceFull()) {
+                    {{ previewWebPriceFull() }}
+                  }
                 </p>
               }
             </div>

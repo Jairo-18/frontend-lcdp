@@ -5,13 +5,14 @@
 }
 <input
   [id]="id"
-  [type]="type"
+  [type]="resolvedType"
   [placeholder]="placeholder"
   [value]="_value()"
   [disabled]="isDisabled"
   [readOnly]="readonly"
+  [attr.inputmode]="currency ? 'decimal' : null"
   (input)="onInput($event)"
-  (blur)="onTouched()"
+  (blur)="onBlur($event)"
   [class]="inputClasses"
 />
 @if (hint && !showError) {

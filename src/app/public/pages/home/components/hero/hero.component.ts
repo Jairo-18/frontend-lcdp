@@ -28,6 +28,12 @@ export class HeroComponent {
     return list.length ? list[this._currentIndex()] : null;
   });
 
+  onVideoCanPlay(event: Event): void {
+    const video = event.target as HTMLVideoElement;
+    video.muted = true;
+    video.play().catch(() => {});
+  }
+
   onVideoEnded(): void {
     const count = this._heroVideos().length;
     if (count <= 1) return;
