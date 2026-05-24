@@ -124,6 +124,17 @@
               </p>
             }
 
+            <!-- Categorías -->
+            @if (p.categories?.length) {
+              <div class="flex flex-wrap gap-1.5 -mt-1">
+                @for (cat of p.categories; track cat.id) {
+                  <span class="px-2.5 py-1 rounded-lg bg-paper-alt border border-rule text-xs font-medium text-ink-mute">
+                    {{ cat.name }}
+                  </span>
+                }
+              </div>
+            }
+
             <!-- Separador -->
             <hr class="border-rule -my-1" />
 

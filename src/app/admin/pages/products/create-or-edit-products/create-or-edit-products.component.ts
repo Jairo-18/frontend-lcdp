@@ -135,6 +135,17 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
     this.form.markAsDirty();
   }
 
+  get selectedBrandId(): number | null {
+    const v = this.form.get('brandId')?.value;
+    return v ? Number(v) : null;
+  }
+
+  selectBrand(id: number): void {
+    const current = this.selectedBrandId;
+    this.form.get('brandId')!.setValue(current === id ? '' : String(id));
+    this.form.markAsDirty();
+  }
+
   get previewBrandName(): string {
     const id = this.form.get('brandId')?.value;
     if (!id) return '';

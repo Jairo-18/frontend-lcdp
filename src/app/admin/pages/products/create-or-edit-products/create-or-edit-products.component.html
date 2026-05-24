@@ -84,14 +84,31 @@
           }
         </div>
 
-        <app-select-field
-          formControlName="brandId"
-          label="Marca"
-          placeholder="Seleccionar..."
-          [required]="true"
-          [options]="brandOptions()"
-          [control]="form.get('brandId')"
-        />
+        <!-- Marca (single-select) -->
+        <div>
+          <p class="text-sm font-medium text-ink mb-2">
+            Marca<span class="text-coral"> *</span>
+          </p>
+          <div class="flex flex-wrap gap-2">
+            @for (brand of _brands(); track brand.id) {
+              <button
+                type="button"
+                (click)="selectBrand(brand.id)"
+                class="px-3 py-1.5 rounded-xl border text-sm font-medium transition-colors cursor-pointer"
+                [class.bg-ink]="selectedBrandId === brand.id"
+                [class.text-white]="selectedBrandId === brand.id"
+                [class.border-ink]="selectedBrandId === brand.id"
+                [class.border-rule]="selectedBrandId !== brand.id"
+                [class.text-ink]="selectedBrandId !== brand.id"
+              >
+                {{ brand.name }}
+              </button>
+            }
+          </div>
+          @if (!selectedBrandId) {
+            <p class="text-xs text-coral mt-1">Selecciona una marca</p>
+          }
+        </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <app-input-field
