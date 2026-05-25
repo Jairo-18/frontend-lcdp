@@ -11,6 +11,9 @@ export interface CartItem {
   unitPrice: number;
   quantity: number;
   imageUrl: string | null;
+  colorId: number | null;
+  colorName: string | null;
+  colorHex: string | null;
 }
 
 const CART_KEY = 'lcdp_cart';
@@ -37,7 +40,7 @@ export class CartService {
 
   addItem(item: Omit<CartItem, 'quantity'>, qty: number = 1): void {
     const idx = this._items().findIndex(
-      i => i.productId === item.productId && i.presentationId === item.presentationId,
+      i => i.productId === item.productId && i.presentationId === item.presentationId && i.colorId === item.colorId,
     );
     if (idx >= 0) {
       this._items.update(list => {

@@ -22,6 +22,8 @@ import { NotificationsService } from '@shared/services/notifications.service';
 import { Product } from '@shared/interfaces/product.interface';
 import { Category } from '@shared/interfaces/category.interface';
 import { Brand } from '@shared/interfaces/brand.interface';
+import { Color } from '@shared/interfaces/color.interface';
+import { ColorService } from '@shared/services/color.service';
 
 const PALETTE: readonly string[] = [
   '#1a56db',
@@ -53,8 +55,8 @@ export class CatalogoComponent implements OnInit, OnDestroy {
     OrganizationalService,
   );
   private readonly _cartService: CartService = inject(CartService);
-  private readonly _notificationService: NotificationsService =
-    inject(NotificationsService);
+  private readonly _notificationService: NotificationsService = inject(NotificationsService);
+  private readonly _colorService: ColorService = inject(ColorService);
   private readonly _titleCase = new TitleCaseEsPipe();
   private readonly _breakpointObserver: BreakpointObserver =
     inject(BreakpointObserver);
@@ -68,12 +70,14 @@ export class CatalogoComponent implements OnInit, OnDestroy {
   readonly products = signal<Product[]>([]);
   readonly categories = signal<Category[]>([]);
   readonly brands = signal<Brand[]>([]);
+  readonly colors = signal<Color[]>([]);
   readonly currentPage = signal(1);
   readonly totalItems = signal(0);
   readonly totalPages = signal(1);
 
   readonly selectedCategory = signal<string | null>(null);
   readonly selectedBrand = signal<string | null>(null);
+  readonly selectedColorId = signal<number | null>(null);
   readonly searchQuery = signal<string | null>(null);
   readonly orderBy = signal<'name' | 'createdAt'>('createdAt');
 
@@ -87,6 +91,11 @@ export class CatalogoComponent implements OnInit, OnDestroy {
     ...this.brands().map((b) => ({ value: b.code, label: b.name })),
   ]);
 
+  readonly colorOptions = computed(() => [
+    { value: '', label: 'Todos los colores' },
+    ...this.colors().map((c) => ({ value: String(c.id), label: c.name })),
+  ]);
+
   readonly orderOptions = [
     { value: 'createdAt', label: 'Más recientes' },
     { value: 'name', label: 'Nombre A–Z' },
@@ -96,6 +105,7 @@ export class CatalogoComponent implements OnInit, OnDestroy {
     () =>
       !!this.selectedCategory() ||
       !!this.selectedBrand() ||
+      !!this.selectedColorId() ||
       !!this.searchQuery(),
   );
 
@@ -103,6 +113,10 @@ export class CatalogoComponent implements OnInit, OnDestroy {
   mobileSearch: string = '';
 
   ngOnInit(): void {
+    this._colorService.getAll().pipe(takeUntil(this._destroy$)).subscribe({
+      next: (cols) => this.colors.set(cols),
+    });
+
     combineLatest([
       this._organizationalService.bootstrap(),
       this._activatedRoute.queryParams,
@@ -113,6 +127,7 @@ export class CatalogoComponent implements OnInit, OnDestroy {
         this.brands.set(bootstrap.brands);
         this.selectedCategory.set(params['categoria'] ?? null);
         this.selectedBrand.set(params['marca'] ?? null);
+        this.selectedColorId.set(params['color'] ? Number(params['color']) : null);
         this.searchQuery.set(params['q'] ?? null);
         this.mobileSearch = params['q'] ?? '';
         this.currentPage.set(1);
@@ -138,6 +153,7 @@ export class CatalogoComponent implements OnInit, OnDestroy {
     const brandId = brandCode
       ? this.brands().find((b) => b.code === brandCode)?.id
       : undefined;
+    const colorId = this.selectedColorId() ?? undefined;
 
     this._productService
       .getPublic({
@@ -145,6 +161,7 @@ export class CatalogoComponent implements OnInit, OnDestroy {
         perPage: this._pageSize,
         categoryId,
         brandId,
+        colorId,
         search: this.searchQuery() ?? undefined,
         orderBy: this.orderBy(),
       })
@@ -207,6 +224,18 @@ export class CatalogoComponent implements OnInit, OnDestroy {
         categoria: this.selectedCategory() ?? null,
         marca: val || null,
         q: this.searchQuery() ?? null,
+      },
+    });
+  }
+
+  onColorSelect(val: string): void {
+    this._router.navigate([], {
+      relativeTo: this._activatedRoute,
+      queryParams: {
+        categoria: this.selectedCategory() ?? null,
+        marca: this.selectedBrand() ?? null,
+        q: this.searchQuery() ?? null,
+        color: val ? Number(val) : null,
       },
     });
   }
@@ -275,10 +304,18 @@ export class CatalogoComponent implements OnInit, OnDestroy {
       sku: pres.sku,
       unitPrice: price,
       imageUrl: this.firstImage(product),
+      colorId: null,
+      colorName: null,
+      colorHex: null,
     });
     this._notificationService.success(
       `1 unidad de ${this._titleCase.transform(product.name)} agregada al carrito`,
     );
+  }
+
+  selectedColorIdStr(): string {
+    const id = this.selectedColorId();
+    return id != null ? String(id) : '';
   }
 
   pageTitle(): string {

@@ -1,0 +1,96 @@
+<div class="p-8">
+  <!-- Header -->
+  <div class="flex items-center gap-4 mb-6">
+    <button type="button" (click)="goBack()"
+      class="p-1.5 rounded-lg hover:bg-[rgba(26,28,44,0.06)] text-ink-mute transition-colors cursor-pointer border-0 bg-transparent">
+      <span class="material-symbols-outlined text-[22px] leading-none">arrow_back</span>
+    </button>
+    <div>
+      <h1 class="font-display font-bold text-ink text-2xl">
+        {{ _editingId() ? 'Editar color' : 'Nuevo color' }}
+      </h1>
+      <p class="text-ink-mute text-sm mt-0.5">Colores</p>
+    </div>
+  </div>
+
+  @if (_loading()) {
+    <div class="flex items-center justify-center py-20 text-ink-mute gap-3">
+      <span class="material-symbols-outlined text-[28px] leading-none animate-spin">progress_activity</span>
+      Cargando...
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="save()" class="space-y-5">
+      <div class="bg-white border border-rule rounded-2xl p-6 space-y-5">
+
+        <app-input-field
+          formControlName="name"
+          label="Nombre"
+          placeholder="Blanco Hueso"
+          [required]="true"
+          [upperCase]="true"
+          [control]="form.get('name')"
+        />
+
+        <!-- Color picker + hex input -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-semibold text-ink">Color <span class="text-red-500">*</span></label>
+          <div class="flex items-center gap-3">
+            <input type="color"
+              formControlName="hex"
+              class="w-12 h-12 rounded-xl border border-rule cursor-pointer p-1 bg-white"
+              title="Seleccionar color" />
+            <div class="flex-1">
+              <app-input-field
+                formControlName="hex"
+                label=""
+                placeholder="#F5F0E8"
+                [required]="true"
+                [mono]="true"
+                [control]="form.get('hex')"
+              />
+            </div>
+            <!-- Preview swatch -->
+            <div class="w-12 h-12 rounded-xl border border-rule shadow-sm flex-shrink-0"
+              [style.background-color]="form.get('hex')?.value">
+            </div>
+          </div>
+          @if (form.get('hex')?.invalid && form.get('hex')?.touched) {
+            <p class="text-xs text-red-500">Ingresa un color válido en formato #RRGGBB</p>
+          }
+        </div>
+
+        <app-input-field
+          formControlName="colorFamily"
+          label="Familia de color"
+          placeholder="Blancos"
+          [control]="form.get('colorFamily')"
+        />
+
+        <app-input-field
+          formControlName="code"
+          label="Código (opcional)"
+          placeholder="BH-001"
+          [mono]="true"
+          [control]="form.get('code')"
+        />
+      </div>
+
+      <div class="flex items-center justify-end gap-3">
+        <button type="button" (click)="goBack()"
+          class="px-4 py-2 rounded-xl border border-rule text-sm font-semibold text-ink hover:bg-[rgba(26,28,44,0.04)] transition-colors cursor-pointer bg-white">
+          Cancelar
+        </button>
+        <button type="submit"
+          [disabled]="_saving() || form.invalid || form.pristine"
+          class="flex items-center gap-2 px-5 py-2 rounded-xl bg-ink text-white text-sm font-semibold hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer border-0">
+          @if (_saving()) {
+            <span class="material-symbols-outlined text-[16px] leading-none animate-spin">progress_activity</span>
+          } @else {
+            <span class="material-symbols-outlined text-[16px] leading-none">save</span>
+          }
+          {{ _editingId() ? 'Guardar cambios' : 'Crear color' }}
+        </button>
+      </div>
+    </form>
+  }
+</div>

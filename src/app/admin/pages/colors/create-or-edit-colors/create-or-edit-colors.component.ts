@@ -1,0 +1,103 @@
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  inject,
+  signal,
+} from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { InputFieldComponent } from '@shared/components';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { ColorService } from '@shared/services/color.service';
+import { Color, ColorDto } from '@shared/interfaces/color.interface';
+import { CacheRouteReuseStrategy } from '@shared/strategies/cache-route-reuse.strategy';
+
+@Component({
+  selector: 'app-create-or-edit-colors',
+  standalone: true,
+  imports: [ReactiveFormsModule, InputFieldComponent],
+  templateUrl: './create-or-edit-colors.component.html',
+})
+export class CreateOrEditColorsComponent implements OnInit, OnDestroy {
+  private readonly _colorService: ColorService = inject(ColorService);
+  private readonly _routeReuse: CacheRouteReuseStrategy = inject(CacheRouteReuseStrategy);
+  private readonly _fb: FormBuilder = inject(FormBuilder);
+  private readonly _route: ActivatedRoute = inject(ActivatedRoute);
+  private readonly _router: Router = inject(Router);
+  private readonly _destroy$: Subject<void> = new Subject<void>();
+
+  readonly _loading   = signal(false);
+  readonly _saving    = signal(false);
+  readonly _editingId = signal<number | null>(null);
+
+  readonly form = this._fb.nonNullable.group({
+    name:        ['', [Validators.required, Validators.maxLength(100)]],
+    hex:         ['#000000', [Validators.required, Validators.pattern(/^#([0-9A-Fa-f]{6})$/)]],
+    colorFamily: [''],
+    code:        [''],
+  });
+
+  ngOnInit(): void {
+    const idParam = this._route.snapshot.paramMap.get('id');
+    const id = idParam ? Number(idParam) : null;
+    this._editingId.set(id);
+
+    if (id) {
+      this._loading.set(true);
+      this._colorService
+        .getOne(id)
+        .pipe(takeUntil(this._destroy$))
+        .subscribe({
+          next: (color: Color) => {
+            this.form.patchValue({
+              name:        color.name,
+              hex:         color.hex,
+              colorFamily: color.colorFamily ?? '',
+              code:        color.code ?? '',
+            });
+            this._loading.set(false);
+          },
+          error: () => this._loading.set(false),
+        });
+    }
+  }
+
+  ngOnDestroy(): void {
+    this._destroy$.next();
+    this._destroy$.complete();
+  }
+
+  goBack(): void {
+    this._router.navigate(['/admin/colors']);
+  }
+
+  save(): void {
+    if (this.form.invalid || this._saving()) return;
+    this._saving.set(true);
+
+    const raw = this.form.getRawValue();
+    const dto: ColorDto = {
+      name:        raw.name,
+      hex:         raw.hex,
+      colorFamily: raw.colorFamily || undefined,
+      code:        raw.code || undefined,
+    };
+
+    const onSuccess = (): void => {
+      this._saving.set(false);
+      this.form.markAsPristine();
+      this._routeReuse.invalidate('colors');
+      this.goBack();
+    };
+    const onError = (): void => this._saving.set(false);
+
+    const editingId = this._editingId();
+    if (editingId) {
+      this._colorService.update(editingId, dto).pipe(takeUntil(this._destroy$)).subscribe({ next: onSuccess, error: onError });
+    } else {
+      this._colorService.create(dto).pipe(takeUntil(this._destroy$)).subscribe({ next: onSuccess, error: onError });
+    }
+  }
+}

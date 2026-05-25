@@ -1,5 +1,6 @@
 import { Category } from './category.interface';
 import { Brand } from './brand.interface';
+import { Color } from './color.interface';
 import { TaxType } from './tax-type.interface';
 import { BasePaginationParams } from './pagination.interface';
 import { ImageVariant } from './image-variant.interface';
@@ -21,6 +22,7 @@ export interface CreateProductDto {
   code?: string;
   description?: string;
   categoryIds: number[];
+  colorIds?: number[];
   brandId: number;
   priceSale?: number;
   taxTypeId?: number;
@@ -50,6 +52,7 @@ export interface ProductParams extends BasePaginationParams {
   brandId?: number;
   taxTypeId?: number;
   unitOfMeasureId?: number;
+  colorId?: number;
   orderBy?: 'name' | 'createdAt';
 }
 
@@ -82,6 +85,7 @@ export interface Product {
   code: string | null;
   description: string | null;
   categories: Category[];
+  colors: Color[];
   brandId: number;
   brand: Brand;
   priceSale: number | null;

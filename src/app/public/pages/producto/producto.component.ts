@@ -43,6 +43,7 @@ export class ProductoComponent implements OnInit, OnDestroy {
   readonly product = signal<Product | null>(null);
   readonly selectedPres = signal(0);
   readonly selectedImage = signal(0);
+  readonly selectedColorId = signal<number | null>(null);
   readonly qty = signal(1);
   readonly addedFeedback = signal(false);
   readonly expandedPanels = signal<Set<string>>(new Set());
@@ -66,9 +67,19 @@ export class ProductoComponent implements OnInit, OnDestroy {
     this._destroy$.complete();
   }
 
+  selectColor(id: number): void {
+    this.selectedColorId.update(cur => cur === id ? null : id);
+  }
+
+  selectedColorName(p: Product): string {
+    const id = this.selectedColorId();
+    return p.colors?.find(c => c.id === id)?.name ?? '';
+  }
+
   private _load(id: number): void {
     this.loading.set(true);
     this.qty.set(1);
+    this.selectedColorId.set(null);
     if (isPlatformBrowser(this._platformId)) {
       window.scrollTo({ top: 0, behavior: 'instant' });
     }
@@ -106,6 +117,8 @@ export class ProductoComponent implements OnInit, OnDestroy {
     const price = this.webPrice();
     if (!p || price == null) return;
     const pres = p.presentations[this.selectedPres()];
+    const colorId = this.selectedColorId();
+    const selectedColor = colorId != null ? (p.colors ?? []).find(c => c.id === colorId) ?? null : null;
     this._cartService.addItem(
       {
         productId: p.id,
@@ -116,6 +129,9 @@ export class ProductoComponent implements OnInit, OnDestroy {
         sku: pres?.sku ?? null,
         unitPrice: price,
         imageUrl: pres?.images[0]?.variants?.thumb ?? null,
+        colorId: selectedColor?.id ?? null,
+        colorName: selectedColor?.name ?? null,
+        colorHex: selectedColor?.hex ?? null,
       },
       this.qty(),
     );

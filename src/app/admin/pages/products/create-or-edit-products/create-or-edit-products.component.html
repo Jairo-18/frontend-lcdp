@@ -86,6 +86,36 @@
           }
         </div>
 
+        <!-- Colores (multi-select) -->
+        <div>
+          <p class="text-sm font-medium text-ink mb-1">Colores</p>
+          <p class="text-xs text-ink-mute mb-2">Haz clic para seleccionar los colores disponibles en este producto.</p>
+          <div class="flex flex-wrap gap-2 max-h-52 overflow-y-auto pr-1 py-1">
+            @for (color of _colors(); track color.id) {
+              <button
+                type="button"
+                (click)="toggleColor(color.id)"
+                [title]="color.name"
+                class="w-8 h-8 rounded-lg border-2 transition-all cursor-pointer flex items-center justify-center"
+                [style.background-color]="color.hex"
+                [class.border-ink]="_colorIds().includes(color.id)"
+                [class.scale-110]="_colorIds().includes(color.id)"
+                [class.shadow-md]="_colorIds().includes(color.id)"
+                [class.border-transparent]="!_colorIds().includes(color.id)"
+                style="outline: 1px solid rgba(0,0,0,0.12)"
+              >
+                @if (_colorIds().includes(color.id)) {
+                  <span class="material-symbols-outlined text-[14px] leading-none"
+                    [style.color]="colorCheckmark(color.hex)">check</span>
+                }
+              </button>
+            }
+          </div>
+          @if (_colorIds().length > 0) {
+            <p class="text-xs text-ink-mute mt-1.5">{{ _colorIds().length }} color{{ _colorIds().length !== 1 ? 'es' : '' }} seleccionado{{ _colorIds().length !== 1 ? 's' : '' }}</p>
+          }
+        </div>
+
         <!-- Marca (single-select) -->
         <div>
           <p class="text-sm font-medium text-ink mb-2">
@@ -712,6 +742,22 @@
                         </div>
                       }
                     </button>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- Colores -->
+            @if (_selectedColors().length > 0) {
+              <div class="space-y-2">
+                <p class="text-[10px] font-bold text-ink-mute tracking-widest uppercase">Colores disponibles</p>
+                <div class="flex flex-wrap gap-1.5">
+                  @for (c of _selectedColors(); track c.id) {
+                    <div
+                      class="w-6 h-6 rounded-md border border-black/10 shrink-0 cursor-default"
+                      [style.background-color]="c.hex"
+                      [title]="c.name"
+                    ></div>
                   }
                 </div>
               </div>

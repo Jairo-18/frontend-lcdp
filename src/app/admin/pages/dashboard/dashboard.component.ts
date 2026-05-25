@@ -37,6 +37,14 @@ export class DashboardComponent {
           color: 'bg-orange-50 text-orange-600',
         },
         {
+          path: '/admin/colors',
+          create: '/admin/colors/create-or-edit-colors',
+          icon: 'palette',
+          label: 'Colores',
+          description: 'Gestiona la paleta de colores disponibles para los productos.',
+          color: 'bg-pink-50 text-pink-600',
+        },
+        {
           path: '/admin/units',
           create: '/admin/units/create-or-edit-units',
           icon: 'straighten',

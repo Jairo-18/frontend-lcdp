@@ -71,6 +71,15 @@
           (ngModelChange)="onBrandSelect($event)"
         />
 
+        @if (colors().length > 0) {
+          <app-select-field
+            class="w-full sm:w-auto"
+            [options]="colorOptions()"
+            [ngModel]="selectedColorId() ? selectedColorIdStr() : ''"
+            (ngModelChange)="onColorSelect($event)"
+          />
+        }
+
         <app-select-field
           class="w-full sm:w-auto"
           [options]="orderOptions"
@@ -186,6 +195,22 @@
               </li>
             }
           </ul>
+
+          <!-- Colores -->
+          @if (colors().length > 0) {
+            <p
+              class="text-[10px] font-extrabold tracking-[0.12em] uppercase text-ink-mute mb-3"
+            >
+              Color
+            </p>
+            <div class="mb-6">
+              <app-select-field
+                [options]="colorOptions()"
+                [ngModel]="selectedColorId() ? selectedColorIdStr() : ''"
+                (ngModelChange)="onColorSelect($event)"
+              />
+            </div>
+          }
         </aside>
 
         <!-- ── Contenido ── -->

@@ -149,6 +149,31 @@ export const adminRoutes: Routes = [
           },
         ],
       },
+      {
+        path: 'colors',
+        children: [
+          {
+            path: '',
+            data: { reuse: true, reuseKey: 'colors' },
+            loadComponent: () =>
+              import('./pages/colors/colors.component').then((m) => m.ColorsComponent),
+          },
+          {
+            path: 'create-or-edit-colors',
+            loadComponent: () =>
+              import('./pages/colors/create-or-edit-colors/create-or-edit-colors.component').then(
+                (m) => m.CreateOrEditColorsComponent,
+              ),
+          },
+          {
+            path: 'create-or-edit-colors/:id',
+            loadComponent: () =>
+              import('./pages/colors/create-or-edit-colors/create-or-edit-colors.component').then(
+                (m) => m.CreateOrEditColorsComponent,
+              ),
+          },
+        ],
+      },
       { path: '',   redirectTo: 'dashboard', pathMatch: 'full' },
       { path: '**', redirectTo: '/'         },
     ],

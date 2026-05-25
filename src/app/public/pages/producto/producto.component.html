@@ -135,6 +135,36 @@
               </div>
             }
 
+            <!-- Colores -->
+            @if (p.colors.length) {
+              <div class="space-y-2.5 -mt-1">
+                <p class="text-[10px] font-bold text-ink-mute tracking-widest uppercase">
+                  Color
+                  @if (selectedColorId()) {
+                    <span class="ml-2 normal-case font-normal text-ink">
+                      — {{ selectedColorName(p) }}
+                    </span>
+                  }
+                </p>
+                <div class="flex flex-wrap gap-2">
+                  @for (color of p.colors; track color.id) {
+                    <button
+                      type="button"
+                      (click)="selectColor(color.id)"
+                      [title]="color.name"
+                      class="relative w-8 h-8 rounded-full border-2 transition-all cursor-pointer shrink-0"
+                      [style.background-color]="color.hex"
+                      [class.border-ink]="selectedColorId() === color.id"
+                      [class.scale-110]="selectedColorId() === color.id"
+                      [class.border-transparent]="selectedColorId() !== color.id"
+                      [style.box-shadow]="selectedColorId() === color.id ? '0 0 0 2px white, 0 0 0 4px #1a1c2c' : '0 0 0 1px rgba(0,0,0,0.15)'"
+                    >
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+
             <!-- Separador -->
             <hr class="border-rule -my-1" />
 

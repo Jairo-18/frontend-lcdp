@@ -25,6 +25,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ProductService } from '@shared/services/product.service';
 import { OrganizationalService } from '@shared/services/organizational.service';
+import { ColorService } from '@shared/services/color.service';
 import { UploadService } from '@shared/services/upload.service';
 import { ImagePreviewService } from '@shared/services/image-preview.service';
 import { ImageEditorService } from '@shared/services/image-editor.service';
@@ -36,6 +37,7 @@ import {
 } from '@shared/interfaces/product.interface';
 import { Category } from '@shared/interfaces/category.interface';
 import { Brand } from '@shared/interfaces/brand.interface';
+import { Color } from '@shared/interfaces/color.interface';
 import { TaxType } from '@shared/interfaces/tax-type.interface';
 import { ImageVariant } from '@shared/interfaces/image-variant.interface';
 @Component({
@@ -51,9 +53,8 @@ import { ImageVariant } from '@shared/interfaces/image-variant.interface';
 })
 export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
   private readonly _productService: ProductService = inject(ProductService);
-  private readonly _organizationalService: OrganizationalService = inject(
-    OrganizationalService,
-  );
+  private readonly _organizationalService: OrganizationalService = inject(OrganizationalService);
+  private readonly _colorService: ColorService = inject(ColorService);
   private readonly _uploadService: UploadService = inject(UploadService);
   private readonly _editorSvc: ImageEditorService = inject(ImageEditorService);
   private readonly _routeReuse: CacheRouteReuseStrategy = inject(CacheRouteReuseStrategy);
@@ -79,7 +80,13 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
   readonly _brands = signal<Brand[]>([]);
   readonly _units = signal<UnitOfMeasure[]>([]);
   readonly _taxTypes = signal<TaxType[]>([]);
+  readonly _colors = signal<Color[]>([]);
   readonly _categoryIds = signal<number[]>([]);
+  readonly _colorIds = signal<number[]>([]);
+
+  readonly _selectedColors = computed(() =>
+    this._colorIds().map(id => this._colors().find(c => c.id === id)).filter(Boolean) as Color[],
+  );
 
   readonly _presImages = signal<ImageVariant[][]>([]);
   readonly _uploadingForIndex = signal<number | null>(null);
@@ -136,6 +143,20 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
       ids.includes(id) ? ids.filter(i => i !== id) : [...ids, id],
     );
     this.form.markAsDirty();
+  }
+
+  toggleColor(id: number): void {
+    this._colorIds.update(ids =>
+      ids.includes(id) ? ids.filter(i => i !== id) : [...ids, id],
+    );
+    this.form.markAsDirty();
+  }
+
+  colorCheckmark(hex: string): string {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.55 ? '#1a1c2c' : '#ffffff';
   }
 
   get selectedBrandId(): number | null {
@@ -236,6 +257,10 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
     this._editingId.set(id);
     this._loading.set(true);
 
+    this._colorService.getAll().pipe(takeUntil(this._destroy$)).subscribe({
+      next: (colors) => this._colors.set(colors),
+    });
+
     this._organizationalService
       .bootstrap()
       .pipe(takeUntil(this._destroy$))
@@ -254,6 +279,7 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
                 next: (p) => {
                   this.presentationsArray.clear();
                   this._categoryIds.set((p.categories ?? []).map(c => c.id));
+                  this._colorIds.set((p.colors ?? []).map(c => c.id));
                   this.form.patchValue({
                     name: p.name,
                     code: p.code ?? '',
@@ -521,6 +547,7 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
       code: raw.code || undefined,
       description: raw.description || undefined,
       categoryIds: this._categoryIds(),
+      colorIds: this._colorIds(),
       brandId: Number(raw.brandId),
       priceSale: raw.priceSale ?? undefined,
       taxTypeId: raw.taxTypeId ? Number(raw.taxTypeId) : undefined,
