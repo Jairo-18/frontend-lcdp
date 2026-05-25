@@ -64,7 +64,7 @@ export class OrganizationalService {
       .pipe(
         map((r) => ({
           org: resolveOrg(r.data.org),
-          categories: r.data.categories,
+          categories: r.data.categories.map((c) => ({ ...c, images: c.images?.map(resolveVariant) ?? [] })),
           units: r.data.units,
           brands: r.data.brands.map((b) => ({ ...b, images: b.images?.map(resolveVariant) ?? [] })),
           taxTypes: r.data.taxTypes,
