@@ -309,9 +309,15 @@
                       >
                         {{ product.name | titleCaseEs }}
                       </a>
-                      <p class="text-[11px] text-ink-mute">
-                        {{ product.categories.at(0)?.name }}
-                      </p>
+                      @if (product.categories.length) {
+                        <div class="flex flex-wrap gap-1 mt-0.5">
+                          @for (cat of product.categories; track cat.id) {
+                            <span class="inline-block px-1.5 py-0.5 rounded-full bg-[rgba(26,28,44,0.06)] text-ink-mute text-[10px] font-medium">
+                              {{ cat.name }}
+                            </span>
+                          }
+                        </div>
+                      }
                       @if (webPrice(product); as price) {
                         <p class="text-[13px] font-bold text-ink mt-1">
                           desde {{ formatPrice(price) }}
@@ -319,29 +325,19 @@
                         <p class="text-[9px] text-ink-mute leading-none">
                           Precio incluye IVA
                         </p>
-                        @if (product.discountPercentage) {
-                          <p class="text-[10px] font-semibold text-green-600 mt-0.5">
-                            ¡{{ product.discountPercentage }}% dto. al cotizar! {{ formatPriceFull(price) }}
-                          </p>
-                        } @else {
-                          <p class="text-[10px] font-semibold text-green-600 mt-0.5">
-                            Obtén descuento y acumula puntos al cotizar
-                          </p>
-                        }
-                      } @else {
-                        <p class="text-[10px] font-semibold text-green-600 mt-0.5">
-                          Obtén descuento y acumula puntos al cotizar
-                        </p>
                       }
+                      <p class="text-[8px] sm:text-[10px] font-semibold text-green-600 mt-0.5 leading-tight">
+                        Obtén un descuento y acumula puntos si compras con nosotros
+                      </p>
                     </div>
 
-                    <div class="px-4 pb-4 flex flex-col gap-2">
+                    <div class="px-3 pb-3 sm:px-4 sm:pb-4 flex flex-col gap-1.5">
                       <a
                         [routerLink]="['/producto', product.id]"
-                        class="w-full py-2 rounded-xl bg-ink text-white text-xs font-semibold flex items-center justify-center gap-1.5 no-underline hover:bg-black transition-colors"
+                        class="w-full py-1.5 sm:py-2 rounded-xl bg-ink text-white text-[10px] sm:text-xs font-semibold flex items-center justify-center gap-1 no-underline hover:bg-black transition-colors"
                       >
                         <span
-                          class="material-symbols-outlined text-[14px] leading-none"
+                          class="material-symbols-outlined text-[12px] sm:text-[14px] leading-none"
                           >open_in_new</span
                         >
                         Ver producto
@@ -350,10 +346,10 @@
                         <button
                           type="button"
                           (click)="addToCart(product)"
-                          class="w-full py-2 rounded-xl text-xs font-semibold text-ink flex items-center justify-center gap-1.5 border-0 bg-paper-alt hover:bg-yellow transition-colors cursor-pointer"
+                          class="w-full py-1.5 sm:py-2 rounded-xl text-[10px] sm:text-xs font-semibold text-ink flex items-center justify-center gap-1 border-0 bg-paper-alt hover:bg-yellow transition-colors cursor-pointer"
                         >
                           <span
-                            class="material-symbols-outlined text-[14px] leading-none"
+                            class="material-symbols-outlined text-[12px] sm:text-[14px] leading-none"
                             >shopping_cart</span
                           >
                           Añadir al carrito
@@ -362,10 +358,10 @@
                         <button
                           type="button"
                           disabled
-                          class="w-full py-2 rounded-xl text-xs font-semibold text-ink-mute flex items-center justify-center gap-1.5 cursor-not-allowed opacity-50 border-0 bg-paper-alt"
+                          class="w-full py-1.5 sm:py-2 rounded-xl text-[10px] sm:text-xs font-semibold text-ink-mute flex items-center justify-center gap-1 cursor-not-allowed opacity-50 border-0 bg-paper-alt"
                         >
                           <span
-                            class="material-symbols-outlined text-[14px] leading-none"
+                            class="material-symbols-outlined text-[12px] sm:text-[14px] leading-none"
                             >shopping_cart</span
                           >
                           Sin precio

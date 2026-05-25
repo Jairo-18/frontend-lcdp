@@ -90,20 +90,24 @@
               <p class="font-display font-bold text-ink text-[13px] leading-tight line-clamp-2 group-hover:text-coral transition-colors">
                 {{ product.name }}
               </p>
-              <p class="text-[11px] text-ink-mute mt-0.5">
-                {{ product.categories.at(0)?.name }}
-              </p>
+              @if (product.categories.length) {
+                <div class="flex flex-wrap gap-1 mt-0.5">
+                  @for (cat of product.categories; track cat.id) {
+                    <span class="inline-block px-1.5 py-0.5 rounded-full bg-[rgba(26,28,44,0.06)] text-ink-mute text-[10px] font-medium">
+                      {{ cat.name }}
+                    </span>
+                  }
+                </div>
+              }
 
               @if (webPrice(product); as price) {
                 <p class="text-[13px] font-bold text-ink mt-1">
                   {{ formatPrice(price) }}
                 </p>
-                @if (product.discountPercentage) {
-                  <p class="text-[10px] font-semibold text-green-600 mt-0.5">
-                    ¡{{ product.discountPercentage }}% dto. al cotizar! {{ formatPriceFull(price) }}
-                  </p>
-                }
               }
+              <p class="text-[8px] sm:text-[10px] font-semibold text-green-600 mt-0.5 leading-tight">
+                Obtén un descuento y acumula puntos si compras con nosotros
+              </p>
             </div>
 
           </a>
