@@ -59,7 +59,7 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
   private readonly _editorSvc: ImageEditorService = inject(ImageEditorService);
   private readonly _routeReuse: CacheRouteReuseStrategy = inject(CacheRouteReuseStrategy);
   private readonly _sanitizer: DomSanitizer = inject(DomSanitizer);
-  readonly _previewSvc: ImagePreviewService = inject(ImagePreviewService);
+  private readonly _previewSvc: ImagePreviewService = inject(ImagePreviewService);
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
   private readonly _router: Router = inject(Router);
@@ -123,6 +123,7 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
     priceSale: [null as number | null],
     taxTypeId: [''],
     isActive: [true],
+    isPromotion: [false],
     videoUrl: [''],
     technicalSheet: [null as string | null],
     safetySheet: [null as string | null],
@@ -288,6 +289,7 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
                     priceSale: p.priceSale ?? null,
                     taxTypeId: p.taxTypeId ? String(p.taxTypeId) : '',
                     isActive: p.isActive,
+                    isPromotion: p.isPromotion ?? false,
                     videoUrl: p.videoUrl ?? '',
                     technicalSheet: p.technicalSheet ?? null,
                     safetySheet: p.safetySheet ?? null,
@@ -552,6 +554,7 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
       priceSale: raw.priceSale ?? undefined,
       taxTypeId: raw.taxTypeId ? Number(raw.taxTypeId) : undefined,
       isActive: raw.isActive,
+      isPromotion: raw.isPromotion,
       videoUrl: raw.videoUrl || undefined,
       technicalSheet: raw.technicalSheet ?? null,
       safetySheet: raw.safetySheet ?? null,

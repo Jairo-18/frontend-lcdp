@@ -3,25 +3,55 @@
     {{ label }}@if (required) {<span class="text-coral"> *</span>}
   </label>
 }
-<div class="relative">
-  <select
-    [id]="id"
-    [disabled]="isDisabled"
-    (change)="onSelect($event)"
-    (blur)="onTouched()"
-    [class]="selectClasses"
+
+<!-- Trigger -->
+<button
+  [id]="id"
+  type="button"
+  [disabled]="isDisabled"
+  (click)="toggle()"
+  [class]="triggerClasses"
+  [attr.aria-expanded]="_open()"
+>
+  <span class="truncate flex-1">{{ selectedLabel }}</span>
+  <span
+    class="material-symbols-outlined text-[18px] leading-none text-ink-mute shrink-0 transition-transform duration-150"
+    [class.rotate-180]="_open()"
   >
-    @if (placeholder) {
-      <option value="">{{ placeholder }}</option>
-    }
-    @for (opt of options; track opt.value) {
-      <option [value]="opt.value" [selected]="opt.value == _value()">{{ opt.label }}</option>
-    }
-  </select>
-  <span class="material-symbols-outlined pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 mr-2 text-[18px] leading-none text-ink-mute">
     expand_more
   </span>
-</div>
+</button>
+
+<!-- Dropdown panel -->
+@if (_open()) {
+  <ul
+    class="absolute z-50 left-0 w-full mt-1 bg-white border border-rule rounded-xl shadow-lg overflow-y-auto max-h-[240px] py-1"
+    role="listbox"
+  >
+    @for (opt of options; track opt.value) {
+      <li role="option" [attr.aria-selected]="opt.value == _value()">
+        <button
+          type="button"
+          (click)="select(opt.value)"
+          class="w-full flex items-center gap-2 px-3 py-2 text-sm text-left transition-colors cursor-pointer border-0 bg-transparent hover:bg-paper-alt"
+          [class.font-semibold]="opt.value == _value()"
+          [class.text-ink]="opt.value == _value()"
+          [class.text-ink-mute]="opt.value != _value()"
+        >
+          <span
+            class="w-4 h-4 shrink-0 flex items-center justify-center"
+          >
+            @if (opt.value == _value()) {
+              <span class="material-symbols-outlined text-[14px] leading-none text-ink">check</span>
+            }
+          </span>
+          {{ opt.label }}
+        </button>
+      </li>
+    }
+  </ul>
+}
+
 @if (hint && !showError) {
   <p class="text-xs text-ink-mute mt-1">{{ hint }}</p>
 }

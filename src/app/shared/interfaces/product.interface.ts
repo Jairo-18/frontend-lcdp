@@ -27,6 +27,7 @@ export interface CreateProductDto {
   priceSale?: number;
   taxTypeId?: number;
   isActive?: boolean;
+  isPromotion?: boolean;
   videoUrl?: string;
   technicalSheet?: string | null;
   safetySheet?: string | null;
@@ -54,6 +55,7 @@ export interface ProductParams extends BasePaginationParams {
   unitOfMeasureId?: number;
   colorId?: number;
   orderBy?: 'name' | 'createdAt';
+  isPromotion?: boolean;
 }
 
 export interface UnitOfMeasure {
@@ -92,6 +94,7 @@ export interface Product {
   taxTypeId: number | null;
   taxType: TaxType | null;
   isActive: boolean;
+  isPromotion: boolean;
   technicalSheet: string | null;
   safetySheet: string | null;
   modeOfUse: string | null;

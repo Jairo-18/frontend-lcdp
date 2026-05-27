@@ -30,7 +30,7 @@ export class CheckoutModalComponent {
     OrganizationalService,
   );
   private readonly _document: Document = inject(DOCUMENT);
-  private readonly _platformId: Object = inject(PLATFORM_ID);
+  private readonly _platformId: object = inject(PLATFORM_ID);
   private readonly _breakpointObserver: BreakpointObserver = inject(
     BreakpointObserver,
   );

@@ -31,7 +31,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   private readonly _organizationalService: OrganizationalService = inject(
     OrganizationalService,
   );
-  readonly _previewSvc: ImagePreviewService = inject(ImagePreviewService);
+  private readonly _previewSvc: ImagePreviewService = inject(ImagePreviewService);
   private readonly _confirmDialog: ConfirmDialogService =
     inject(ConfirmDialogService);
   private readonly _router: Router = inject(Router);

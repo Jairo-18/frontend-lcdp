@@ -1,9 +1,14 @@
 import {
   Component,
+  ElementRef,
+  HostListener,
   Input,
+  PLATFORM_ID,
   forwardRef,
+  inject,
   signal,
 } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import {
   AbstractControl,
   ControlValueAccessor,
@@ -16,7 +21,7 @@ let uid = 0;
 @Component({
   selector: 'app-select-field',
   standalone: true,
-  host: { style: 'display: block' },
+  host: { style: 'display: block; position: relative' },
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -35,8 +40,12 @@ export class SelectFieldComponent implements ControlValueAccessor {
   @Input() options: SelectOption[] = [];
   @Input() control: AbstractControl | null | undefined;
 
+  private readonly _el: ElementRef<HTMLElement> = inject(ElementRef);
+  private readonly _platformId: object = inject(PLATFORM_ID);
+
   protected readonly id = `field-${++uid}`;
   protected readonly _value = signal<string | number>('');
+  protected readonly _open = signal(false);
   protected isDisabled = false;
 
   private onChange: (v: string | number) => void = () => {};
@@ -55,20 +64,51 @@ export class SelectFieldComponent implements ControlValueAccessor {
     return 'Campo inválido';
   }
 
-  protected get selectClasses(): string {
+  protected get selectedLabel(): string {
+    const opt = this.options.find(o => String(o.value) === String(this._value()));
+    if (opt) return opt.label;
+    return this.placeholder || 'Seleccionar';
+  }
+
+  protected get hasValue(): boolean {
+    const v = this._value();
+    return v !== '' && v !== null && v !== undefined;
+  }
+
+  protected get triggerClasses(): string {
     const base =
-      'w-full rounded-xl border pl-3 pr-8 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 transition-colors cursor-pointer appearance-none';
+      'w-full flex items-center justify-between gap-2 rounded-xl border pl-3 pr-2 py-2 text-sm bg-white focus:outline-none focus:ring-2 transition-colors cursor-pointer text-left';
     const border = this.showError
       ? 'border-coral focus:ring-coral/20'
       : 'border-rule focus:ring-black/10';
+    const color = this.hasValue ? 'text-ink' : 'text-ink-mute';
     const disabled = this.isDisabled ? 'opacity-50 cursor-not-allowed' : '';
-    return [base, border, disabled].filter(Boolean).join(' ');
+    return [base, border, color, disabled].filter(Boolean).join(' ');
   }
 
-  protected onSelect(event: Event): void {
-    const val = (event.target as HTMLSelectElement).value;
-    this._value.set(val);
-    this.onChange(val);
+  protected toggle(): void {
+    if (this.isDisabled) return;
+    this._open.update(v => !v);
+    this.onTouched();
+  }
+
+  protected select(value: string | number): void {
+    this._value.set(value);
+    this.onChange(value);
+    this._open.set(false);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!isPlatformBrowser(this._platformId)) return;
+    if (!this._el.nativeElement.contains(event.target as Node)) {
+      this._open.set(false);
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    this._open.set(false);
   }
 
   writeValue(val: string | number | null): void {

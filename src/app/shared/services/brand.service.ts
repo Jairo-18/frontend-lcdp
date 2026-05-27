@@ -25,7 +25,7 @@ const resolveBrand = (b: Brand): Brand => ({
 export class BrandService {
   private readonly _http: HttpClient = inject(HttpClient);
   private readonly _httpUtils: HttpUtilitiesService = inject(HttpUtilitiesService);
-  private readonly _orgService: OrganizationalService = inject(OrganizationalService);
+  private readonly _organizationalService: OrganizationalService = inject(OrganizationalService);
 
   private _allCache$: Observable<Brand[]> | null = null;
 
@@ -47,7 +47,7 @@ export class BrandService {
 
   private _invalidateCache(): void {
     this._allCache$ = null;
-    this._orgService.invalidateBootstrap();
+    this._organizationalService.invalidateBootstrap();
   }
 
   getPaginated(

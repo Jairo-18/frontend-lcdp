@@ -90,18 +90,14 @@
               <p class="font-display font-bold text-ink text-[13px] leading-tight line-clamp-2 group-hover:text-coral transition-colors">
                 {{ product.name }}
               </p>
-              @if (product.categories.length) {
-                <div class="flex flex-wrap gap-1 mt-0.5">
-                  @for (cat of product.categories; track cat.id) {
-                    <span class="inline-block px-1.5 py-0.5 rounded-full bg-[rgba(26,28,44,0.06)] text-ink-mute text-[10px] font-medium">
-                      {{ cat.name }}
-                    </span>
-                  }
-                </div>
+              @if (product.categories.at(0)?.name) {
+                <p class="text-[10px] text-ink-mute leading-none">
+                  {{ product.categories.at(0)!.name }}
+                </p>
               }
 
               @if (webPrice(product); as price) {
-                <p class="text-[13px] font-bold text-ink mt-1">
+                <p class="text-[11px] sm:text-[13px] font-bold text-ink mt-1">
                   {{ formatPrice(price) }}
                 </p>
               }

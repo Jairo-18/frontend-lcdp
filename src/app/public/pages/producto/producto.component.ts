@@ -29,8 +29,8 @@ export class ProductoComponent implements OnInit, OnDestroy {
   private readonly _activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   private readonly _productService: ProductService = inject(ProductService);
   private readonly _domSanitizer: DomSanitizer = inject(DomSanitizer);
-  private readonly _platformId = inject(PLATFORM_ID);
-  private readonly _destroy$ = new Subject<void>();
+  private readonly _platformId: object = inject(PLATFORM_ID);
+  private readonly _destroy$: Subject<void> = new Subject<void>();
   private readonly _organizationalService: OrganizationalService = inject(
     OrganizationalService,
   );
@@ -153,11 +153,12 @@ export class ProductoComponent implements OnInit, OnDestroy {
     if (!num || !p || price == null) return '#';
     const pres = p.presentations[this.selectedPres()];
     const presName = pres?.unitOfMeasure.name ?? '';
+    const sku = pres?.sku ? ` - ${pres.sku}` : '';
     const total = this._cartService.fmt(price * this.qty());
     const msg = [
       '¡Hola! Me gustaría pedir:',
       '',
-      `• ${p.name}${presName ? ` (${presName})` : ''} x${this.qty()} — ${total}`,
+      `• ${p.name}${presName ? ` (${presName}${sku})` : ''} x${this.qty()} — ${total}`,
     ].join('\n');
     return `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
   }

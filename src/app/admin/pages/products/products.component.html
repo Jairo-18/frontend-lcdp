@@ -223,6 +223,19 @@
                       {{ formatPrice(product.priceSale) }}
                     </p>
                   }
+                  <!-- Info extra visible solo en mobile -->
+                  <div class="md:hidden mt-1.5 flex flex-wrap gap-x-2 gap-y-0.5">
+                    <span class="text-[11px] text-ink-mute font-medium">{{ product.brand.name }}</span>
+                    @if (product.categories.at(0)?.name) {
+                      <span class="text-[11px] text-ink-mute">· {{ product.categories.at(0)!.name }}</span>
+                    }
+                    @if (product.presentations.length) {
+                      <span class="text-[11px] text-ink-mute">· {{ product.presentations.length }} pres.</span>
+                    }
+                    @if (product.isPromotion) {
+                      <span class="text-[11px] font-semibold text-green-600">· En promoción</span>
+                    }
+                  </div>
                 </td>
                 <td class="hidden sm:table-cell px-4 py-4">
                   @if (product.code) {

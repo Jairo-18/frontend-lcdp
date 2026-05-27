@@ -36,7 +36,7 @@ const resolveOrg = (org: Organizational | null): Organizational | null => {
 export class OrganizationalService {
   private readonly _httpClient: HttpClient = inject(HttpClient);
   private readonly _transferState: TransferState = inject(TransferState);
-  private readonly _platformId = inject(PLATFORM_ID);
+  private readonly _platformId: object = inject(PLATFORM_ID);
 
   private _bootstrapCache$: Observable<BootstrapData> | null = null;
 

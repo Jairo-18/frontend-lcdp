@@ -152,19 +152,12 @@
       </div>
 
       <!-- Footer -->
-      <div class="px-5 py-4 border-t border-rule flex gap-3 shrink-0 bg-white">
-        <button
-          type="button"
-          (click)="close.emit()"
-          class="flex-1 py-3 rounded-xl border border-rule text-sm font-semibold text-ink bg-white hover:bg-paper-alt transition-colors cursor-pointer"
-        >
-          Cancelar
-        </button>
+      <div class="px-5 py-4 border-t border-rule flex flex-col gap-2 shrink-0 bg-white">
         <button
           type="button"
           (click)="send()"
           [disabled]="!isValid"
-          class="flex-1 py-3 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 transition-colors cursor-pointer border-0"
+          class="w-full py-3 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 transition-colors cursor-pointer border-0"
           [class.bg-[#25D366]]="isValid"
           [class.hover:bg-[#20c05c]]="isValid"
           [class.bg-ink-mute]="!isValid"
@@ -177,6 +170,13 @@
             />
           </svg>
           Enviar por WhatsApp
+        </button>
+        <button
+          type="button"
+          (click)="close.emit()"
+          class="w-full py-2.5 rounded-xl border border-rule text-sm font-medium text-ink-mute bg-white hover:bg-paper-alt transition-colors cursor-pointer"
+        >
+          Cancelar
         </button>
       </div>
     </div>

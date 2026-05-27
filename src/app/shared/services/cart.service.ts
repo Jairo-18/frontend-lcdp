@@ -20,7 +20,7 @@ const CART_KEY = 'lcdp_cart';
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
-  private readonly _platformId = inject(PLATFORM_ID);
+  private readonly _platformId: object = inject(PLATFORM_ID);
   private readonly _items = signal<CartItem[]>([]);
 
   readonly items = this._items.asReadonly();

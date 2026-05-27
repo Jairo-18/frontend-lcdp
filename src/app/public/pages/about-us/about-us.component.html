@@ -139,10 +139,10 @@
           @if (socialNetworks.length) {
             <div class="mt-10 pt-8 border-t border-rule">
               <p class="text-[10px] font-extrabold tracking-widest uppercase text-ink-mute mb-4">Síguenos</p>
-              <div class="flex flex-wrap gap-3">
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 @for (s of socialNetworks; track s.key) {
                   <a [href]="s.url" target="_blank" rel="noopener"
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl border border-rule bg-paper-alt hover:bg-white hover:border-ink/20 transition-all no-underline min-w-[160px]">
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl border border-rule bg-paper-alt hover:bg-white hover:border-ink/20 transition-all no-underline w-full">
                     <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 social-icon-wrap" [attr.data-platform]="s.key">
                       @switch (s.key) {
                         @case ('instagram') {

@@ -39,8 +39,16 @@ export class NewProductsComponent implements OnInit {
     return CLIPBOARD_PALETTE[index % CLIPBOARD_PALETTE.length];
   }
 
+  private _richestPresentation(product: Product) {
+    if (!product.presentations.length) return null;
+    return product.presentations.reduce((best, p) => {
+      return Number(p.priceSale ?? 0) > Number(best.priceSale ?? 0) ? p : best;
+    });
+  }
+
   firstImage(product: Product): string | null {
-    return product.presentations?.[0]?.images?.[0]?.variants?.thumb ?? null;
+    const pres = this._richestPresentation(product);
+    return pres?.images?.[0]?.variants?.thumb ?? product.presentations?.[0]?.images?.[0]?.variants?.thumb ?? null;
   }
 
   firstSku(product: Product): string {
@@ -48,7 +56,8 @@ export class NewProductsComponent implements OnInit {
   }
 
   webPrice(product: Product): number | null {
-    const base = product.presentations[0]?.priceSale ?? product.priceSale;
+    const pres = this._richestPresentation(product);
+    const base = pres?.priceSale ?? product.priceSale;
     if (base == null) return null;
     const markup = product.markupPercentage ?? 0;
     return Number(base) * (1 + markup / 100);

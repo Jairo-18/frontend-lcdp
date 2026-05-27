@@ -80,6 +80,7 @@ export class CatalogoComponent implements OnInit, OnDestroy {
   readonly selectedColorId = signal<number | null>(null);
   readonly searchQuery = signal<string | null>(null);
   readonly orderBy = signal<'name' | 'createdAt'>('createdAt');
+  readonly showPromotion = signal<boolean | null>(null);
 
   readonly categoryOptions = computed(() => [
     { value: '', label: 'Todas las categorías' },
@@ -101,12 +102,18 @@ export class CatalogoComponent implements OnInit, OnDestroy {
     { value: 'name', label: 'Nombre A–Z' },
   ];
 
+  readonly promotionOptions = [
+    { value: '', label: 'Todos los productos' },
+    { value: 'true', label: 'Solo promociones' },
+  ];
+
   readonly hasFilters = computed(
     () =>
       !!this.selectedCategory() ||
       !!this.selectedBrand() ||
       !!this.selectedColorId() ||
-      !!this.searchQuery(),
+      !!this.searchQuery() ||
+      this.showPromotion() !== null,
   );
 
   readonly skeletons: null[] = Array<null>(12).fill(null);
@@ -130,6 +137,8 @@ export class CatalogoComponent implements OnInit, OnDestroy {
         this.selectedColorId.set(params['color'] ? Number(params['color']) : null);
         this.searchQuery.set(params['q'] ?? null);
         this.mobileSearch = params['q'] ?? '';
+        const promoParam = params['promo'];
+        this.showPromotion.set(promoParam === 'true' ? true : null);
         this.currentPage.set(1);
         this._load(1);
       });
@@ -155,6 +164,7 @@ export class CatalogoComponent implements OnInit, OnDestroy {
       : undefined;
     const colorId = this.selectedColorId() ?? undefined;
 
+    const isPromotion = this.showPromotion();
     this._productService
       .getPublic({
         page,
@@ -164,6 +174,7 @@ export class CatalogoComponent implements OnInit, OnDestroy {
         colorId,
         search: this.searchQuery() ?? undefined,
         orderBy: this.orderBy(),
+        isPromotion: isPromotion !== null ? isPromotion : undefined,
       })
       .pipe(takeUntil(this._destroy$))
       .subscribe({
@@ -248,6 +259,18 @@ export class CatalogoComponent implements OnInit, OnDestroy {
     });
   }
 
+  onPromotionSelect(val: string): void {
+    this._router.navigate([], {
+      relativeTo: this._activatedRoute,
+      queryParams: {
+        categoria: this.selectedCategory() ?? null,
+        marca: this.selectedBrand() ?? null,
+        q: this.searchQuery() ?? null,
+        promo: val || null,
+      },
+    });
+  }
+
   onMobileSearch(): void {
     this._router.navigate([], {
       relativeTo: this._activatedRoute,
@@ -264,8 +287,18 @@ export class CatalogoComponent implements OnInit, OnDestroy {
     this._load(1);
   }
 
+  private _richestPresentation(product: Product) {
+    if (!product.presentations.length) return null;
+    return product.presentations.reduce((best, p) => {
+      const bestPrice = Number(best.priceSale ?? 0);
+      const pPrice = Number(p.priceSale ?? 0);
+      return pPrice > bestPrice ? p : best;
+    });
+  }
+
   webPrice(product: Product): number | null {
-    const base = product.presentations[0]?.priceSale ?? product.priceSale;
+    const pres = this._richestPresentation(product);
+    const base = pres?.priceSale ?? product.priceSale;
     if (base == null) return null;
     const markup = product.markupPercentage ?? 0;
     return Number(base) * (1 + markup / 100);
@@ -280,7 +313,8 @@ export class CatalogoComponent implements OnInit, OnDestroy {
   }
 
   firstImage(product: Product): string | null {
-    return product.presentations[0]?.images[0]?.variants?.thumb ?? null;
+    const pres = this._richestPresentation(product);
+    return pres?.images[0]?.variants?.thumb ?? product.presentations[0]?.images[0]?.variants?.thumb ?? null;
   }
 
   placeholderColor(index: number): string {
