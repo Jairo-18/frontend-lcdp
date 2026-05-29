@@ -68,15 +68,17 @@
           <p class="text-ink-mute text-sm">No hay videos en esta plataforma aún.</p>
         </div>
       } @else {
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
           @for (video of _paged(); track video.id) {
             <div class="bg-white border border-rule rounded-2xl overflow-hidden flex flex-col">
 
               @if (isEmbed(video)) {
-                <div class="relative w-full" style="padding-top: 56.25%">
+                <div class="w-full overflow-hidden"
+                     [style.height]="isVertical(video.url) ? '520px' : null"
+                     [style.aspect-ratio]="isVertical(video.url) ? null : '16/9'">
                   <iframe
                     [src]="embedUrl(video)"
-                    class="absolute inset-0 w-full h-full border-0"
+                    class="w-full h-full border-0"
                     scrolling="no"
                     allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
                     allowfullscreen="true"
@@ -86,7 +88,8 @@
               } @else {
                 <a [href]="video.url" target="_blank" rel="noopener noreferrer"
                   class="relative flex items-center justify-center bg-[rgba(26,28,44,0.04)] hover:bg-[rgba(26,28,44,0.08)] transition-colors"
-                  style="padding-top: 56.25%">
+                  [style.height]="isVertical(video.url) ? '520px' : null"
+                  [style.aspect-ratio]="isVertical(video.url) ? null : '16/9'">
                   <div class="absolute inset-0 flex flex-col items-center justify-center gap-2 text-ink-mute">
                     <span class="material-symbols-outlined text-[48px] leading-none">{{ platformIcon(video.url) }}</span>
                     <span class="text-xs font-semibold">Ver en {{ platformLabel(video.url) }}</span>

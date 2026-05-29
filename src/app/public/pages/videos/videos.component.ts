@@ -163,4 +163,11 @@ export class VideosComponent implements OnInit, OnDestroy {
   isEmbed(video: Video): boolean {
     return this.embedUrl(video) !== null;
   }
+
+  isVertical(url: string): boolean {
+    if (/tiktok\.com/i.test(url)) return true;
+    if (/instagram\.com\/reel\//i.test(url)) return true;
+    if (/youtube\.com\/shorts\//i.test(url)) return true;
+    return false;
+  }
 }

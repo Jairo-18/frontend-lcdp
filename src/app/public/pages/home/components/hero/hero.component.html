@@ -1,7 +1,7 @@
 <!-- ── Hero ── -->
-<div class="px-6 py-10 md:px-10 md:py-12">
+<div class="px-6 py-10 md:px-10 md:py-12 max-lg:px-0 max-lg:py-0">
   <section
-    class="max-w-[1440px] mx-auto rounded-3xl flex items-center justify-between gap-10 px-12 py-14 overflow-hidden relative max-lg:flex-col max-lg:justify-center max-lg:px-8 max-lg:py-10"
+    class="max-w-[1440px] mx-auto rounded-3xl flex items-center justify-between gap-10 px-12 py-14 overflow-hidden relative max-lg:flex-col max-lg:justify-center max-lg:px-8 max-lg:py-12 max-lg:rounded-none max-lg:min-h-svh"
     [style.background]="!_hasVideos() ? 'radial-gradient(ellipse 80% 100% at 70% 40%, #ffdf4a 0%, #ffcb05 55%, #f5b800 100%)' : 'transparent'"
   >
     <!-- Fondo: video cuando hay videos, gradiente cuando no -->
@@ -14,13 +14,13 @@
           autoplay
           muted
           playsinline
-          loop
+          [attr.loop]="_heroVideos().length <= 1 ? '' : null"
           (canplay)="onVideoCanPlay($event)"
           (ended)="onVideoEnded()"
         ></video>
       }
-      <!-- Scrim: oscurece la zona izquierda para que el texto sea legible -->
-      <div class="absolute inset-0 bg-gradient-to-r from-black/65 via-black/30 to-transparent z-[1] pointer-events-none"></div>
+      <!-- Scrim: derecha en desktop, vertical en mobile -->
+      <div class="absolute inset-0 bg-gradient-to-r from-black/65 via-black/30 to-transparent z-[1] pointer-events-none max-lg:bg-gradient-to-b max-lg:from-black/75 max-lg:via-black/50 max-lg:to-black/20"></div>
       <!-- Dots de navegación -->
       @if (_heroVideos().length > 1) {
         <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20">
@@ -90,7 +90,8 @@
         trabajo. Pedido directo a WhatsApp, sin filas ni complicaciones.
       </p>
 
-      <!-- Imágenes — solo mobile (entre párrafo y botones) -->
+      <!-- Imágenes — solo mobile cuando no hay video (el video ya da contexto visual) -->
+      @if (!_hasVideos()) {
       <div
         class="flex items-end justify-center lg:hidden mb-6"
         aria-hidden="true"
@@ -111,6 +112,7 @@
           class="h-[95px] w-auto object-contain drop-shadow-xl rotate-[4deg] translate-y-2 -ml-5 z-0"
         />
       </div>
+      }
 
       <!-- CTAs -->
       <div
