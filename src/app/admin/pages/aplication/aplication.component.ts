@@ -122,6 +122,7 @@ export class AplicationComponent implements OnInit {
     metaTitle: ['', Validators.maxLength(200)],
     metaDescription: [''],
     metaKeywords: ['', Validators.maxLength(500)],
+    howToOrderVideoUrl: ['', Validators.maxLength(500)],
   });
 
   ngOnInit(): void {

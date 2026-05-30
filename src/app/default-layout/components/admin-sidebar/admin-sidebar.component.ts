@@ -53,6 +53,7 @@ export class AdminSidebarComponent implements OnDestroy {
     { label: 'Unidades', icon: 'straighten', route: '/admin/units' },
     { label: 'Impuestos', icon: 'receipt_long', route: '/admin/tax-types' },
     { label: 'Videos', icon: 'smart_display', route: '/admin/videos' },
+    { label: 'Certificaciones', icon: 'verified', route: '/admin/certifications' },
     { label: 'Aplicación', icon: 'app_settings_alt', route: '/admin/aplication' },
   ];
 

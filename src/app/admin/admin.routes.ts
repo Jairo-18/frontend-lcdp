@@ -13,6 +13,7 @@ export const adminRoutes: Routes = [
       },
       {
         path: 'aplication',
+        data: { reuseKey: 'admin-aplication' },
         loadComponent: () =>
           import('./pages/aplication/create-or-edit-aplication/create-or-edit-aplication.component').then(
             (m) => m.CreateOrEditAplicationComponent,
@@ -120,7 +121,7 @@ export const adminRoutes: Routes = [
       },
       {
         path: 'tax-types',
-        data: { reuse: true },
+        data: { reuseKey: 'admin-tax-types' },
         loadComponent: () =>
           import('./pages/tax-types/tax-types.component').then((m) => m.TaxTypesComponent),
       },
@@ -170,6 +171,31 @@ export const adminRoutes: Routes = [
             loadComponent: () =>
               import('./pages/colors/create-or-edit-colors/create-or-edit-colors.component').then(
                 (m) => m.CreateOrEditColorsComponent,
+              ),
+          },
+        ],
+      },
+      {
+        path: 'certifications',
+        children: [
+          {
+            path: '',
+            data: { reuseKey: 'admin-certifications' },
+            loadComponent: () =>
+              import('./pages/certifications/certifications.component').then((m) => m.CertificationsComponent),
+          },
+          {
+            path: 'create-or-edit-certifications',
+            loadComponent: () =>
+              import('./pages/certifications/create-or-edit-certifications/create-or-edit-certifications.component').then(
+                (m) => m.CreateOrEditCertificationsComponent,
+              ),
+          },
+          {
+            path: 'create-or-edit-certifications/:id',
+            loadComponent: () =>
+              import('./pages/certifications/create-or-edit-certifications/create-or-edit-certifications.component').then(
+                (m) => m.CreateOrEditCertificationsComponent,
               ),
           },
         ],

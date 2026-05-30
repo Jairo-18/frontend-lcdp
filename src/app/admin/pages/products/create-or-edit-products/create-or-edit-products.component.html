@@ -498,14 +498,14 @@
                         <img
                           [src]="img.thumb"
                           alt="imagen"
-                          class="w-full h-full object-cover rounded-lg border border-rule"
+                          class="w-full h-full object-contain bg-white rounded-lg border border-rule"
                         />
                         <button
                           type="button"
                           (click)="
                             removeImage(pi, ii); $event.stopPropagation()
                           "
-                          class="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/75 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center border-0 cursor-pointer shadow-sm hover:bg-red-600"
+                          class="absolute top-1 right-1 w-8 h-8 rounded-full bg-black/80 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center border-0 cursor-pointer shadow hover:bg-red-600"
                         >
                           <span
                             class="material-symbols-outlined text-[15px] leading-none"
@@ -584,193 +584,111 @@
         >
         <h2 class="font-semibold text-ink text-base">Vista previa</h2>
         <span class="text-xs text-ink-mute ml-1"
-          >— así se verá en el catálogo</span
+          >— así se verá en la página del producto</span
         >
       </div>
 
       <div class="p-4 md:p-8">
-        <div class="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-8 lg:gap-12">
-          <!-- Left: images -->
+        <div class="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-8 lg:gap-16 mt-4 lg:mt-6">
+
+          <!-- ── Galería (igual que producto.component.html) ── -->
           <div class="space-y-3">
-            <!-- Main image -->
-            <div
-              class="relative aspect-square rounded-2xl border border-rule bg-[rgba(26,28,44,0.03)] overflow-hidden flex items-center justify-center group"
-              [class.cursor-zoom-in]="
-                presImages(_previewPresIndex()).length > 0
-              "
-              (click)="
-                openPresPreview(_previewPresIndex(), _previewImageIndex())
-              "
-            >
-              @if (
-                presImages(_previewPresIndex())[_previewImageIndex()];
-                as mainImg
-              ) {
-                <img
-                  [src]="mainImg.lg"
-                  alt="foto producto"
-                  class="w-full h-full object-cover"
-                />
-                <span
-                  class="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/10 transition-colors pointer-events-none"
-                >
-                  <span
-                    class="material-symbols-outlined text-white text-[36px] leading-none opacity-0 group-hover:opacity-60 transition-opacity drop-shadow"
-                    >zoom_in</span
-                  >
-                </span>
+            <div class="aspect-[4/3] rounded-2xl border border-rule bg-white overflow-hidden flex items-center justify-center"
+              [class.cursor-zoom-in]="presImages(_previewPresIndex()).length > 0"
+              (click)="openPresPreview(_previewPresIndex(), _previewImageIndex())">
+              @if (presImages(_previewPresIndex())[_previewImageIndex()]; as mainImg) {
+                <img [src]="mainImg.lg" alt="foto producto" class="w-full h-full object-contain" />
               } @else {
-                <div
-                  class="flex flex-col items-center gap-2 text-ink-mute select-none"
-                >
-                  <span
-                    class="material-symbols-outlined text-[56px] leading-none opacity-15"
-                    >image</span
-                  >
-                  <span class="text-xs opacity-30 font-mono"
-                    >foto producto</span
-                  >
+                <div class="flex flex-col items-center gap-2 text-ink-mute select-none">
+                  <span class="material-symbols-outlined text-[56px] leading-none opacity-15">image</span>
+                  <span class="text-xs opacity-30 font-mono">sin imagen</span>
                 </div>
               }
             </div>
 
-            <!-- Thumbnails -->
-            <div class="grid grid-cols-4 gap-2">
-              @for (
-                img of presImages(_previewPresIndex());
-                track $index;
-                let ii = $index
-              ) {
-                <button
-                  type="button"
-                  (click)="
-                    selectPreviewImage(ii);
-                    openPresPreview(_previewPresIndex(), ii)
-                  "
-                  class="aspect-square rounded-xl border-2 overflow-hidden transition-all cursor-zoom-in"
-                  [class.border-ink]="_previewImageIndex() === ii"
-                  [class.border-rule]="_previewImageIndex() !== ii"
-                  [class.shadow-md]="_previewImageIndex() === ii"
-                >
-                  <img
-                    [src]="img.thumb"
-                    alt="miniatura"
-                    class="w-full h-full object-cover"
-                  />
-                </button>
-              }
-              @for (
-                _ of thumbnailPlaceholders(_previewPresIndex());
-                track $index
-              ) {
-                <div
-                  class="aspect-square rounded-xl border border-dashed border-rule bg-[rgba(26,28,44,0.02)]"
-                ></div>
-              }
-            </div>
+            @if (presImages(_previewPresIndex()).length > 1) {
+              <div class="flex gap-2 overflow-x-auto pb-1" style="scrollbar-width: none">
+                @for (img of presImages(_previewPresIndex()); track $index; let ii = $index) {
+                  <button type="button"
+                    (click)="selectPreviewImage(ii); openPresPreview(_previewPresIndex(), ii)"
+                    class="w-16 h-16 shrink-0 rounded-xl border-2 overflow-hidden transition-all cursor-pointer bg-white p-0"
+                    [class.border-ink]="_previewImageIndex() === ii"
+                    [class.border-rule]="_previewImageIndex() !== ii">
+                    <img [src]="img.thumb" alt="miniatura" class="w-full h-full object-contain" />
+                  </button>
+                }
+              </div>
+            }
           </div>
 
-          <!-- Right: product info -->
-          <div class="py-1 flex flex-col gap-5">
-            <!-- Brand · Ref -->
-            <p
-              class="text-xs font-semibold text-ink-mute tracking-widest uppercase"
-            >
+          <!-- ── Info (igual que producto.component.html) ── -->
+          <div class="flex flex-col gap-4 lg:gap-5 py-1">
+
+            <!-- Marca · Ref -->
+            <p class="text-xs font-semibold text-ink-mute tracking-widest uppercase">
               {{ previewBrandName || 'MARCA' }}
-              @if (form.get('code')?.value) {
-                · REF {{ form.get('code')?.value }}
-              }
+              @if (form.get('code')?.value) { · REF {{ form.get('code')?.value }} }
             </p>
 
-            <!-- Name -->
-            <h1
-              class="font-display font-bold text-ink text-[2rem] leading-tight -mt-2"
-            >
+            <!-- Nombre -->
+            <h1 class="font-display font-bold text-ink text-[clamp(20px,3.5vw,36px)] leading-tight -mt-1">
               {{ form.get('name')?.value || 'Nombre del producto' }}
             </h1>
 
-            <!-- Description -->
+            <!-- Descripción -->
             @if (form.get('description')?.value) {
-              <p class="text-ink-mute text-sm leading-relaxed -mt-1">
+              <p class="text-ink-mute text-sm leading-relaxed -mt-1 italic">
                 {{ form.get('description')?.value }}
               </p>
             }
 
-            <!-- Price -->
-            <div class="space-y-1">
-              <div class="flex items-baseline gap-2 flex-wrap">
-                <span class="font-display font-bold text-ink text-4xl">
-                  {{ previewWebPrice() }}
-                </span>
-                @if (
-                  presentationsArray.length > 0 &&
-                  presentationsArray.at(_previewPresIndex()).get('priceSale')?.value &&
-                  previewUnitName(_previewPresIndex())
-                ) {
-                  <span class="text-ink-mute text-sm font-medium uppercase tracking-wide">
-                    / {{ previewUnitName(_previewPresIndex()) }}
-                  </span>
+            <!-- Categorías -->
+            @if (_selectedCategoryNames().length > 0) {
+              <div class="flex flex-wrap gap-1.5 -mt-1">
+                @for (name of _selectedCategoryNames(); track name) {
+                  <span class="px-2.5 py-1 rounded-lg bg-paper-alt border border-rule text-xs font-medium text-ink-mute">{{ name }}</span>
                 }
               </div>
-              @if (form.get('markupPercentage')?.value) {
-                <p class="text-xs text-ink-mute">
-                  Precio base:
-                  {{
-                    formatPrice(
-                      presentationsArray.length > 0
-                        ? presentationsArray.at(_previewPresIndex()).get('priceSale')?.value
-                        : form.get('priceSale')?.value
-                    )
-                  }}
-                  · +{{ form.get('markupPercentage')?.value }}% web
-                </p>
-              }
-              @if (form.get('discountPercentage')?.value) {
-                <p class="text-[12px] font-semibold text-green-600">
-                  ¡{{ form.get('discountPercentage')?.value }}% de descuento al cotizar!
-                  @if (previewWebPriceFull()) {
-                    {{ previewWebPriceFull() }}
-                  }
-                </p>
-              }
-            </div>
+            }
 
-            <!-- Presentations selector -->
-            @if (presentationsArray.length > 0) {
-              <div class="space-y-2.5">
-                <p
-                  class="text-[10px] font-bold text-ink-mute tracking-widest uppercase"
-                >
-                  Presentación
-                </p>
+            <!-- Colores -->
+            @if (_selectedColors().length > 0) {
+              <div class="space-y-2.5 -mt-1">
+                <p class="text-[10px] font-bold text-ink-mute tracking-widest uppercase">Color</p>
                 <div class="flex flex-wrap gap-2">
-                  @for (
-                    pres of presentationsArray.controls;
-                    track pres;
-                    let pi = $index
-                  ) {
-                    <button
-                      type="button"
-                      (click)="selectPreviewPres(pi)"
-                      class="px-4 py-2.5 rounded-xl border-2 text-sm font-medium transition-all text-left"
-                      [class.border-ink]="_previewPresIndex() === pi"
-                      [class.bg-ink]="_previewPresIndex() === pi"
-                      [class.text-white]="_previewPresIndex() === pi"
+                  @for (c of _selectedColors(); track c.id) {
+                    <button type="button" [title]="c.name" cursor-default
+                      class="relative w-8 h-8 rounded-full border-2 border-transparent shrink-0"
+                      [style.background-color]="c.hex"
+                      [style.box-shadow]="'0 0 0 1px rgba(0,0,0,0.15)'"
+                    ></button>
+                  }
+                </div>
+              </div>
+            }
+
+            <hr class="border-rule -my-1" />
+
+            <!-- Presentaciones -->
+            @if (presentationsArray.length > 0) {
+              <div class="space-y-2">
+                <p class="text-[10px] font-bold text-ink-mute tracking-widest uppercase">Presentación</p>
+                <div class="flex flex-wrap gap-2">
+                  @for (pres of presentationsArray.controls; track pres; let pi = $index) {
+                    <button type="button" (click)="selectPreviewPres(pi)"
+                      class="px-3 py-2.5 lg:px-4 rounded-xl border-2 text-sm font-medium transition-all cursor-pointer text-left"
+                      [class.border-yellow]="_previewPresIndex() === pi"
+                      [class.bg-amber-100]="_previewPresIndex() === pi"
                       [class.border-rule]="_previewPresIndex() !== pi"
-                      [class.text-ink]="_previewPresIndex() !== pi"
-                      [class.hover:border-ink]="_previewPresIndex() !== pi"
-                    >
-                      <div class="font-semibold leading-none">
-                        {{ previewUnitName(pi) || 'Presentación ' + (pi + 1) }}
-                      </div>
+                      [class.bg-white]="_previewPresIndex() !== pi">
+                      <span class="block text-[9px] font-extrabold tracking-widest uppercase text-ink-mute leading-none mb-1">
+                        {{ previewUnitName(pi) ? previewUnitName(pi)!.substring(0,4).toUpperCase() : 'UND' }}
+                      </span>
+                      <span class="block font-bold text-ink leading-none">{{ previewUnitName(pi) || 'Presentación ' + (pi + 1) }}</span>
                       @if (pres.get('priceSale')?.value) {
-                        <div class="text-xs mt-1 opacity-75">
-                          {{
-                            webPriceForPresentation(
-                              pres.get('priceSale')?.value
-                            )
-                          }}
-                        </div>
+                        <span class="block text-xs mt-1.5 font-semibold text-ink">
+                          {{ webPriceForPresentation(pres.get('priceSale')?.value) }}
+                        </span>
                       }
                     </button>
                   }
@@ -778,59 +696,40 @@
               </div>
             }
 
-            <!-- Colores -->
-            @if (_selectedColors().length > 0) {
-              <div class="space-y-2">
-                <p class="text-[10px] font-bold text-ink-mute tracking-widest uppercase">Colores disponibles</p>
-                <div class="flex flex-wrap gap-1.5">
-                  @for (c of _selectedColors(); track c.id) {
-                    <div
-                      class="w-6 h-6 rounded-md border border-black/10 shrink-0 cursor-default"
-                      [style.background-color]="c.hex"
-                      [title]="c.name"
-                    ></div>
-                  }
-                </div>
-              </div>
-            }
-
-            <!-- Availability -->
-            <div class="flex items-center gap-2">
-              <span
-                class="w-2 h-2 rounded-full shrink-0"
+            <!-- Disponibilidad -->
+            <div class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full shrink-0"
                 [class.bg-green-500]="form.get('isActive')?.value"
-                [class.bg-[rgba(26,28,44,0.25)]]="!form.get('isActive')?.value"
-              >
-              </span>
+                [class.bg-[rgba(26,28,44,0.25)]]="!form.get('isActive')?.value"></span>
               <span class="text-sm text-ink-mute">
-                {{
-                  form.get('isActive')?.value ? 'Disponible' : 'No disponible'
-                }}
+                {{ form.get('isActive')?.value ? 'Disponible' : 'No disponible' }}
               </span>
             </div>
 
-            <!-- CTA (decorative) -->
-            <div class="flex items-center gap-3 pt-1">
-              <div
-                class="flex items-center border border-rule rounded-xl select-none"
-              >
-                <span
-                  class="px-4 py-2.5 text-sm font-semibold text-ink border-r border-rule"
-                  >−</span
-                >
-                <span class="px-5 py-2.5 text-sm font-medium text-ink">1</span>
-                <span
-                  class="px-4 py-2.5 text-sm font-semibold text-ink border-l border-rule"
-                  >+</span
-                >
+            <!-- Subtotal + CTA (decorativo) -->
+            <div class="flex flex-col gap-2.5 pt-1 select-none pointer-events-none">
+              @if (previewWebPrice() !== '—') {
+                <div class="flex items-center justify-between px-4 py-3.5 bg-white border border-rule rounded-xl">
+                  <p class="text-xs font-bold text-ink-mute tracking-widest uppercase">Subtotal</p>
+                  <p class="font-display font-bold text-ink text-[22px]">{{ previewWebPrice() }}</p>
+                </div>
+              }
+              <p class="text-sm font-semibold text-green-600 -mt-1">Obtén un descuento y acumula puntos si compras con nosotros</p>
+              <div class="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-ink text-white text-sm font-semibold">
+                <span class="material-symbols-outlined text-[18px] leading-none">shopping_cart</span>
+                Agregar al carrito
+                <span class="material-symbols-outlined text-[16px] leading-none">arrow_forward</span>
               </div>
-              <button
-                type="button"
-                class="flex-1 py-2.5 rounded-xl bg-red-500 text-white text-sm font-semibold cursor-default select-none"
-              >
-                Agregar a cotización
-              </button>
+              <div class="flex items-center justify-center gap-2.5 w-full py-3.5 rounded-xl text-white text-sm font-semibold" style="background:#25D366">
+                Pedir por WhatsApp
+              </div>
+              <a class="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl border border-rule text-sm font-medium text-ink-mute no-underline">
+                <span class="material-symbols-outlined text-[16px] leading-none">arrow_back</span>
+                Volver al catálogo
+              </a>
+              <p class="text-[11px] text-ink-mute">Precio incluye IVA</p>
             </div>
+
           </div>
         </div>
 

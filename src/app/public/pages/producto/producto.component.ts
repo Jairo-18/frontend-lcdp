@@ -16,13 +16,15 @@ import { ProductService } from '@shared/services/product.service';
 import { OrganizationalService } from '@shared/services/organizational.service';
 import { CartService } from '@shared/services/cart.service';
 import { NotificationsService } from '@shared/services/notifications.service';
+import { ImagePreviewService } from '@shared/services/image-preview.service';
+import { ImagePreviewComponent } from '@shared/components';
 import { Product } from '@shared/interfaces/product.interface';
 import { TitleCaseEsPipe } from '@shared/pipes/title-case-es.pipe';
 
 @Component({
   selector: 'app-producto',
   standalone: true,
-  imports: [RouterModule, TitleCaseEsPipe],
+  imports: [RouterModule, TitleCaseEsPipe, ImagePreviewComponent],
   templateUrl: './producto.component.html',
 })
 export class ProductoComponent implements OnInit, OnDestroy {
@@ -37,6 +39,7 @@ export class ProductoComponent implements OnInit, OnDestroy {
   private readonly _cartService: CartService = inject(CartService);
   private readonly _notificationService: NotificationsService =
     inject(NotificationsService);
+  readonly _previewSvc: ImagePreviewService = inject(ImagePreviewService);
   private readonly _titleCase = new TitleCaseEsPipe();
 
   readonly loading = signal(true);
@@ -103,6 +106,11 @@ export class ProductoComponent implements OnInit, OnDestroy {
 
   selectImage(i: number): void {
     this.selectedImage.set(i);
+  }
+
+  openImagePreview(index = 0): void {
+    const imgs = this.currentImages().map(img => img.variants.lg);
+    if (imgs.length) this._previewSvc.open(imgs, index);
   }
 
   incQty(): void {

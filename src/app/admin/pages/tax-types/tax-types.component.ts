@@ -57,8 +57,9 @@ export class TaxTypesComponent implements OnInit, OnDestroy {
   readonly _editingId = signal<number | null>(null);
 
   readonly form = this._fb.nonNullable.group({
-    name: ['', [Validators.required, Validators.maxLength(100)]],
-    code: ['', [Validators.required, Validators.maxLength(50)]],
+    name:     ['', [Validators.required, Validators.maxLength(100)]],
+    code:     ['', [Validators.required, Validators.maxLength(50)]],
+    isActive: [true],
   });
 
   ngOnInit(): void {
@@ -131,7 +132,7 @@ export class TaxTypesComponent implements OnInit, OnDestroy {
 
   openEdit(taxType: TaxType): void {
     this._editingId.set(taxType.id);
-    this.form.patchValue({ name: taxType.name, code: taxType.code });
+    this.form.patchValue({ name: taxType.name, code: taxType.code, isActive: taxType.isActive ?? true });
     this._panelOpen.set(true);
   }
 

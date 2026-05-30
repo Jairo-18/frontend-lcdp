@@ -10,7 +10,7 @@
     </span>
     }
     <button type="button" (click)="_svc.close()"
-      class=" px-[13px] pt-3 pb-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer border-0">
+      class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer border-0 flex items-center justify-center">
       <span class="material-symbols-outlined text-[22px] leading-none">close</span>
     </button>
   </div>
@@ -19,7 +19,7 @@
   <div class="relative flex items-center justify-center w-full max-w-4xl" (click)="$event.stopPropagation()">
     @if (_svc.images().length > 1) {
     <button type="button" (click)="_svc.prev()"
-      class="absolute left-0 z-10 px-[13px] pt-3 pb-2  rounded-full bg-white/10 hover:bg-white/25 text-white transition-colors cursor-pointer border-0">
+      class="absolute left-0 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 text-white transition-colors cursor-pointer border-0 flex items-center justify-center">
       <span class="material-symbols-outlined text-[24px] leading-none">chevron_left</span>
     </button>
     }
@@ -29,7 +29,7 @@
 
     @if (_svc.images().length > 1) {
     <button type="button" (click)="_svc.next()"
-      class="absolute right-0 z-10 px-[13px] pt-3 pb-2 rounded-full bg-white/10 hover:bg-white/25 text-white transition-colors cursor-pointer border-0">
+      class="absolute right-0 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 text-white transition-colors cursor-pointer border-0 flex items-center justify-center">
       <span class="material-symbols-outlined text-[24px] leading-none">chevron_right</span>
     </button>
     }

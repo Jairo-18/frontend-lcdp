@@ -5,6 +5,7 @@ export interface ColorDto {
   hex: string;
   colorFamily?: string;
   code?: string;
+  isActive?: boolean;
 }
 
 export interface Color {
@@ -13,6 +14,7 @@ export interface Color {
   hex: string;
   colorFamily: string | null;
   code: string | null;
+  isActive: boolean;
 }
 
 export interface ColorParams extends BasePaginationParams {

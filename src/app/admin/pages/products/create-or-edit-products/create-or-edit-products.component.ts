@@ -88,6 +88,10 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
     this._colorIds().map(id => this._colors().find(c => c.id === id)).filter(Boolean) as Color[],
   );
 
+  readonly _selectedCategoryNames = computed(() =>
+    this._categoryIds().map(id => this._categories().find(c => c.id === id)?.name).filter(Boolean) as string[],
+  );
+
   readonly _presImages = signal<ImageVariant[][]>([]);
   readonly _uploadingForIndex = signal<number | null>(null);
   readonly _uploadingTechPdf = signal(false);

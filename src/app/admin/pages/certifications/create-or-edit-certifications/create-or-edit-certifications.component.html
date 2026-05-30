@@ -1,5 +1,4 @@
 <div class="p-8">
-
   <!-- Header -->
   <div class="flex items-center gap-4 mb-6">
     <button type="button" (click)="goBack()"
@@ -8,9 +7,9 @@
     </button>
     <div>
       <h1 class="font-display font-bold text-ink text-2xl">
-        {{ _editingId() ? 'Editar unidad' : 'Nueva unidad' }}
+        {{ _editingId() ? 'Editar certificación' : 'Nueva certificación' }}
       </h1>
-      <p class="text-ink-mute text-sm mt-0.5">Unidades de medida</p>
+      <p class="text-ink-mute text-sm mt-0.5">Certificaciones</p>
     </div>
   </div>
 
@@ -21,31 +20,61 @@
     </div>
   } @else {
     <form [formGroup]="form" (ngSubmit)="save()" class="space-y-5">
-
       <div class="bg-white border border-rule rounded-2xl p-6 space-y-5">
+
+        <app-input-field
+          formControlName="normCode"
+          label="Código de norma"
+          placeholder="NTC 1651:1997"
+          [required]="true"
+          [mono]="true"
+          [control]="form.get('normCode')"
+        />
+
         <app-input-field
           formControlName="name"
           label="Nombre"
-          placeholder="Galón"
+          placeholder="Certificado ISO 9001"
           [required]="true"
           [upperCase]="true"
           [control]="form.get('name')"
         />
 
         <app-input-field
-          formControlName="code"
-          label="Código (único, abreviatura)"
-          placeholder="GL"
-          hint="Ejemplos: GL, L, KG, UN, m²"
-          [required]="true"
+          formControlName="certifyingBody"
+          label="Entidad certificadora"
+          placeholder="Bureau Veritas"
+          [control]="form.get('certifyingBody')"
+        />
+
+        <app-textarea-field
+          formControlName="description"
+          label="Descripción (opcional)"
+          placeholder="Describe brevemente el alcance de esta certificación..."
+          [control]="form.get('description')"
+        />
+
+        <app-input-field
+          formControlName="imageUrl"
+          label="URL del logo/sello (opcional)"
+          placeholder="https://..."
+          [control]="form.get('imageUrl')"
+        />
+
+        <app-input-field
+          formControlName="sortOrder"
+          label="Orden de visualización"
+          placeholder="0"
+          type="number"
+          hint="Número menor = aparece primero"
           [mono]="true"
-          [control]="form.get('code')"
+          [control]="form.get('sortOrder')"
         />
 
         <div class="flex items-center justify-between pt-1">
           <div>
             <p class="text-sm font-semibold text-ink">Estado</p>
-            <p class="text-xs text-ink-mute">Inactivo = no aparece en los selectores de productos</p>
+            <p class="text-xs text-ink-mute">Inactivo = no aparece en la página de garantía</p>
           </div>
           <button type="button"
             (click)="form.get('isActive')!.setValue(!form.get('isActive')!.value); form.markAsDirty()"
@@ -58,9 +87,9 @@
             </span>
           </button>
         </div>
+
       </div>
 
-      <!-- Actions -->
       <div class="flex items-center justify-end gap-3">
         <button type="button" (click)="goBack()"
           class="px-4 py-2 rounded-xl border border-rule text-sm font-semibold text-ink hover:bg-[rgba(26,28,44,0.04)] transition-colors cursor-pointer bg-white">
@@ -73,11 +102,9 @@
           } @else {
             <span class="material-symbols-outlined text-[16px] leading-none">save</span>
           }
-          {{ _editingId() ? 'Guardar cambios' : 'Crear unidad' }}
+          {{ _editingId() ? 'Guardar cambios' : 'Crear certificación' }}
         </button>
       </div>
-
     </form>
   }
-
 </div>

@@ -36,8 +36,9 @@ export class CreateOrEditUnitsComponent implements OnInit, OnDestroy {
   readonly _editingId = signal<number | null>(null);
 
   readonly form = this._fb.nonNullable.group({
-    name: ['', [Validators.required, Validators.maxLength(100)]],
-    code: ['', [Validators.required, Validators.maxLength(20)]],
+    name:     ['', [Validators.required, Validators.maxLength(100)]],
+    code:     ['', [Validators.required, Validators.maxLength(20)]],
+    isActive: [true],
   });
 
   ngOnInit(): void {
@@ -54,7 +55,7 @@ export class CreateOrEditUnitsComponent implements OnInit, OnDestroy {
           next: (units: UnitOfMeasure[]) => {
             const unit = units.find((u) => u.id === id);
             if (unit) {
-              this.form.patchValue({ name: unit.name, code: unit.code });
+              this.form.patchValue({ name: unit.name, code: unit.code, isActive: unit.isActive ?? true });
             }
             this._loading.set(false);
           },

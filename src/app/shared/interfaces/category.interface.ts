@@ -4,6 +4,7 @@ export interface CategoryDto {
   name: string;
   code: string;
   images?: ImageVariant[];
+  isActive?: boolean;
 }
 
 export interface Category {
@@ -11,6 +12,7 @@ export interface Category {
   name: string;
   code: string;
   images: ImageVariant[];
+  isActive: boolean;
 }
 
 export interface CategoryPill {

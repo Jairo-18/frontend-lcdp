@@ -40,8 +40,9 @@ export class CreateOrEditVideosComponent implements OnInit, OnDestroy {
   readonly _editingId      = signal<string | null>(null);
 
   readonly form = this._fb.nonNullable.group({
-    url:   ['', [Validators.required, Validators.maxLength(500)]],
-    title: ['', [Validators.required, Validators.maxLength(200)]],
+    url:      ['', [Validators.required, Validators.maxLength(500)]],
+    title:    ['', [Validators.required, Validators.maxLength(200)]],
+    isActive: [true],
   });
 
   ngOnInit(): void {
@@ -55,7 +56,7 @@ export class CreateOrEditVideosComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this._destroy$))
         .subscribe({
           next: (video: Video) => {
-            this.form.patchValue({ url: video.url, title: video.title });
+            this.form.patchValue({ url: video.url, title: video.title, isActive: video.isActive ?? true });
             this._loading.set(false);
           },
           error: () => this._loading.set(false),

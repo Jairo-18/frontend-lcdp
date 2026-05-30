@@ -8,6 +8,7 @@ import { ImageVariant } from './image-variant.interface';
 export interface UnitOfMeasureDto {
   name: string;
   code: string;
+  isActive?: boolean;
 }
 
 export interface CreatePresentationDto {
@@ -62,6 +63,7 @@ export interface UnitOfMeasure {
   id: number;
   name: string;
   code: string;
+  isActive: boolean;
 }
 
 export interface ProductImage {

@@ -41,12 +41,21 @@
       /* Iconos ocultos hasta que la fuente cargue */
       .material-symbols-outlined {
         visibility: hidden;
-        /* Tamaño fijo: evita que el texto largo desplace el layout */
         display: inline-block;
         overflow: hidden;
         width: 1em;
         height: 1em;
         vertical-align: middle;
+        /* Forzar ligatures sin importar el idioma del navegador */
+        font-feature-settings: 'liga' 1;
+        -webkit-font-feature-settings: 'liga' 1;
+        font-variant-ligatures: normal;
+        direction: ltr;
+        text-transform: none;
+        letter-spacing: normal;
+        white-space: nowrap;
+        word-wrap: normal;
+        -webkit-font-smoothing: antialiased;
       }
       html.fonts-ready .material-symbols-outlined {
         visibility: visible;
@@ -88,6 +97,34 @@
     </div>
 
     <app-root></app-root>
+
+    <!-- Evita que Google Translate traduzca los nombres de íconos de Material Symbols -->
+    <script>
+      (function () {
+        function markIcons(root) {
+          (root || document).querySelectorAll('.material-symbols-outlined').forEach(function (el) {
+            el.setAttribute('translate', 'no');
+            el.classList.add('notranslate');
+          });
+        }
+        var observer = new MutationObserver(function (mutations) {
+          mutations.forEach(function (m) {
+            m.addedNodes.forEach(function (node) {
+              if (node.nodeType !== 1) return;
+              if (node.classList && node.classList.contains('material-symbols-outlined')) {
+                node.setAttribute('translate', 'no');
+                node.classList.add('notranslate');
+              }
+              if (node.querySelectorAll) markIcons(node);
+            });
+          });
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+          markIcons(document);
+          observer.observe(document.body, { childList: true, subtree: true });
+        });
+      })();
+    </script>
 
     <script>
       (function () {

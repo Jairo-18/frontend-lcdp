@@ -37,6 +37,7 @@ export class CreateOrEditColorsComponent implements OnInit, OnDestroy {
     hex:         ['#000000', [Validators.required, Validators.pattern(/^#([0-9A-Fa-f]{6})$/)]],
     colorFamily: [''],
     code:        [''],
+    isActive:    [true],
   });
 
   ngOnInit(): void {
@@ -56,6 +57,7 @@ export class CreateOrEditColorsComponent implements OnInit, OnDestroy {
               hex:         color.hex,
               colorFamily: color.colorFamily ?? '',
               code:        color.code ?? '',
+              isActive:    color.isActive ?? true,
             });
             this._loading.set(false);
           },
@@ -83,6 +85,7 @@ export class CreateOrEditColorsComponent implements OnInit, OnDestroy {
       hex:         raw.hex,
       colorFamily: raw.colorFamily || undefined,
       code:        raw.code || undefined,
+      isActive:    raw.isActive,
     };
 
     const onSuccess = (): void => {

@@ -1,4 +1,4 @@
-<input #fileInput type="file" [multiple]="multiple" accept="image/*" class="hidden" (change)="onFilesSelected($event)" />
+﻿<input #fileInput type="file" [multiple]="multiple" accept="image/*" class="hidden" (change)="onFilesSelected($event)" />
 
 <div>
   <div class="flex items-center justify-between mb-3">
@@ -17,10 +17,11 @@
 
   @if (images.length > 0) {
     <!-- Main preview (click to open fullscreen) -->
-    <div class="relative group bg-[rgba(26,28,44,0.03)] rounded-xl border border-rule overflow-hidden aspect-video flex items-center justify-center mb-3 cursor-zoom-in"
+    <div class="relative group bg-white rounded-xl border border-rule overflow-hidden flex items-center justify-center mb-3 cursor-zoom-in"
+      style="max-height: 200px; aspect-ratio: 4/3"
       (click)="openLightbox(_previewIndex())">
       <img [src]="images[_previewIndex()].md" alt="Vista previa"
-        class="max-w-full max-h-full object-contain p-3" />
+        class="max-w-full max-h-full object-contain" />
       <span class="absolute bottom-2 right-2 px-2 py-0.5 rounded-md bg-black/50 text-white text-[10px] font-medium">
         {{ _previewIndex() + 1 }} / {{ images.length }}
       </span>
@@ -37,11 +38,11 @@
             [class.border-rule]="_previewIndex() !== $index"
             [class.opacity-60]="_previewIndex() !== $index"
             (click)="selectPreview($index); openLightbox($index)">
-            <img [src]="img.thumb" alt="imagen" class="w-full h-full object-cover" />
+            <img [src]="img.thumb" alt="imagen" class="w-full h-full object-contain bg-white" />
           </div>
           <button type="button" (click)="removeImage($index); $event.stopPropagation()"
-            class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center border-0 cursor-pointer shadow">
-            <span class="material-symbols-outlined text-[11px] leading-none">close</span>
+            class="absolute top-1 right-1 w-7 h-7 rounded-full bg-black/75 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center border-0 cursor-pointer shadow hover:bg-red-600">
+            <span class="material-symbols-outlined text-[15px] leading-none">close</span>
           </button>
         </div>
       }

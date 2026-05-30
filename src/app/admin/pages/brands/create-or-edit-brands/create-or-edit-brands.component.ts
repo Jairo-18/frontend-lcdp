@@ -35,8 +35,9 @@ export class CreateOrEditBrandsComponent implements OnInit, OnDestroy {
   readonly _images    = signal<ImageVariant[]>([]);
 
   readonly form = this._fb.nonNullable.group({
-    name: ['', [Validators.required, Validators.maxLength(100)]],
-    code: ['', [Validators.required, Validators.maxLength(50)]],
+    name:     ['', [Validators.required, Validators.maxLength(100)]],
+    code:     ['', [Validators.required, Validators.maxLength(50)]],
+    isActive: [true],
   });
 
   ngOnInit(): void {
@@ -51,7 +52,7 @@ export class CreateOrEditBrandsComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this._destroy$))
         .subscribe({
           next: (brand: Brand) => {
-            this.form.patchValue({ name: brand.name, code: brand.code });
+            this.form.patchValue({ name: brand.name, code: brand.code, isActive: brand.isActive ?? true });
             this._images.set([...(brand.images ?? [])]);
             this._loading.set(false);
           },

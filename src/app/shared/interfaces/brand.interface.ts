@@ -4,6 +4,7 @@ export interface BrandDto {
   name: string;
   code: string;
   images?: ImageVariant[];
+  isActive?: boolean;
 }
 
 export interface Brand {
@@ -11,4 +12,5 @@ export interface Brand {
   name: string;
   code: string;
   images: ImageVariant[];
+  isActive: boolean;
 }

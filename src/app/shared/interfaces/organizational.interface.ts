@@ -38,6 +38,7 @@ export interface Organizational {
   metaTitle?: string;
   metaDescription?: string;
   metaKeywords?: string;
+  howToOrderVideoUrl?: string;
   heroVideos?: VideoVariant[];
   aboutVideos?: VideoVariant[];
   status?: boolean;

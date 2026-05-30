@@ -3,7 +3,7 @@
     <app-admin-sidebar (exitAdmin)="onExitAdmin()" />
   }
 
-  <div class="app-container flex-1 relative" [class.no-sidebar]="!isAdmin">
+  <div class="app-container flex-1 relative" [class.no-sidebar]="!isAdmin" [style.--sidebar-w]="isAdmin ? '260px' : '0px'">
     @if (!isAdmin) {
       <app-nav-bar
         class="brand-nav-bar"

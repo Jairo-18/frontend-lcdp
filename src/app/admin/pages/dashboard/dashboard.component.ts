@@ -65,6 +65,14 @@ export class DashboardComponent {
           description: 'Publica videos de YouTube, TikTok e Instagram en la tienda.',
           color: 'bg-red-50 text-red-600',
         },
+        {
+          path: '/admin/certifications',
+          create: '/admin/certifications/create-or-edit-certifications',
+          icon: 'verified',
+          label: 'Certificaciones',
+          description: 'Gestiona las normas ISO y certificados que aparecen en la página de Garantía.',
+          color: 'bg-emerald-50 text-emerald-600',
+        },
       ],
     },
     {

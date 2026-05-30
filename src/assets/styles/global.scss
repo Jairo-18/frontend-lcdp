@@ -20,11 +20,12 @@ html:not(.fonts-ready) .material-symbols-outlined {
   margin-left: 0;
 
   @media (min-width: 769px) {
-    width: calc(100vw - var(--sidebar-width));
-    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-w, 0px));
+    margin-left: var(--sidebar-w, 0px);
   }
 
   &.no-sidebar {
+    --sidebar-w: 0px;
     margin-left: 0 !important;
     width: 100% !important;
   }
@@ -38,6 +39,12 @@ html:not(.fonts-ready) .material-symbols-outlined {
   flex-direction: column;
 
   overflow-x: hidden;
+
+  > * {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
 
   &.has-mobile-menu {
     @media (max-width: 768px) {

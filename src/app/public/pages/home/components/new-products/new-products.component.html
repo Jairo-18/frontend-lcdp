@@ -1,6 +1,6 @@
-<!-- ── Lo más nuevo ── -->
+﻿<!-- ── Lo más nuevo ── -->
 <section class="px-6 pb-12 md:px-10">
-  <div class="max-w-[1440px] mx-auto">
+  <div class="mx-auto">
 
     <!-- Header -->
     <div class="flex items-end justify-between mb-6 gap-4">
@@ -25,7 +25,7 @@
       @if (loading()) {
         @for (s of skeletons; track $index) {
           <div class="bg-white border border-rule rounded-2xl overflow-hidden animate-pulse">
-            <div class="bg-paper-alt aspect-[4/3]"></div>
+            <div class="bg-white aspect-[4/3]"></div>
             <div class="p-4 flex flex-col gap-2">
               <div class="h-2.5 w-16 bg-rule rounded-full"></div>
               <div class="h-4 w-full bg-rule rounded-full"></div>
@@ -44,7 +44,7 @@
           >
 
             <!-- Imagen / ilustración -->
-            <div class="relative bg-paper-alt aspect-[4/3] overflow-hidden flex items-center justify-center">
+            <div class="relative bg-white aspect-[4/3] overflow-hidden flex items-center justify-center">
 
               <!-- Badge -->
               <span class="absolute top-3 left-3 z-10 bg-coral text-white text-[10px] font-extrabold tracking-widest uppercase px-2.5 py-1 rounded-md leading-none">
@@ -55,7 +55,7 @@
                 <img
                   [src]="firstImage(product)!"
                   [alt]="product.name"
-                  class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
                   loading="lazy"
                 />
               } @else {

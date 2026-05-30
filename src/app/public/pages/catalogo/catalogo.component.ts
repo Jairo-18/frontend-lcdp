@@ -63,7 +63,7 @@ export class CatalogoComponent implements OnInit, OnDestroy {
   private readonly _destroy$: Subject<void> = new Subject<void>();
 
   private get _pageSize(): number {
-    return this._breakpointObserver.isMatched('(max-width: 1023px)') ? 10 : 20;
+    return this._breakpointObserver.isMatched('(max-width: 1023px)') ? 10 : 25;
   }
 
   readonly loading = signal(true);
@@ -79,8 +79,16 @@ export class CatalogoComponent implements OnInit, OnDestroy {
   readonly selectedBrand = signal<string | null>(null);
   readonly selectedColorId = signal<number | null>(null);
   readonly searchQuery = signal<string | null>(null);
-  readonly orderBy = signal<'name' | 'createdAt'>('createdAt');
+  readonly orderBy = signal<'name' | 'createdAt'>('name');
   readonly showPromotion = signal<boolean | null>(null);
+  readonly colorMenuOpen = signal(false);
+
+  readonly selectedColorName = computed(() =>
+    this.colors().find(c => c.id === this.selectedColorId())?.name ?? null,
+  );
+  readonly selectedColorHex = computed(() =>
+    this.colors().find(c => c.id === this.selectedColorId())?.hex ?? null,
+  );
 
   readonly categoryOptions = computed(() => [
     { value: '', label: 'Todas las categorías' },
@@ -98,13 +106,8 @@ export class CatalogoComponent implements OnInit, OnDestroy {
   ]);
 
   readonly orderOptions = [
-    { value: 'createdAt', label: 'Más recientes' },
     { value: 'name', label: 'Nombre A–Z' },
-  ];
-
-  readonly promotionOptions = [
-    { value: '', label: 'Todos los productos' },
-    { value: 'true', label: 'Solo promociones' },
+    { value: 'createdAt', label: 'Más recientes' },
   ];
 
   readonly hasFilters = computed(
@@ -116,12 +119,12 @@ export class CatalogoComponent implements OnInit, OnDestroy {
       this.showPromotion() !== null,
   );
 
-  readonly skeletons: null[] = Array<null>(12).fill(null);
+  readonly skeletons: null[] = Array<null>(25).fill(null);
   mobileSearch: string = '';
 
   ngOnInit(): void {
     this._colorService.getAll().pipe(takeUntil(this._destroy$)).subscribe({
-      next: (cols) => this.colors.set(cols),
+      next: (cols) => this.colors.set(cols.filter(c => c.isActive)),
     });
 
     combineLatest([
@@ -259,14 +262,15 @@ export class CatalogoComponent implements OnInit, OnDestroy {
     });
   }
 
-  onPromotionSelect(val: string): void {
+  togglePromotion(): void {
     this._router.navigate([], {
       relativeTo: this._activatedRoute,
       queryParams: {
         categoria: this.selectedCategory() ?? null,
         marca: this.selectedBrand() ?? null,
         q: this.searchQuery() ?? null,
-        promo: val || null,
+        color: this.selectedColorId() ?? null,
+        promo: this.showPromotion() ? null : 'true',
       },
     });
   }
@@ -351,6 +355,8 @@ export class CatalogoComponent implements OnInit, OnDestroy {
     const id = this.selectedColorId();
     return id != null ? String(id) : '';
   }
+
+  toStr(val: number): string { return String(val); }
 
   pageTitle(): string {
     const q = this.searchQuery();

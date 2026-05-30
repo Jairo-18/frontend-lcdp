@@ -35,8 +35,9 @@ export class CreateOrEditCategoriesComponent implements OnInit, OnDestroy {
   readonly _images    = signal<ImageVariant[]>([]);
 
   readonly form = this._fb.nonNullable.group({
-    name: ['', [Validators.required, Validators.maxLength(100)]],
-    code: ['', [Validators.required, Validators.maxLength(50)]],
+    name:     ['', [Validators.required, Validators.maxLength(100)]],
+    code:     ['', [Validators.required, Validators.maxLength(50)]],
+    isActive: [true],
   });
 
   ngOnInit(): void {
@@ -51,7 +52,7 @@ export class CreateOrEditCategoriesComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this._destroy$))
         .subscribe({
           next: (category: Category) => {
-            this.form.patchValue({ name: category.name, code: category.code });
+            this.form.patchValue({ name: category.name, code: category.code, isActive: category.isActive ?? true });
             this._images.set([...(category.images ?? [])]);
             this._loading.set(false);
           },

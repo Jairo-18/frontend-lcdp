@@ -57,6 +57,7 @@
               <th class="px-6 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Plataforma</th>
               <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Título</th>
               <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide hidden md:table-cell">URL</th>
+              <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Estado</th>
               <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide text-right">Acciones</th>
             </tr>
           </thead>
@@ -83,6 +84,19 @@
                     class="text-xs text-ink-mute hover:text-ink underline truncate block max-w-[260px]">
                     {{ video.url }}
                   </a>
+                </td>
+
+                <!-- Estado -->
+                <td class="px-4 py-3">
+                  @if (video.isActive) {
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-700">
+                      <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>Activo
+                    </span>
+                  } @else {
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-[rgba(26,28,44,0.06)] text-ink-mute">
+                      <span class="w-1.5 h-1.5 rounded-full bg-ink-mute/50"></span>Inactivo
+                    </span>
+                  }
                 </td>
 
                 <!-- Actions -->

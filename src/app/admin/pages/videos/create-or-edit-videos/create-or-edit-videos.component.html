@@ -54,6 +54,23 @@
           <p class="text-xs text-ink-mute pl-0.5 mt-1">Se intenta obtener automáticamente desde la URL.</p>
         </div>
 
+        <div class="flex items-center justify-between pt-1">
+          <div>
+            <p class="text-sm font-semibold text-ink">Estado</p>
+            <p class="text-xs text-ink-mute">Inactivo = no aparece en la sección de videos pública</p>
+          </div>
+          <button type="button"
+            (click)="form.get('isActive')!.setValue(!form.get('isActive')!.value); form.markAsDirty()"
+            class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer border-0 shrink-0"
+            [class.bg-green-500]="form.get('isActive')!.value"
+            [class.bg-ink-mute]="!form.get('isActive')!.value">
+            <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow"
+              [class.translate-x-6]="form.get('isActive')!.value"
+              [class.translate-x-1]="!form.get('isActive')!.value">
+            </span>
+          </button>
+        </div>
+
       </div>
 
       <div class="flex items-center justify-end gap-3">

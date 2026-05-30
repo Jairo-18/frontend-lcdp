@@ -1,8 +1,8 @@
-<div class="min-h-screen bg-paper">
+﻿<div class="min-h-screen bg-paper">
 
   <!-- Breadcrumb -->
   <div class="px-6 md:px-10 pt-6 pb-2">
-    <div class="max-w-[1440px] mx-auto">
+    <div class="mx-auto">
       <p class="text-xs font-semibold text-ink-mute tracking-widest uppercase">
         <a routerLink="/" class="hover:text-ink transition-colors">Inicio</a>
         <span class="mx-2">/</span>
@@ -11,16 +11,79 @@
     </div>
   </div>
 
-  <!-- Content placeholder -->
-  <section class="px-6 md:px-10 pt-8 pb-16">
-    <div class="max-w-[1440px] mx-auto max-w-3xl">
-      <h1 class="font-display font-bold text-ink text-[clamp(28px,5vw,48px)] leading-tight mb-4">
+  <div class="px-6 md:px-10 pb-20">
+    <div class="mx-auto">
+
+      <h1 class="font-display font-bold text-ink text-[clamp(26px,4vw,40px)] leading-tight mt-3 mb-3">
         Garantía
       </h1>
-      <p class="text-ink-mute text-[clamp(15px,1.4vw,18px)] leading-relaxed">
-        Próximamente…
+      <p class="text-ink-mute text-base mb-10 max-w-2xl">
+        Trabajamos con productos que cumplen las más altas normas de calidad. Nuestras certificaciones respaldan el
+        compromiso con la excelencia en cada producto que ofrecemos.
       </p>
+
+      @if (loading()) {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        @for (s of [1,2,3,4]; track s) {
+        <div class="bg-white border border-rule rounded-2xl p-6 animate-pulse space-y-3">
+          <div class="h-3 w-24 bg-rule rounded-full"></div>
+          <div class="h-5 w-full bg-rule rounded-full"></div>
+          <div class="h-3 w-32 bg-rule rounded-full"></div>
+        </div>
+        }
+      </div>
+
+      } @else if (certifications().length === 0) {
+      <div class="flex flex-col items-center justify-center py-24 text-ink-mute gap-3">
+        <span class="material-symbols-outlined text-[48px] leading-none opacity-20">verified</span>
+        <p class="text-sm">Aún no hay certificaciones</p>
+      </div>
+
+      } @else {
+      <h2 class="text-[10px] font-extrabold tracking-[0.15em] uppercase text-ink-mute mb-5">
+        Nuestras certificaciones
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        @for (cert of certifications(); track cert.id) {
+        <div class="bg-white border border-rule rounded-2xl p-5 flex flex-col gap-3 hover:shadow-md transition-shadow">
+
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex-1 min-w-0">
+              <p class="font-mono text-[11px] font-bold tracking-widest text-ink-mute uppercase leading-none mb-1.5">
+                CERTIFICADO
+              </p>
+              <p class="font-display font-bold text-ink text-base leading-tight">
+                {{ cert.normCode }}
+              </p>
+            </div>
+            @if (cert.imageUrl) {
+            <img [src]="cert.imageUrl" [alt]="cert.certifyingBody || cert.name"
+              class="w-12 h-12 object-contain shrink-0 rounded-lg border border-rule p-1" />
+            } @else {
+            <div
+              class="w-12 h-12 rounded-lg border border-rule bg-[rgba(26,28,44,0.03)] flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-[22px] text-ink-mute leading-none opacity-40">verified</span>
+            </div>
+            }
+          </div>
+
+          <div class="border-t border-rule pt-3 space-y-1">
+            <p class="text-sm font-semibold text-ink leading-snug">{{ cert.name }}</p>
+            @if (cert.certifyingBody) {
+            <p class="text-xs text-ink-mute">{{ cert.certifyingBody }}</p>
+            }
+            @if (cert.description) {
+            <p class="text-xs text-ink-mute leading-relaxed line-clamp-3 mt-1">{{ cert.description }}</p>
+            }
+          </div>
+
+        </div>
+        }
+      </div>
+      }
+
     </div>
-  </section>
+  </div>
 
 </div>
