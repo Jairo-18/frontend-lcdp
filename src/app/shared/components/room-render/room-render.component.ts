@@ -12,6 +12,7 @@ import { ColorService } from '@shared/services/color.service';
 import { Color } from '@shared/interfaces/color.interface';
 
 type Surface = 'pared' | 'techo' | 'piso';
+type RoomView = 'alcoba' | 'sala' | 'cocina' | 'fachada';
 
 @Component({
   selector: 'app-room-render',
@@ -28,6 +29,7 @@ export class RoomRenderComponent implements OnInit {
   readonly colors = signal<Color[]>([]);
   readonly loading = signal(true);
   readonly activeSurface = signal<Surface>('pared');
+  readonly activeView = signal<RoomView>('alcoba');
 
   searchQuery = '';
 
@@ -35,29 +37,39 @@ export class RoomRenderComponent implements OnInit {
   readonly ceilingColor = signal('#FAFAF7');
   readonly floorColor = signal('#C4A882');
 
-  readonly surfaces = [
-    {
-      key: 'pared' as Surface,
-      label: 'Paredes',
-      icon: 'format_paint',
-      color: () => this.wallColor(),
-      set: (h: string) => this.wallColor.set(h),
-    },
-    {
-      key: 'techo' as Surface,
-      label: 'Techo',
-      icon: 'roofing',
-      color: () => this.ceilingColor(),
-      set: (h: string) => this.ceilingColor.set(h),
-    },
-    {
-      key: 'piso' as Surface,
-      label: 'Piso',
-      icon: 'texture',
-      color: () => this.floorColor(),
-      set: (h: string) => this.floorColor.set(h),
-    },
+  readonly views: { key: RoomView; label: string; icon: string }[] = [
+    { key: 'alcoba', label: 'Alcoba', icon: 'bed' },
+    { key: 'sala', label: 'Sala', icon: 'weekend' },
+    { key: 'cocina', label: 'Cocina', icon: 'countertops' },
+    { key: 'fachada', label: 'Fachada', icon: 'house' },
   ];
+
+  get surfaces() {
+    const f = this.activeView() === 'fachada';
+    return [
+      {
+        key: 'pared' as Surface,
+        label: f ? 'Fachada' : 'Paredes',
+        icon: f ? 'house' : 'format_paint',
+        color: () => this.wallColor(),
+        set: (h: string) => this.wallColor.set(h),
+      },
+      {
+        key: 'techo' as Surface,
+        label: f ? 'Cubierta' : 'Techo',
+        icon: 'roofing',
+        color: () => this.ceilingColor(),
+        set: (h: string) => this.ceilingColor.set(h),
+      },
+      {
+        key: 'piso' as Surface,
+        label: f ? 'Suelo' : 'Piso',
+        icon: f ? 'grass' : 'texture',
+        color: () => this.floorColor(),
+        set: (h: string) => this.floorColor.set(h),
+      },
+    ];
+  }
 
   get activeSurfaceCfg() {
     return this.surfaces.find((s) => s.key === this.activeSurface())!;

@@ -62,21 +62,53 @@
       <span class="material-symbols-outlined text-[18px] leading-none">smart_display</span>
       <span class="hidden 2xl:inline">Videos</span>
     </a>
-    <a routerLink="/ayuda/como-pedir" routerLinkActive="!bg-ink !text-white !border-ink" title="Cómo pedir"
-      class="px-3 py-2.5 2xl:px-3.5 rounded-lg inline-flex items-center gap-2 text-sm font-medium bg-white border border-rule text-ink-soft no-underline transition-all hover:bg-ink hover:text-white hover:border-ink">
-      <span class="material-symbols-outlined text-[18px] leading-none">quiz</span>
-      <span class="hidden 2xl:inline">Cómo pedir</span>
-    </a>
-    <a routerLink="/ayuda/garantia" routerLinkActive="!bg-ink !text-white !border-ink" title="Garantía"
-      class="px-3 py-2.5 2xl:px-3.5 rounded-lg inline-flex items-center gap-2 text-sm font-medium bg-white border border-rule text-ink-soft no-underline transition-all hover:bg-ink hover:text-white hover:border-ink">
-      <span class="material-symbols-outlined text-[18px] leading-none">verified</span>
-      <span class="hidden 2xl:inline">Garantía</span>
-    </a>
-    <a routerLink="/sobre-nosotros" routerLinkActive="!bg-ink !text-white !border-ink" title="Nosotros"
-      class="px-3 py-2.5 2xl:px-3.5 rounded-lg inline-flex items-center gap-2 text-sm font-medium bg-white border border-rule text-ink-soft no-underline transition-all hover:bg-ink hover:text-white hover:border-ink">
-      <span class="material-symbols-outlined text-[18px] leading-none">storefront</span>
-      <span class="hidden 2xl:inline">Nosotros</span>
-    </a>
+    <!-- Más dropdown -->
+    <div class="relative">
+      <button
+        (click)="toggleMore($event)"
+        title="Más páginas"
+        class="px-3 py-2.5 2xl:px-3.5 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium bg-white border border-rule text-ink-soft transition-all hover:bg-ink hover:text-white hover:border-ink cursor-pointer"
+        [class.!bg-ink]="isMoreActive || moreOpen()"
+        [class.!text-white]="isMoreActive || moreOpen()"
+        [class.!border-ink]="isMoreActive || moreOpen()">
+        <span class="material-symbols-outlined text-[18px] leading-none">more_horiz</span>
+        <span class="hidden 2xl:inline">Más</span>
+        <span
+          class="material-symbols-outlined text-[14px] leading-none transition-transform duration-200"
+          [class.rotate-180]="moreOpen()">expand_more</span>
+      </button>
+
+      @if (moreOpen()) {
+        <div
+          class="absolute top-[calc(100%+6px)] right-0 w-52 bg-white rounded-xl border border-rule shadow-xl py-1.5 z-50"
+          (click)="$event.stopPropagation()">
+          <a
+            routerLink="/ayuda/como-pedir"
+            routerLinkActive="!bg-gray-50 !text-ink font-semibold"
+            (click)="moreOpen.set(false)"
+            class="flex items-center gap-3 px-3.5 py-2.5 mx-1 rounded-lg text-sm text-ink-soft no-underline hover:bg-gray-50 hover:text-ink transition-colors">
+            <span class="material-symbols-outlined text-[17px] leading-none shrink-0">quiz</span>
+            Cómo pedir
+          </a>
+          <a
+            routerLink="/ayuda/garantia"
+            routerLinkActive="!bg-gray-50 !text-ink font-semibold"
+            (click)="moreOpen.set(false)"
+            class="flex items-center gap-3 px-3.5 py-2.5 mx-1 rounded-lg text-sm text-ink-soft no-underline hover:bg-gray-50 hover:text-ink transition-colors">
+            <span class="material-symbols-outlined text-[17px] leading-none shrink-0">verified</span>
+            Garantía
+          </a>
+          <a
+            routerLink="/sobre-nosotros"
+            routerLinkActive="!bg-gray-50 !text-ink font-semibold"
+            (click)="moreOpen.set(false)"
+            class="flex items-center gap-3 px-3.5 py-2.5 mx-1 rounded-lg text-sm text-ink-soft no-underline hover:bg-gray-50 hover:text-ink transition-colors">
+            <span class="material-symbols-outlined text-[17px] leading-none shrink-0">storefront</span>
+            Nosotros
+          </a>
+        </div>
+      }
+    </div>
 
     <button
       (click)="openRender.emit()"
