@@ -50,7 +50,7 @@
 <!-- ── Drawer ── -->
 <nav
   class="fixed top-0 left-0 z-[120] h-dvh w-[78%] max-w-[300px] bg-paper flex flex-col shadow-2xl transition-transform duration-300 ease-out lg:hidden"
-  [class.-translate-x-full]="!_isMenuOpen()" [class.translate-x-0]="_isMenuOpen()">
+  [style.transform]="_isMenuOpen() ? 'translateX(0)' : 'translateX(-100%)'">
   <!-- Drawer header -->
   <div class="flex items-center justify-between px-5 py-4 border-b border-rule">
     <div class="flex items-center gap-2.5">

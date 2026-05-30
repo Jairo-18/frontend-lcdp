@@ -52,8 +52,8 @@ export class HomeComponent implements OnInit {
     this._orgService.bootstrap().subscribe({
       next: ({ org, categories, brands }) => {
         this._org.set(org);
-        this._categories.set(categories);
-        this._brands.set(brands);
+        this._categories.set(categories.filter(c => c.isActive !== false));
+        this._brands.set(brands.filter(b => b.isActive !== false));
       },
     });
   }

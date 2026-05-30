@@ -1,25 +1,15 @@
 <div class="min-h-screen flex">
   <!-- ── Left panel ── -->
-  <aside
-    class="hidden md:flex md:w-[42%] bg-yellow flex-col justify-between p-10"
-  >
+  <aside class="hidden md:flex md:w-[42%] bg-yellow flex-col justify-between p-10">
     <div class="w-11 h-11 rounded-xl overflow-hidden shadow-sm shrink-0">
-      <img
-        [src]="_logoUrl() || 'assets/images/logo.jpg'"
-        alt="La Casa del Pintor"
-        class="w-full h-full object-cover"
-      />
+      <img [src]="_logoUrl() || 'assets/images/logo.jpg'" alt="La Casa del Pintor" class="w-full h-full object-cover" />
     </div>
 
     <div>
-      <p
-        class="font-mono text-[11px] text-ink/50 uppercase tracking-widest mb-3"
-      >
+      <p class="font-mono text-[11px] text-ink/50 uppercase tracking-widest mb-3">
         Panel Admin
       </p>
-      <h1
-        class="font-display font-extrabold text-ink text-5xl leading-[1.1] mb-4"
-      >
+      <h1 class="font-display font-extrabold text-ink text-5xl leading-[1.1] mb-4">
         La Casa<br />del Pintor.
       </h1>
       <p class="text-ink/70 text-sm max-w-xs leading-relaxed">
@@ -35,24 +25,18 @@
   <!-- ── Right panel ── -->
   <main class="flex-1 bg-paper flex items-center justify-center px-6 py-12">
     <div class="w-full max-w-md animate-slide-in-up">
-      <a
-        routerLink="/"
-        class="inline-flex items-center gap-1.5 text-ink-mute text-sm hover:text-ink transition-colors mb-8 group"
-      >
-        <span
-          class="material-symbols-outlined text-[18px] group-hover:-translate-x-0.5 transition-transform"
-        >
+      <a routerLink="/"
+        class="inline-flex items-center gap-1.5 text-ink-mute text-sm hover:text-ink transition-colors mb-8 group">
+        <span class="material-symbols-outlined text-[18px] group-hover:-translate-x-0.5 transition-transform">
           arrow_back
         </span>
         Volver al inicio
       </a>
 
-      <h2
-        class="font-display font-bold text-ink text-[2rem] leading-tight mb-1"
-      >
+      <h2 class="font-display font-bold text-ink text-[2rem] leading-tight mb-1">
         Bienvenido
         @if (_greeting()) {
-          , {{ _greeting() }}
+        , {{ _greeting() }}
         }
       </h2>
       <p class="text-ink-mute text-sm mb-8">
@@ -62,43 +46,26 @@
       <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
         <!-- USUARIO -->
         <div class="mb-5">
-          <label
-            for="email"
-            class="block font-mono text-[10px] font-bold text-ink-mute uppercase tracking-widest mb-2"
-          >
+          <label for="email" class="block font-mono text-[10px] font-bold text-ink-mute uppercase tracking-widest mb-2">
             Usuario
           </label>
-          <input
-            id="email"
-            type="email"
-            formControlName="email"
-            placeholder="admin@lacasadelpintor.co"
+          <input id="email" type="email" formControlName="email" placeholder="admin@lacasadelpintor.co"
             autocomplete="email"
-            class="w-full border border-rule bg-white rounded-xl px-4 py-3 text-sm text-ink placeholder:text-ink/30 focus:outline-none focus:ring-2 focus:ring-coral/20 focus:border-coral transition-colors"
-          />
+            class="w-full border border-rule bg-white rounded-xl px-4 py-3 text-sm text-ink placeholder:text-ink/30 focus:outline-none focus:ring-2 focus:ring-coral/20 focus:border-coral transition-colors" />
         </div>
 
         <!-- CONTRASEÑA -->
         <div class="mb-5">
-          <label
-            for="password"
-            class="block font-mono text-[10px] font-bold text-ink-mute uppercase tracking-widest mb-2"
-          >
+          <label for="password"
+            class="block font-mono text-[10px] font-bold text-ink-mute uppercase tracking-widest mb-2">
             Contraseña
           </label>
           <div class="relative">
-            <input
-              id="password"
-              [type]="_showPassword() ? 'text' : 'password'"
-              formControlName="password"
+            <input id="password" [type]="_showPassword() ? 'text' : 'password'" formControlName="password"
               autocomplete="current-password"
-              class="w-full border border-rule bg-white rounded-xl px-4 py-3 pr-12 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-coral/20 focus:border-coral transition-colors"
-            />
-            <button
-              type="button"
-              (click)="_showPassword.set(!_showPassword())"
-              class="absolute right-3 top-1/2 -translate-y-1/2 text-ink-mute hover:text-ink transition-colors"
-            >
+              class="w-full border border-rule bg-white rounded-xl px-4 py-3 pr-12 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-coral/20 focus:border-coral transition-colors" />
+            <button type="button" (click)="_showPassword.set(!_showPassword())"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-ink-mute hover:text-ink transition-colors">
               <span class="material-symbols-outlined text-xl leading-none">
                 {{ _showPassword() ? 'visibility_off' : 'visibility' }}
               </span>
@@ -108,35 +75,23 @@
 
         <!-- Recordarme -->
         <div class="flex items-center gap-2 mb-8">
-          <input
-            type="checkbox"
-            id="remember"
-            formControlName="remember"
-            class="w-4 h-4 rounded accent-coral cursor-pointer"
-          />
-          <label
-            for="remember"
-            class="text-sm text-coral cursor-pointer select-none"
-          >
+          <input type="checkbox" id="remember" formControlName="remember"
+            class="w-4 h-4 rounded accent-coral cursor-pointer" />
+          <label for="remember" class="text-sm text-coral cursor-pointer select-none">
             Recordarme en este equipo
           </label>
         </div>
 
         <!-- Submit -->
-        <button
-          type="submit"
-          [disabled]="form.invalid || _loading()"
-          class="w-full bg-coral text-white font-display font-semibold rounded-xl py-4 text-base transition-all hover:opacity-90 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
-        >
+        <button type="submit" [disabled]="form.invalid || _loading()"
+          class="w-full bg-coral text-white font-display font-semibold rounded-xl py-4 text-base transition-all hover:opacity-90 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed">
           @if (_loading()) {
-            <span class="flex items-center justify-center gap-2">
-              <span class="material-symbols-outlined text-base animate-spin"
-                >progress_activity</span
-              >
-              Entrando...
-            </span>
+          <span class="flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-base animate-spin">progress_activity</span>
+            Entrando...
+          </span>
           } @else {
-            Entrar al panel
+          Entrar al panel
           }
         </button>
       </form>

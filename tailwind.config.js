@@ -1,6 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/**/*.{html,ts,scss}'],
+  safelist: [
+    'translate-x-0', 'translate-x-1', 'translate-x-5', 'translate-x-6',
+  ],
   theme: {
     extend: {
       colors: {

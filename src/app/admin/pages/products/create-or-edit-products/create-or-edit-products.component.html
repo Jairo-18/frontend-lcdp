@@ -67,15 +67,23 @@
             @for (cat of _categories(); track cat.id) {
               <button
                 type="button"
-                (click)="toggleCategory(cat.id)"
-                class="px-3 py-1.5 rounded-xl border text-sm font-medium transition-colors cursor-pointer"
-                [class.bg-ink]="_categoryIds().includes(cat.id)"
-                [class.text-white]="_categoryIds().includes(cat.id)"
-                [class.border-ink]="_categoryIds().includes(cat.id)"
-                [class.border-rule]="!_categoryIds().includes(cat.id)"
-                [class.text-ink]="!_categoryIds().includes(cat.id)"
+                (click)="cat.isActive && toggleCategory(cat.id)"
+                [title]="cat.isActive ? '' : 'Debes activar esta categoría primero'"
+                class="px-3 py-1.5 rounded-xl border text-sm font-medium transition-colors"
+                [class.bg-ink]="_categoryIds().includes(cat.id) && cat.isActive"
+                [class.text-white]="_categoryIds().includes(cat.id) && cat.isActive"
+                [class.border-ink]="_categoryIds().includes(cat.id) && cat.isActive"
+                [class.border-rule]="!_categoryIds().includes(cat.id) || !cat.isActive"
+                [class.text-ink]="!_categoryIds().includes(cat.id) && cat.isActive"
+                [class.cursor-pointer]="cat.isActive"
+                [class.opacity-40]="!cat.isActive"
+                [class.cursor-not-allowed]="!cat.isActive"
+                [class.line-through]="!cat.isActive"
               >
                 {{ cat.name }}
+                @if (!cat.isActive) {
+                  <span class="text-[10px] no-underline ml-1">(inactiva)</span>
+                }
               </button>
             }
           </div>
@@ -92,23 +100,35 @@
           <p class="text-xs text-ink-mute mb-2">Haz clic para seleccionar los colores disponibles en este producto.</p>
           <div class="flex flex-wrap gap-2 max-h-52 overflow-y-auto pr-1 py-1">
             @for (color of _colors(); track color.id) {
-              <button
-                type="button"
-                (click)="toggleColor(color.id)"
-                [title]="color.name"
-                class="w-8 h-8 rounded-lg border-2 transition-all cursor-pointer flex items-center justify-center"
-                [style.background-color]="color.hex"
-                [class.border-ink]="_colorIds().includes(color.id)"
-                [class.scale-110]="_colorIds().includes(color.id)"
-                [class.shadow-md]="_colorIds().includes(color.id)"
-                [class.border-transparent]="!_colorIds().includes(color.id)"
-                style="outline: 1px solid rgba(0,0,0,0.12)"
-              >
-                @if (_colorIds().includes(color.id)) {
-                  <span class="material-symbols-outlined text-[14px] leading-none"
-                    [style.color]="colorCheckmark(color.hex)">check</span>
-                }
-              </button>
+              @if (color.isActive) {
+                <button
+                  type="button"
+                  (click)="toggleColor(color.id)"
+                  [title]="color.name"
+                  class="w-8 h-8 rounded-lg border-2 transition-all cursor-pointer flex items-center justify-center"
+                  [style.background-color]="color.hex"
+                  [class.border-ink]="_colorIds().includes(color.id)"
+                  [class.scale-110]="_colorIds().includes(color.id)"
+                  [class.shadow-md]="_colorIds().includes(color.id)"
+                  [class.border-transparent]="!_colorIds().includes(color.id)"
+                  style="outline: 1px solid rgba(0,0,0,0.12)"
+                >
+                  @if (_colorIds().includes(color.id)) {
+                    <span class="material-symbols-outlined text-[14px] leading-none"
+                      [style.color]="colorCheckmark(color.hex)">check</span>
+                  }
+                </button>
+              } @else {
+                <button
+                  type="button"
+                  disabled
+                  [title]="color.name + ' (inactivo — debes activar este color primero)'"
+                  class="w-8 h-8 rounded-lg border-2 border-dashed border-gray-300 transition-all cursor-not-allowed flex items-center justify-center opacity-40"
+                  [style.background-color]="color.hex"
+                >
+                  <span class="material-symbols-outlined text-[12px] leading-none text-white" style="text-shadow: 0 0 2px rgba(0,0,0,0.5)">block</span>
+                </button>
+              }
             }
           </div>
           @if (_colorIds().length > 0) {
@@ -125,19 +145,24 @@
             @for (brand of _brands(); track brand.id) {
               <button
                 type="button"
-                (click)="selectBrand(brand.id)"
-                [disabled]="selectedBrandId !== null && selectedBrandId !== brand.id"
+                (click)="brand.isActive && selectBrand(brand.id)"
+                [disabled]="!brand.isActive || (selectedBrandId !== null && selectedBrandId !== brand.id)"
+                [title]="brand.isActive ? '' : 'Debes activar esta marca primero'"
                 class="px-3 py-1.5 rounded-xl border text-sm font-medium transition-colors"
-                [class.bg-ink]="selectedBrandId === brand.id"
-                [class.text-white]="selectedBrandId === brand.id"
-                [class.border-ink]="selectedBrandId === brand.id"
-                [class.cursor-pointer]="selectedBrandId === null || selectedBrandId === brand.id"
-                [class.border-rule]="selectedBrandId !== brand.id"
-                [class.text-ink]="selectedBrandId !== brand.id"
-                [class.opacity-35]="selectedBrandId !== null && selectedBrandId !== brand.id"
-                [class.cursor-not-allowed]="selectedBrandId !== null && selectedBrandId !== brand.id"
+                [class.bg-ink]="selectedBrandId === brand.id && brand.isActive"
+                [class.text-white]="selectedBrandId === brand.id && brand.isActive"
+                [class.border-ink]="selectedBrandId === brand.id && brand.isActive"
+                [class.cursor-pointer]="brand.isActive && (selectedBrandId === null || selectedBrandId === brand.id)"
+                [class.border-rule]="selectedBrandId !== brand.id || !brand.isActive"
+                [class.text-ink]="selectedBrandId !== brand.id && brand.isActive"
+                [class.opacity-35]="!brand.isActive || (selectedBrandId !== null && selectedBrandId !== brand.id)"
+                [class.cursor-not-allowed]="!brand.isActive || (selectedBrandId !== null && selectedBrandId !== brand.id)"
+                [class.line-through]="!brand.isActive"
               >
                 {{ brand.name }}
+                @if (!brand.isActive) {
+                  <span class="text-[10px] no-underline ml-1">(inactiva)</span>
+                }
               </button>
             }
           </div>

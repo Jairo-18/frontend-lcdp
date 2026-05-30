@@ -82,6 +82,7 @@ export class CatalogoComponent implements OnInit, OnDestroy {
   readonly orderBy = signal<'name' | 'createdAt'>('name');
   readonly showPromotion = signal<boolean | null>(null);
   readonly colorMenuOpen = signal(false);
+  readonly mobileColorMenuOpen = signal(false);
 
   readonly selectedColorName = computed(() =>
     this.colors().find(c => c.id === this.selectedColorId())?.name ?? null,
@@ -133,8 +134,8 @@ export class CatalogoComponent implements OnInit, OnDestroy {
     ])
       .pipe(takeUntil(this._destroy$))
       .subscribe(([bootstrap, params]) => {
-        this.categories.set(bootstrap.categories);
-        this.brands.set(bootstrap.brands);
+        this.categories.set(bootstrap.categories.filter(c => c.isActive !== false));
+        this.brands.set(bootstrap.brands.filter(b => b.isActive !== false));
         this.selectedCategory.set(params['categoria'] ?? null);
         this.selectedBrand.set(params['marca'] ?? null);
         this.selectedColorId.set(params['color'] ? Number(params['color']) : null);

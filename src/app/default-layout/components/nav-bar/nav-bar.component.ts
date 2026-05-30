@@ -11,7 +11,6 @@ import { NavBarMobileComponent } from '../nav-bar-mobile/nav-bar-mobile.componen
 export class NavBarComponent {
   @Input() cartCount: number = 0;
   @Input() logoUrl: string = '';
-  @Output() openMenu = new EventEmitter<void>();
   @Output() openCart = new EventEmitter<void>();
   @Output() goHome = new EventEmitter<void>();
   @Output() openRender = new EventEmitter<void>();

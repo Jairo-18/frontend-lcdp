@@ -72,12 +72,62 @@
         />
 
         @if (colors().length > 0) {
-          <app-select-field
-            class="w-full sm:w-auto"
-            [options]="colorOptions()"
-            [ngModel]="selectedColorId() ? selectedColorIdStr() : ''"
-            (ngModelChange)="onColorSelect($event)"
-          />
+          <div class="w-full relative">
+            <button
+              type="button"
+              (click)="mobileColorMenuOpen.set(!mobileColorMenuOpen())"
+              class="w-full flex items-center gap-2 px-3 py-2 rounded-xl border text-sm font-semibold transition-colors cursor-pointer"
+              [class.border-ink]="selectedColorId()"
+              [class.bg-ink]="selectedColorId()"
+              [class.text-white]="selectedColorId()"
+              [class.border-rule]="!selectedColorId()"
+              [class.bg-white]="!selectedColorId()"
+              [class.text-ink-mute]="!selectedColorId()"
+            >
+              @if (selectedColorId()) {
+                <span class="w-4 h-4 rounded-full shrink-0 border border-white/30"
+                  [style.background-color]="selectedColorHex()"></span>
+                {{ selectedColorName() }}
+              } @else {
+                <span class="material-symbols-outlined text-[16px] leading-none">palette</span>
+                Todos los colores
+              }
+              <span class="material-symbols-outlined text-[14px] leading-none opacity-60 ml-auto"
+                [style.transform]="mobileColorMenuOpen() ? 'rotate(180deg)' : ''">expand_more</span>
+            </button>
+
+            @if (mobileColorMenuOpen()) {
+              <div class="absolute left-0 right-0 top-full mt-1.5 z-50 bg-white border border-rule rounded-2xl shadow-xl p-3 max-h-60 overflow-y-auto"
+                style="scrollbar-width: thin">
+                @if (selectedColorId()) {
+                  <button type="button"
+                    (click)="onColorSelect(''); mobileColorMenuOpen.set(false)"
+                    class="w-full flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-xs text-ink-mute hover:bg-paper-alt transition-colors cursor-pointer border-0 bg-transparent mb-1">
+                    <span class="material-symbols-outlined text-[14px] leading-none">close</span>
+                    Todos los colores
+                  </button>
+                  <hr class="border-rule mb-1">
+                }
+                <div class="space-y-0.5">
+                  @for (color of colors(); track color.id) {
+                    <button type="button"
+                      (click)="onColorSelect(toStr(color.id)); mobileColorMenuOpen.set(false)"
+                      class="w-full flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-sm transition-colors cursor-pointer border-0 bg-transparent text-left"
+                      [class.bg-paper-alt]="selectedColorId() === color.id"
+                      [class.font-semibold]="selectedColorId() === color.id"
+                      [class.text-ink]="selectedColorId() === color.id"
+                      [class.text-ink-mute]="selectedColorId() !== color.id"
+                    >
+                      <span class="w-5 h-5 rounded-full shrink-0 border border-rule shadow-sm"
+                        [style.background-color]="color.hex"></span>
+                      {{ color.name }}
+                    </button>
+                  }
+                </div>
+              </div>
+              <div class="fixed inset-0 z-40" (click)="mobileColorMenuOpen.set(false)"></div>
+            }
+          </div>
         }
 
         <div class="w-full sm:w-auto flex items-center gap-2">

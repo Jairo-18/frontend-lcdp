@@ -2,39 +2,39 @@
 <div class="fixed inset-0 z-[200] flex flex-col bg-white">
 
   <!-- Header bar -->
-  <div class="flex items-center justify-between px-5 py-3 border-b border-gray-200 shrink-0 bg-white">
-    <div class="flex items-center gap-3">
-      <span class="material-symbols-outlined text-[22px] text-gray-500">3d_rotation</span>
-      <div>
-        <h2 class="font-semibold text-gray-800 text-[15px] leading-tight">Visualizador de espacios</h2>
-        <p class="text-[11px] text-gray-400">Selecciona un espacio, haz clic en una superficie y elige el color</p>
+  <div class="flex items-center justify-between px-4 lg:px-5 py-2.5 lg:py-3 border-b border-gray-200 shrink-0 bg-white">
+    <div class="flex items-center gap-2 lg:gap-3 min-w-0">
+      <span class="material-symbols-outlined text-[20px] lg:text-[22px] text-gray-500 shrink-0">3d_rotation</span>
+      <div class="min-w-0">
+        <h2 class="font-semibold text-gray-800 text-[14px] lg:text-[15px] leading-tight truncate">Visualizador de espacios</h2>
+        <p class="text-[10px] lg:text-[11px] text-gray-400 hidden sm:block">Selecciona un espacio, haz clic en una superficie y elige el color</p>
       </div>
     </div>
     <button
       (click)="close.emit()"
-      class="w-9 h-9 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-all border-0 bg-transparent cursor-pointer"
+      class="w-8 h-8 lg:w-9 lg:h-9 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-all border-0 bg-transparent cursor-pointer shrink-0"
       title="Cerrar">
       <span class="material-symbols-outlined text-[20px] leading-none">close</span>
     </button>
   </div>
 
   <!-- Body -->
-  <div class="flex-1 flex overflow-hidden">
+  <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
 
     <!-- ── SVG Room ── -->
-    <div class="flex-1 bg-gradient-to-br from-slate-100 to-gray-200 flex flex-col items-center justify-center p-4 lg:p-6 overflow-hidden gap-3">
+    <div class="shrink-0 lg:flex-1 bg-gradient-to-br from-slate-100 to-gray-200 flex flex-col items-center justify-center p-3 lg:p-6 overflow-hidden gap-2 lg:gap-3 h-[38dvh] lg:h-auto">
 
       <!-- View selector -->
-      <div class="flex gap-1 bg-white/90 backdrop-blur-sm rounded-xl p-1 shadow-md border border-white/60 shrink-0">
+      <div class="flex gap-0.5 lg:gap-1 bg-white/90 backdrop-blur-sm rounded-xl p-0.5 lg:p-1 shadow-md border border-white/60 shrink-0">
         @for (v of views; track v.key) {
           <button
             (click)="activeView.set(v.key)"
-            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-medium transition-all cursor-pointer border-0"
+            class="flex items-center gap-1 lg:gap-1.5 px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg text-[11px] lg:text-[12px] font-medium transition-all cursor-pointer border-0"
             [class.bg-ink]="activeView() === v.key"
             [class.text-white]="activeView() === v.key"
             [class.text-gray-500]="activeView() !== v.key"
             [class.bg-transparent]="activeView() !== v.key">
-            <span class="material-symbols-outlined text-[15px] leading-none">{{ v.icon }}</span>
+            <span class="material-symbols-outlined text-[14px] lg:text-[15px] leading-none">{{ v.icon }}</span>
             <span class="hidden sm:inline">{{ v.label }}</span>
           </button>
         }
@@ -45,7 +45,7 @@
         viewBox="0 0 900 580"
         xmlns="http://www.w3.org/2000/svg"
         class="w-full h-full"
-        style="max-height: calc(100vh - 155px); filter: drop-shadow(0 12px 40px rgba(0,0,0,0.22))">
+        style="max-height: calc(100dvh - 155px); filter: drop-shadow(0 12px 40px rgba(0,0,0,0.22))">
 
         @switch (activeView()) {
 
@@ -504,35 +504,30 @@
     </div>
 
     <!-- ── COLOR PICKER PANEL ── -->
-    <div class="w-72 xl:w-80 flex flex-col border-l border-gray-200 bg-white overflow-hidden shrink-0">
+    <div class="flex-1 lg:flex-none lg:w-72 xl:w-80 flex flex-col border-t lg:border-t-0 lg:border-l border-gray-200 bg-white overflow-hidden">
 
-      <!-- Surface selector -->
-      <div class="px-4 pt-4 pb-3 border-b border-gray-100">
-        <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2.5">Superficie activa</p>
-        <div class="flex gap-2">
+      <!-- Surface selector + Search (compact row on mobile) -->
+      <div class="px-3 lg:px-4 pt-3 lg:pt-4 pb-2 lg:pb-3 border-b border-gray-100">
+        <div class="flex gap-1.5 lg:gap-2 mb-2 lg:mb-2.5">
           @for (s of surfaces; track s.key) {
             <button
               (click)="activeSurface.set(s.key)"
-              class="flex-1 flex flex-col items-center gap-1 py-2.5 px-1 rounded-xl border-2 text-[11px] font-medium transition-all cursor-pointer"
+              class="flex-1 flex items-center lg:flex-col gap-1.5 lg:gap-1 py-2 lg:py-2.5 px-2 lg:px-1 rounded-xl border-2 text-[11px] font-medium transition-all cursor-pointer"
               [class.border-ink]="activeSurface() === s.key"
               [class.bg-ink]="activeSurface() === s.key"
               [class.text-white]="activeSurface() === s.key"
               [class.border-gray-200]="activeSurface() !== s.key"
               [class.text-gray-500]="activeSurface() !== s.key">
-              <span class="material-symbols-outlined text-[17px] leading-none">{{ s.icon }}</span>
-              {{ s.label }}
               <span
-                class="w-5 h-5 rounded-full border border-gray-200 shadow-sm block mt-0.5 transition-colors"
+                class="w-5 h-5 rounded-full border border-gray-200 shadow-sm shrink-0 transition-colors lg:order-last lg:mt-0.5"
                 [style.background]="s.color()">
               </span>
+              <span class="material-symbols-outlined text-[15px] lg:text-[17px] leading-none hidden lg:block">{{ s.icon }}</span>
+              <span class="truncate">{{ s.label }}</span>
             </button>
           }
         </div>
-      </div>
-
-      <!-- Search -->
-      <div class="px-4 py-3">
-        <div class="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus-within:border-gray-400 transition-colors">
+        <div class="flex items-center gap-2 px-3 py-1.5 lg:py-2 bg-gray-50 rounded-lg border border-gray-200 focus-within:border-gray-400 transition-colors">
           <span class="material-symbols-outlined text-[15px] text-gray-400 shrink-0 leading-none">search</span>
           <input
             type="text"
@@ -543,24 +538,24 @@
       </div>
 
       <!-- Color grid -->
-      <div class="flex-1 overflow-y-auto px-4 pb-4 color-scroll">
+      <div class="flex-1 overflow-y-auto px-3 lg:px-4 pb-3 lg:pb-4 pt-2 lg:pt-0 color-scroll">
         @if (loading()) {
-          <div class="flex items-center justify-center py-12 gap-2.5">
+          <div class="flex items-center justify-center py-8 lg:py-12 gap-2.5">
             <div class="w-5 h-5 border-2 border-gray-200 border-t-gray-600 rounded-full animate-spin"></div>
             <span class="text-sm text-gray-400">Cargando colores…</span>
           </div>
         } @else if (colorsByFamily.length === 0) {
-          <div class="text-center py-10">
+          <div class="text-center py-6 lg:py-10">
             <span class="material-symbols-outlined text-[40px] text-gray-200 leading-none">palette</span>
             <p class="text-sm text-gray-400 mt-2">Sin resultados</p>
           </div>
         } @else {
           @for (group of colorsByFamily; track group.family) {
-            <div class="mb-4">
-              <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2 leading-none">
+            <div class="mb-3 lg:mb-4">
+              <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-1.5 lg:mb-2 leading-none">
                 {{ group.family }}
               </p>
-              <div class="grid grid-cols-7 gap-1.5">
+              <div class="grid grid-cols-8 sm:grid-cols-10 lg:grid-cols-7 gap-1.5">
                 @for (color of group.colors; track color.id) {
                   <button
                     (click)="selectColor(color)"
@@ -588,9 +583,9 @@
       </div>
 
       <!-- Footer: active color + reset -->
-      <div class="px-4 py-3 border-t border-gray-100 flex items-center gap-3 shrink-0">
+      <div class="px-3 lg:px-4 py-2.5 lg:py-3 border-t border-gray-100 flex items-center gap-3 shrink-0">
         <span
-          class="w-8 h-8 rounded-xl shrink-0 border border-gray-200 shadow-sm transition-colors"
+          class="w-7 h-7 lg:w-8 lg:h-8 rounded-xl shrink-0 border border-gray-200 shadow-sm transition-colors"
           [style.background]="activeSurfaceCfg.color()">
         </span>
         <span class="text-xs text-gray-500 flex-1 truncate">{{ activeSurfaceCfg.label }}</span>
