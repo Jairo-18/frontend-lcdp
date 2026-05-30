@@ -13,7 +13,6 @@ export const adminRoutes: Routes = [
       },
       {
         path: 'aplication',
-        data: { reuseKey: 'admin-aplication' },
         loadComponent: () =>
           import('./pages/aplication/create-or-edit-aplication/create-or-edit-aplication.component').then(
             (m) => m.CreateOrEditAplicationComponent,

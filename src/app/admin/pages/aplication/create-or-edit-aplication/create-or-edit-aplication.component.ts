@@ -118,6 +118,7 @@ export class CreateOrEditAplicationComponent implements OnInit, OnDestroy {
     missionDescription: [''],
     visionTitle:        ['', Validators.maxLength(200)],
     visionDescription:  [''],
+    howToOrderVideoUrl: ['', Validators.maxLength(500)],
     metaTitle:          ['', Validators.maxLength(200)],
     metaDescription:    [''],
     metaKeywords:       ['', Validators.maxLength(500)],
