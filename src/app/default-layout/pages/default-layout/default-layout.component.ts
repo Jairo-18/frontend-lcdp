@@ -3,7 +3,7 @@ import { RouterOutlet, Router } from '@angular/router';
 import { AdminSidebarComponent } from '../../components/admin-sidebar/admin-sidebar.component';
 import { NavBarComponent } from '../../components/nav-bar/nav-bar.component';
 import { FooterComponent } from '../../components/footer/footer.component';
-import { AnnouncementBarComponent, CartDrawerComponent } from '@shared/components';
+import { AnnouncementBarComponent, CartDrawerComponent, RoomRenderComponent } from '@shared/components';
 import { OrganizationalService } from '@shared/services/organizational.service';
 import { CartService } from '@shared/services/cart.service';
 import { SeoService } from '@shared/services/seo.service';
@@ -11,7 +11,7 @@ import { SeoService } from '@shared/services/seo.service';
 @Component({
   selector: 'app-default-layout',
   standalone: true,
-  imports: [RouterOutlet, AdminSidebarComponent, NavBarComponent, FooterComponent, CartDrawerComponent, AnnouncementBarComponent],
+  imports: [RouterOutlet, AdminSidebarComponent, NavBarComponent, FooterComponent, CartDrawerComponent, AnnouncementBarComponent, RoomRenderComponent],
   templateUrl: './default-layout.component.html',
   styleUrls: ['./default-layout.component.scss'],
 })
@@ -22,10 +22,11 @@ export class DefaultLayoutComponent implements OnInit {
 
   readonly _org = computed(() => this._orgService.org());
   readonly cartOpen = signal(false);
+  readonly renderOpen = signal(false);
 
   isAdmin: boolean = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
     this._orgService.bootstrap().subscribe({

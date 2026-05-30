@@ -8,3 +8,4 @@ export { PaginatorComponent } from './paginator/paginator.component';
 export { ImageEditorComponent } from './image-editor/image-editor.component';
 export { CartDrawerComponent } from './cart-drawer/cart-drawer.component';
 export { AnnouncementBarComponent } from './announcement-bar/announcement-bar.component';
+export { RoomRenderComponent } from './room-render/room-render.component';

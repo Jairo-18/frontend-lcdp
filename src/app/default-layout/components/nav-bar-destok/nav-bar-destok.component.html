@@ -78,8 +78,16 @@
       <span class="hidden 2xl:inline">Nosotros</span>
     </a>
 
+    <button
+      (click)="openRender.emit()"
+      title="Ver Render"
+      class="ml-1 px-3 py-2.5 2xl:px-3.5 rounded-lg inline-flex items-center gap-2 text-sm font-medium bg-yellow text-ink border border-yellow/0 cursor-pointer transition-all hover:brightness-95">
+      <span class="material-symbols-outlined text-[18px] leading-none">3d_rotation</span>
+      <span class="hidden 2xl:inline font-semibold">Ver Render</span>
+    </button>
+
     <a routerLink="/auth/login" routerLinkActive="!bg-ink !text-white !border-ink" title="Admin"
-      class="ml-2 px-3 py-2.5 2xl:px-[18px] rounded-lg inline-flex items-center gap-2 text-sm font-medium bg-white border border-rule text-ink-soft no-underline transition-all hover:bg-ink hover:text-white hover:border-ink">
+      class="ml-1 px-3 py-2.5 2xl:px-[18px] rounded-lg inline-flex items-center gap-2 text-sm font-medium bg-white border border-rule text-ink-soft no-underline transition-all hover:bg-ink hover:text-white hover:border-ink">
       <span class="material-symbols-outlined text-[18px] leading-none">manage_accounts</span>
       <span class="hidden 2xl:inline">Admin</span>
     </a>

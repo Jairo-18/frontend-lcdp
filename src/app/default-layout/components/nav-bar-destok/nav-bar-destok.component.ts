@@ -25,6 +25,7 @@ export class NavBarDestokComponent {
   @Output() selectCategory = new EventEmitter<string | null>();
   @Output() goHome = new EventEmitter<void>();
   @Output() goAdmin = new EventEmitter<void>();
+  @Output() openRender = new EventEmitter<void>();
 
   searchQuery: string = '';
 

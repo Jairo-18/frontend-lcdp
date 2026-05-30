@@ -1,0 +1,303 @@
+<!-- Full-screen modal -->
+<div class="fixed inset-0 z-[200] flex flex-col bg-white">
+
+  <!-- Header bar -->
+  <div class="flex items-center justify-between px-5 py-3 border-b border-gray-200 shrink-0 bg-white">
+    <div class="flex items-center gap-3">
+      <span class="material-symbols-outlined text-[22px] text-gray-500">3d_rotation</span>
+      <div>
+        <h2 class="font-semibold text-gray-800 text-[15px] leading-tight">Visualizador de habitación</h2>
+        <p class="text-[11px] text-gray-400">Haz clic en una superficie o usa los botones para pintar</p>
+      </div>
+    </div>
+    <button
+      (click)="close.emit()"
+      class="w-9 h-9 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-all border-0 bg-transparent cursor-pointer"
+      title="Cerrar">
+      <span class="material-symbols-outlined text-[20px] leading-none">close</span>
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="flex-1 flex overflow-hidden">
+
+    <!-- ── SVG Room ── -->
+    <div class="flex-1 bg-gradient-to-br from-slate-100 to-gray-200 flex items-center justify-center p-4 lg:p-8 overflow-hidden">
+      <svg
+        viewBox="0 0 900 580"
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-full h-full"
+        style="max-height: calc(100vh - 110px); filter: drop-shadow(0 12px 40px rgba(0,0,0,0.22))">
+
+        <!-- ── ROOM SURFACES ── -->
+
+        <!-- Floor -->
+        <polygon
+          points="0,580 900,580 650,380 250,380"
+          [attr.fill]="floorColor()"
+          class="room-surface cursor-pointer"
+          (click)="activeSurface.set('piso')" />
+
+        <!-- Ceiling -->
+        <polygon
+          points="0,0 900,0 650,80 250,80"
+          [attr.fill]="ceilingColor()"
+          class="room-surface cursor-pointer"
+          (click)="activeSurface.set('techo')" />
+
+        <!-- Left wall -->
+        <polygon
+          points="0,0 250,80 250,380 0,580"
+          [attr.fill]="wallColor()"
+          class="room-surface cursor-pointer"
+          (click)="activeSurface.set('pared')" />
+        <!-- Left wall ambient shadow -->
+        <polygon points="0,0 250,80 250,380 0,580" fill="rgba(0,0,0,0.09)" style="pointer-events:none" />
+
+        <!-- Right wall -->
+        <polygon
+          points="900,0 650,80 650,380 900,580"
+          [attr.fill]="wallColor()"
+          class="room-surface cursor-pointer"
+          (click)="activeSurface.set('pared')" />
+        <!-- Right wall ambient shadow -->
+        <polygon points="900,0 650,80 650,380 900,580" fill="rgba(0,0,0,0.05)" style="pointer-events:none" />
+
+        <!-- Back wall -->
+        <polygon
+          points="250,80 650,80 650,380 250,380"
+          [attr.fill]="wallColor()"
+          class="room-surface cursor-pointer"
+          (click)="activeSurface.set('pared')" />
+
+        <!-- ── ACTIVE SURFACE HIGHLIGHT ── -->
+        @if (activeSurface() === 'piso') {
+          <polygon points="0,580 900,580 650,380 250,380"
+            fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3" class="selection-march" style="pointer-events:none"/>
+        }
+        @if (activeSurface() === 'techo') {
+          <polygon points="0,0 900,0 650,80 250,80"
+            fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3" class="selection-march" style="pointer-events:none"/>
+        }
+        @if (activeSurface() === 'pared') {
+          <polygon points="250,80 650,80 650,380 250,380"
+            fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3" class="selection-march" style="pointer-events:none"/>
+        }
+
+        <!-- ── ROOM EDGE LINES ── -->
+        <!-- Back wall edges -->
+        <line x1="250" y1="80"  x2="250" y2="380" stroke="rgba(0,0,0,0.18)" stroke-width="1.5"/>
+        <line x1="650" y1="80"  x2="650" y2="380" stroke="rgba(0,0,0,0.12)" stroke-width="1.5"/>
+        <line x1="250" y1="80"  x2="650" y2="80"  stroke="rgba(0,0,0,0.10)" stroke-width="1"/>
+        <line x1="250" y1="380" x2="650" y2="380" stroke="rgba(0,0,0,0.20)" stroke-width="1.5"/>
+        <!-- Edges to viewport corners -->
+        <line x1="250" y1="80"  x2="0"   y2="0"   stroke="rgba(0,0,0,0.07)" stroke-width="1"/>
+        <line x1="650" y1="80"  x2="900" y2="0"   stroke="rgba(0,0,0,0.07)" stroke-width="1"/>
+        <line x1="250" y1="380" x2="0"   y2="580" stroke="rgba(0,0,0,0.10)" stroke-width="1"/>
+        <line x1="650" y1="380" x2="900" y2="580" stroke="rgba(0,0,0,0.10)" stroke-width="1"/>
+
+        <!-- ── BASEBOARD ── -->
+        <polygon points="0,569  250,373 250,380 0,580"   fill="rgba(255,255,255,0.30)"/>
+        <polygon points="900,569 650,373 650,380 900,580" fill="rgba(255,255,255,0.24)"/>
+        <rect    x="250" y="374" width="400" height="6"  fill="rgba(255,255,255,0.28)"/>
+
+        <!-- ── WINDOW ── -->
+        <!-- Curtains (behind window frame) -->
+        <polygon points="335,108 362,108 368,278 327,278" fill="#A89880" opacity="0.78"/>
+        <polygon points="565,108 538,108 532,278 573,278" fill="#A89880" opacity="0.78"/>
+        <!-- Window outer frame -->
+        <rect x="335" y="108" width="230" height="170" rx="3" fill="white" stroke="#8B9BAF" stroke-width="3"/>
+        <!-- Sky visible through glass -->
+        <rect x="338" y="111" width="108" height="78"  fill="#C5E2F5"/>
+        <rect x="450" y="111" width="111" height="78"  fill="#CEE8F8"/>
+        <rect x="338" y="193" width="108" height="81"  fill="#D8EFF8"/>
+        <rect x="450" y="193" width="111" height="81"  fill="#D2EBF5"/>
+        <!-- Window pane dividers -->
+        <line x1="449" y1="111" x2="449" y2="278" stroke="#8B9BAF" stroke-width="2.5"/>
+        <line x1="338" y1="192" x2="562" y2="192" stroke="#8B9BAF" stroke-width="2.5"/>
+        <!-- Window sill -->
+        <rect x="327" y="278" width="246" height="10" rx="2" fill="#BCA898"/>
+
+        <!-- ── CEILING LIGHT ── -->
+        <rect x="388" y="80" width="124" height="9" rx="2" fill="rgba(0,0,0,0.22)"/>
+        <line x1="450" y1="89" x2="450" y2="116" stroke="#999" stroke-width="1.5"/>
+        <ellipse cx="450" cy="128" rx="27" ry="13" fill="#F5EDD6" stroke="#D4C8A0" stroke-width="1.5"/>
+        <ellipse cx="450" cy="141" rx="19" ry="7"  fill="rgba(255,240,150,0.32)"/>
+
+        <!-- ── WALL ART (left wall, perspective skewed) ── -->
+        <polygon points="28,118 118,133 118,220 28,202" fill="white" stroke="#8A7A6A" stroke-width="2"/>
+        <!-- Canvas background -->
+        <polygon points="33,123 113,137 113,216 33,207" fill="#8BA888"/>
+        <!-- Simple landscape: sky gradient strip -->
+        <polygon points="33,123 113,137 113,165 33,148" fill="#B0CDE0"/>
+        <!-- Mountains -->
+        <polygon points="33,207 55,178 72,196 87,170 113,216" fill="#5C7C5A"/>
+        <polygon points="33,190 55,178 33,207"               fill="#4E6E4C"/>
+        <!-- Sun -->
+        <circle cx="97" cy="145" r="9" fill="#F0D058"/>
+
+        <!-- ── BED ── -->
+        <!-- Rug (under bed) -->
+        <polygon points="458,394 652,394 786,514 444,514" fill="#9B7E5A" opacity="0.22"/>
+
+        <!-- Headboard (drawn before mattress so mattress covers lower part) -->
+        <rect x="472" y="200" width="176" height="112" rx="3" fill="#5C3D1E"/>
+        <!-- Headboard top rail -->
+        <rect x="469" y="196" width="182" height="13"  rx="3" fill="#6B4828"/>
+        <!-- Headboard recessed panels -->
+        <rect x="479" y="213" width="74"  height="88"  rx="2" fill="#4A3018"/>
+        <rect x="561" y="213" width="74"  height="88"  rx="2" fill="#4A3018"/>
+
+        <!-- Bed frame – left face (thin sliver) -->
+        <polygon points="472,312 490,418 490,505 472,390" fill="#6B4828"/>
+        <!-- Bed frame – front face -->
+        <polygon points="490,418 782,418 782,505 490,505" fill="#7A5530"/>
+        <!-- Bed frame – right face -->
+        <polygon points="648,312 782,418 782,505 648,390" fill="#5C3D1E"/>
+
+        <!-- Mattress surface -->
+        <polygon points="472,312 648,312 782,418 490,418" fill="#EDE5D8"/>
+        <!-- Mattress front edge strip -->
+        <polygon points="490,418 782,418 782,424 490,424" fill="#D4C8B4"/>
+
+        <!-- Blanket / duvet -->
+        <polygon points="490,358 782,418 782,448 490,448" fill="#C4D4E4"/>
+        <!-- Blanket fold (top decorative edge) -->
+        <polygon points="490,353 782,413 782,360 490,353" fill="#B6C8DC"/>
+        <!-- Blanket front overhang -->
+        <polygon points="490,444 782,444 782,454 490,454" fill="#B0C2D6"/>
+
+        <!-- Pillows -->
+        <polygon points="484,310 553,310 550,342 481,342" fill="#F5F0E8"/>
+        <polygon points="559,310 643,310 648,342 555,342" fill="#F8F4EC"/>
+        <!-- Pillow bottom shadow -->
+        <polygon points="485,340 552,340 549,344 483,344" fill="rgba(0,0,0,0.08)"/>
+        <polygon points="559,340 643,340 648,344 556,344" fill="rgba(0,0,0,0.08)"/>
+
+        <!-- ── BEDSIDE TABLE ── -->
+        <!-- Table top surface -->
+        <polygon points="410,334 472,334 490,398 402,398" fill="#6B4828"/>
+        <!-- Table front face -->
+        <polygon points="402,398 490,398 490,456 402,456" fill="#7A5530"/>
+        <!-- Table right face -->
+        <polygon points="472,334 490,398 490,456 472,390" fill="#5C3D1E"/>
+        <!-- Drawer divider line -->
+        <line x1="406" y1="427" x2="488" y2="427" stroke="rgba(0,0,0,0.28)" stroke-width="1"/>
+        <!-- Drawer handle -->
+        <rect x="430" y="422" width="28" height="4" rx="2" fill="#A08060"/>
+
+        <!-- ── BEDSIDE LAMP ── -->
+        <!-- Lamp shade -->
+        <polygon points="424,337 470,337 464,319 430,319" fill="#F0E0BE"/>
+        <polygon points="428,335 466,335 461,322 433,322" fill="#E4D0A8"/>
+        <!-- Lamp pole -->
+        <line x1="447" y1="337" x2="447" y2="396" stroke="#C0A070" stroke-width="3" stroke-linecap="round"/>
+        <!-- Lamp base -->
+        <ellipse cx="447" cy="396" rx="13" ry="5" fill="#B09060"/>
+        <!-- Warm light glow on table -->
+        <ellipse cx="447" cy="398" rx="22" ry="8" fill="rgba(255,220,120,0.18)"/>
+
+      </svg>
+    </div>
+
+    <!-- ── COLOR PICKER PANEL ── -->
+    <div class="w-72 xl:w-80 flex flex-col border-l border-gray-200 bg-white overflow-hidden shrink-0">
+
+      <!-- Surface selector -->
+      <div class="px-4 pt-4 pb-3 border-b border-gray-100">
+        <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2.5">Superficie activa</p>
+        <div class="flex gap-2">
+          @for (s of surfaces; track s.key) {
+            <button
+              (click)="activeSurface.set(s.key)"
+              class="flex-1 flex flex-col items-center gap-1 py-2.5 px-1 rounded-xl border-2 text-[11px] font-medium transition-all cursor-pointer"
+              [class.border-ink]="activeSurface() === s.key"
+              [class.bg-ink]="activeSurface() === s.key"
+              [class.text-white]="activeSurface() === s.key"
+              [class.border-gray-200]="activeSurface() !== s.key"
+              [class.text-gray-500]="activeSurface() !== s.key">
+              <span class="material-symbols-outlined text-[17px] leading-none">{{ s.icon }}</span>
+              {{ s.label }}
+              <span
+                class="w-5 h-5 rounded-full border border-gray-200 shadow-sm block mt-0.5 transition-colors"
+                [style.background]="s.color()">
+              </span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="px-4 py-3">
+        <div class="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus-within:border-gray-400 transition-colors">
+          <span class="material-symbols-outlined text-[15px] text-gray-400 shrink-0 leading-none">search</span>
+          <input
+            type="text"
+            placeholder="Buscar color o familia…"
+            class="flex-1 bg-transparent text-sm outline-none text-gray-700 placeholder:text-gray-400"
+            [(ngModel)]="searchQuery" />
+        </div>
+      </div>
+
+      <!-- Color grid -->
+      <div class="flex-1 overflow-y-auto px-4 pb-4 color-scroll">
+        @if (loading()) {
+          <div class="flex items-center justify-center py-12 gap-2.5">
+            <div class="w-5 h-5 border-2 border-gray-200 border-t-gray-600 rounded-full animate-spin"></div>
+            <span class="text-sm text-gray-400">Cargando colores…</span>
+          </div>
+        } @else if (colorsByFamily.length === 0) {
+          <div class="text-center py-10">
+            <span class="material-symbols-outlined text-[40px] text-gray-200 leading-none">palette</span>
+            <p class="text-sm text-gray-400 mt-2">Sin resultados</p>
+          </div>
+        } @else {
+          @for (group of colorsByFamily; track group.family) {
+            <div class="mb-4">
+              <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2 leading-none">
+                {{ group.family }}
+              </p>
+              <div class="grid grid-cols-7 gap-1.5">
+                @for (color of group.colors; track color.id) {
+                  <button
+                    (click)="selectColor(color)"
+                    [title]="color.name + (color.code ? ' · ' + color.code : '')"
+                    class="w-full aspect-square rounded-lg border-2 transition-all hover:scale-105 relative overflow-hidden cursor-pointer"
+                    [style.background]="color.hex"
+                    [class.border-ink]="isSelected(color)"
+                    [class.scale-105]="isSelected(color)"
+                    [class.border-transparent]="!isSelected(color)">
+                    @if (isSelected(color)) {
+                      <span class="absolute inset-0 flex items-center justify-center">
+                        <span
+                          class="material-symbols-outlined text-[12px] leading-none font-bold"
+                          [style.color]="isLight(color.hex) ? '#1a1c2c' : '#ffffff'">
+                          check
+                        </span>
+                      </span>
+                    }
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        }
+      </div>
+
+      <!-- Footer: active color + reset -->
+      <div class="px-4 py-3 border-t border-gray-100 flex items-center gap-3 shrink-0">
+        <span
+          class="w-8 h-8 rounded-xl shrink-0 border border-gray-200 shadow-sm transition-colors"
+          [style.background]="activeSurfaceCfg.color()">
+        </span>
+        <span class="text-xs text-gray-500 flex-1 truncate">{{ activeSurfaceCfg.label }}</span>
+        <button
+          (click)="reset()"
+          class="text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-all shrink-0 cursor-pointer bg-white">
+          Restablecer
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

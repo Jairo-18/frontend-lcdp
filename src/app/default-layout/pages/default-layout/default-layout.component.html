@@ -10,6 +10,7 @@
         [logoUrl]="_org()?.logoUrl ?? ''"
         [cartCount]="cartSvc.count()"
         (openCart)="cartOpen.set(true)"
+        (openRender)="renderOpen.set(true)"
       />
       <app-announcement-bar />
     }
@@ -28,3 +29,7 @@
   [isOpen]="cartOpen()"
   (close)="cartOpen.set(false)"
 />
+
+@if (renderOpen()) {
+  <app-room-render (close)="renderOpen.set(false)" />
+}

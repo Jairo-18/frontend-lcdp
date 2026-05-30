@@ -41,6 +41,7 @@ export class NavBarMobileComponent implements OnInit, OnDestroy {
   @Input() logoUrl: string = '';
   @Output() openCart: EventEmitter<void> = new EventEmitter<void>();
   @Output() goHome: EventEmitter<void> = new EventEmitter<void>();
+  @Output() openRender: EventEmitter<void> = new EventEmitter<void>();
 
   readonly _isMenuOpen: WritableSignal<boolean> = signal(false);
 

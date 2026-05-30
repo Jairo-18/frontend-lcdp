@@ -14,4 +14,5 @@ export class NavBarComponent {
   @Output() openMenu = new EventEmitter<void>();
   @Output() openCart = new EventEmitter<void>();
   @Output() goHome = new EventEmitter<void>();
+  @Output() openRender = new EventEmitter<void>();
 }
