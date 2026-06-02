@@ -338,6 +338,7 @@ export class CatalogoComponent implements OnInit, OnDestroy {
       productId: product.id,
       productName: product.name,
       brandName: product.brand.name,
+      productCode: product.code ?? null,
       presentationId: pres.id,
       presentationName: pres.unitOfMeasure.name,
       sku: pres.sku,

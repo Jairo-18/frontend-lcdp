@@ -40,6 +40,18 @@ export class CheckoutModalComponent {
   phone: string = '';
   address: string = '';
   notes: string = '';
+  paymentMethod: 'addi' | 'sistecredito' | 'contado' = 'contado';
+
+  readonly paymentOptions = [
+    { value: 'addi' as const, emoji: '💳', label: 'Addi (cuotas)' },
+    { value: 'sistecredito' as const, emoji: '💰', label: 'Sistecredito' },
+    { value: 'contado' as const, emoji: '✅', label: 'De contado' },
+  ];
+
+  private get _greeting(): string {
+    const h = new Date().getHours();
+    return h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches';
+  }
 
   get items(): CartItem[] {
     return this._cartService.items();
@@ -62,32 +74,29 @@ export class CheckoutModalComponent {
     const p = this.phone.trim() || '[Tu teléfono]';
     const addr = this.address.trim();
     const nt = this.notes.trim();
+    const payLabel = this.paymentOptions.find(o => o.value === this.paymentMethod)?.label ?? 'De contado';
 
     const lines: string[] = [
-      `🧾 *NUEVA COTIZACIÓN*`,
+      `${this._greeting} 🎨`,
       ``,
-      `👤 *Cliente:* ${n}`,
-      `📞 *Celular:* ${p}`,
+      `Mi nombre es *${n}*, mi celular es *${p}*. Quiero comprar los siguientes productos por medio de pago *${payLabel}*:`,
+      ``,
     ];
-    if (addr) lines.push(`📍 *Dirección:* ${addr}`);
-    lines.push(``, `📦 *Productos:*`, ``);
 
     this._cartService.items().forEach((it) => {
-      const pres = it.sku
-        ? `${it.presentationName} - ${it.sku}`
-        : it.presentationName;
+      const ref = it.productCode ? ` · Cód. ${it.productCode}` : (it.sku ? ` · Ref ${it.sku}` : '');
       lines.push(
-        `• ${this._titleCasePipe.transform(it.productName)} (${pres}) x${it.quantity}`,
+        `• ${this._titleCasePipe.transform(it.productName)}${ref} (${it.presentationName}) x${it.quantity} — ${this._cartService.fmt(it.unitPrice * it.quantity)}`,
       );
-      lines.push(`  💰 ${this._cartService.fmt(it.unitPrice * it.quantity)}`);
-      lines.push('');
     });
 
     lines.push(
-      `💵 *TOTAL ESTIMADO:*`,
-      this._cartService.fmt(this._cartService.subtotal()),
+      ``,
+      `*Total estimado: ${this._cartService.fmt(this._cartService.subtotal())}*`,
     );
-    if (nt) lines.push(``, `📝 *Notas:* ${nt}`);
+    if (addr) lines.push(``, `📍 Dirección de entrega: ${addr}`);
+    if (nt) lines.push(`📝 Notas: ${nt}`);
+    lines.push(``, `¡Muchas gracias! 🙏`);
     return lines;
   }
 
@@ -103,11 +112,14 @@ export class CheckoutModalComponent {
   send(): void {
     if (!this.isValid || !isPlatformBrowser(this._platformId)) return;
 
+    const payLabel = this.paymentOptions.find(o => o.value === this.paymentMethod)?.label ?? '';
     const msg = this._cartService.buildCheckoutMessage({
       name: this.name.trim(),
       phone: this.phone.trim(),
       address: this.address.trim(),
       notes: this.notes.trim(),
+      greeting: this._greeting,
+      paymentMethod: payLabel,
     });
 
     const rawNum = this._organizationalService.org()?.whatsappNumber ?? '';

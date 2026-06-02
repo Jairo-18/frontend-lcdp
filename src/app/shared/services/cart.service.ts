@@ -5,6 +5,7 @@ export interface CartItem {
   productId: number;
   productName: string;
   brandName: string;
+  productCode: string | null;
   presentationId: number;
   presentationName: string;
   sku: string | null;
@@ -34,7 +35,7 @@ export class CartService {
       try {
         const raw = localStorage.getItem(CART_KEY);
         if (raw) this._items.set(JSON.parse(raw));
-      } catch {}
+      } catch { }
     }
   }
 
@@ -94,29 +95,31 @@ export class CartService {
     ].join('\n');
   }
 
-  buildCheckoutMessage(customer: { name: string; phone: string; address: string; notes: string }): string {
+  buildCheckoutMessage(customer: {
+    name: string; phone: string; address: string; notes: string;
+    greeting?: string; paymentMethod?: string;
+  }): string {
     const items = this._items();
     if (!items.length) return '';
+    const greeting = customer.greeting ?? 'Hola';
+    const pay = customer.paymentMethod ?? 'de contado';
     const productLines: string[] = [];
     items.forEach(it => {
-      const pres = it.sku ? `${it.presentationName} - ${it.sku}` : it.presentationName;
-      productLines.push(`• ${it.productName} (${pres}) x${it.quantity}`);
-      productLines.push(`  💰 ${this._fmt(it.unitPrice * it.quantity)}`);
-      productLines.push('');
+      const ref = it.productCode ? ` · Cód. ${it.productCode}` : (it.sku ? ` · Ref ${it.sku}` : '');
+      productLines.push(`• ${it.productName}${ref} (${it.presentationName}) x${it.quantity} — ${this._fmt(it.unitPrice * it.quantity)}`);
     });
     return [
-      `🧾 *NUEVA COTIZACIÓN*`,
+      `${greeting} 🎨`,
       ``,
-      `👤 *Cliente:* ${customer.name}`,
-      `📞 *Celular:* ${customer.phone}`,
-      customer.address ? `📍 *Dirección:* ${customer.address}` : null,
-      ``,
-      `📦 *Productos:*`,
+      `Mi nombre es *${customer.name}*, mi celular es *${customer.phone}*. Quiero comprar los siguientes productos por medio de pago *${pay}*:`,
       ``,
       ...productLines,
-      `💵 *TOTAL ESTIMADO:*`,
-      `${this._fmt(this.subtotal())}`,
-      customer.notes ? `\n📝 *Notas:* ${customer.notes}` : null,
+      ``,
+      `*Total estimado: ${this._fmt(this.subtotal())}*`,
+      customer.address ? `\n📍 Dirección de entrega: ${customer.address}` : null,
+      customer.notes ? `📝 Notas: ${customer.notes}` : null,
+      ``,
+      `¡Muchas gracias! 🙏`,
     ].filter(v => v !== null).join('\n');
   }
 

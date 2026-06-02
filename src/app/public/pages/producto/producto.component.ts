@@ -49,6 +49,13 @@ export class ProductoComponent implements OnInit, OnDestroy {
   readonly selectedColorId = signal<number | null>(null);
   readonly qty = signal(1);
   readonly addedFeedback = signal(false);
+  readonly paymentMethod = signal<'addi' | 'sistecredito' | 'contado'>('contado');
+
+  readonly paymentOptions = [
+    { value: 'addi' as const, emoji: '💳', label: 'Addi' },
+    { value: 'sistecredito' as const, emoji: '💰', label: 'Sistecredito' },
+    { value: 'contado' as const, emoji: '✅', label: 'Contado' },
+  ];
   readonly expandedPanels = signal<Set<string>>(new Set());
 
   readonly subtotal = computed(() => {
@@ -132,6 +139,7 @@ export class ProductoComponent implements OnInit, OnDestroy {
         productId: p.id,
         productName: p.name,
         brandName: p.brand.name,
+        productCode: p.code ?? null,
         presentationId: pres?.id ?? -1,
         presentationName: pres?.unitOfMeasure.name ?? '',
         sku: pres?.sku ?? null,
@@ -161,12 +169,27 @@ export class ProductoComponent implements OnInit, OnDestroy {
     if (!num || !p || price == null) return '#';
     const pres = p.presentations[this.selectedPres()];
     const presName = pres?.unitOfMeasure.name ?? '';
-    const sku = pres?.sku ? ` - ${pres.sku}` : '';
+    const sku = pres?.sku ? ` · REF ${pres.sku}` : '';
+    const code = p.code ? ` · Cód. ${p.code}` : '';
     const total = this._cartService.fmt(price * this.qty());
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? 'Buenos días' : hour < 19 ? 'Buenas tardes' : 'Buenas noches';
+    const paymentLabels: Record<string, string> = {
+      addi: '💳 Addi (pago en cuotas)',
+      sistecredito: '💰 Sistecredito (financiación)',
+      contado: '✅ De contado',
+    };
     const msg = [
-      '¡Hola! Me gustaría pedir:',
+      `${greeting} 🎨`,
       '',
-      `• ${p.name}${presName ? ` (${presName}${sku})` : ''} x${this.qty()} — ${total}`,
+      'Me gustaría hacer el siguiente pedido:',
+      '',
+      `📦 ${p.name}${sku}${code}`,
+      `   ${presName ? `Presentación: ${presName} ×` : 'Cantidad:'} ${this.qty()} — ${total}`,
+      '',
+      `Método de pago: ${paymentLabels[this.paymentMethod()]}`,
+      '',
+      '¡Muchas gracias! 🙏',
     ].join('\n');
     return `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
   }

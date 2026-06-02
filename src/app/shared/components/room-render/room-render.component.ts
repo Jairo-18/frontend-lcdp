@@ -11,8 +11,20 @@ import { FormsModule } from '@angular/forms';
 import { ColorService } from '@shared/services/color.service';
 import { Color } from '@shared/interfaces/color.interface';
 
-type Surface = 'pared' | 'techo' | 'piso';
+type Surface =
+  | 'wall-left' | 'wall-back' | 'wall-right'
+  | 'ceiling' | 'floor'
+  | 'facade-left' | 'facade-right';
+
 type RoomView = 'alcoba' | 'sala' | 'cocina' | 'fachada';
+
+interface SurfaceConfig {
+  key: Surface;
+  label: string;
+  icon: string;
+  color: () => string;
+  set: (h: string) => void;
+}
 
 @Component({
   selector: 'app-room-render',
@@ -28,14 +40,21 @@ export class RoomRenderComponent implements OnInit {
 
   readonly colors = signal<Color[]>([]);
   readonly loading = signal(true);
-  readonly activeSurface = signal<Surface>('pared');
+  readonly activeSurface = signal<Surface>('wall-back');
   readonly activeView = signal<RoomView>('alcoba');
 
   searchQuery = '';
 
-  readonly wallColor = signal('#F2ECE4');
-  readonly ceilingColor = signal('#FAFAF7');
-  readonly floorColor = signal('#C4A882');
+  // Interior wall colors (each wall independently)
+  readonly wallLeft = signal('#F2ECE4');
+  readonly wallBack = signal('#F2ECE4');
+  readonly wallRight = signal('#F2ECE4');
+  readonly ceiling = signal('#FAFAF7');
+  readonly floor = signal('#C4A882');
+
+  // Fachada: left and right halves
+  readonly fachadaLeft = signal('#F2ECE4');
+  readonly fachadaRight = signal('#F2ECE4');
 
   readonly views: { key: RoomView; label: string; icon: string }[] = [
     { key: 'alcoba', label: 'Alcoba', icon: 'bed' },
@@ -44,35 +63,26 @@ export class RoomRenderComponent implements OnInit {
     { key: 'fachada', label: 'Fachada', icon: 'house' },
   ];
 
-  get surfaces() {
-    const f = this.activeView() === 'fachada';
+  get surfaces(): SurfaceConfig[] {
+    if (this.activeView() === 'fachada') {
+      return [
+        { key: 'facade-left', label: 'Lado Izq.', icon: 'west', color: () => this.fachadaLeft(), set: (h) => this.fachadaLeft.set(h) },
+        { key: 'facade-right', label: 'Lado Der.', icon: 'east', color: () => this.fachadaRight(), set: (h) => this.fachadaRight.set(h) },
+        { key: 'ceiling', label: 'Cubierta', icon: 'roofing', color: () => this.ceiling(), set: (h) => this.ceiling.set(h) },
+        { key: 'floor', label: 'Suelo', icon: 'grass', color: () => this.floor(), set: (h) => this.floor.set(h) },
+      ];
+    }
     return [
-      {
-        key: 'pared' as Surface,
-        label: f ? 'Fachada' : 'Paredes',
-        icon: f ? 'house' : 'format_paint',
-        color: () => this.wallColor(),
-        set: (h: string) => this.wallColor.set(h),
-      },
-      {
-        key: 'techo' as Surface,
-        label: f ? 'Cubierta' : 'Techo',
-        icon: 'roofing',
-        color: () => this.ceilingColor(),
-        set: (h: string) => this.ceilingColor.set(h),
-      },
-      {
-        key: 'piso' as Surface,
-        label: f ? 'Suelo' : 'Piso',
-        icon: f ? 'grass' : 'texture',
-        color: () => this.floorColor(),
-        set: (h: string) => this.floorColor.set(h),
-      },
+      { key: 'wall-left', label: 'Pared Izq.', icon: 'west', color: () => this.wallLeft(), set: (h) => this.wallLeft.set(h) },
+      { key: 'wall-back', label: 'Pared Fondo', icon: 'format_paint', color: () => this.wallBack(), set: (h) => this.wallBack.set(h) },
+      { key: 'wall-right', label: 'Pared Der.', icon: 'east', color: () => this.wallRight(), set: (h) => this.wallRight.set(h) },
+      { key: 'ceiling', label: 'Techo', icon: 'roofing', color: () => this.ceiling(), set: (h) => this.ceiling.set(h) },
+      { key: 'floor', label: 'Piso', icon: 'texture', color: () => this.floor(), set: (h) => this.floor.set(h) },
     ];
   }
 
-  get activeSurfaceCfg() {
-    return this.surfaces.find((s) => s.key === this.activeSurface())!;
+  get activeSurfaceCfg(): SurfaceConfig {
+    return this.surfaces.find((s) => s.key === this.activeSurface()) ?? this.surfaces[0];
   }
 
   get filteredColors(): Color[] {
@@ -110,6 +120,11 @@ export class RoomRenderComponent implements OnInit {
     });
   }
 
+  setView(view: RoomView): void {
+    this.activeView.set(view);
+    this.activeSurface.set(view === 'fachada' ? 'facade-left' : 'wall-back');
+  }
+
   selectColor(color: Color): void {
     this.activeSurfaceCfg.set(color.hex);
   }
@@ -127,9 +142,13 @@ export class RoomRenderComponent implements OnInit {
   }
 
   reset(): void {
-    this.wallColor.set('#F2ECE4');
-    this.ceilingColor.set('#FAFAF7');
-    this.floorColor.set('#C4A882');
+    this.wallLeft.set('#F2ECE4');
+    this.wallBack.set('#F2ECE4');
+    this.wallRight.set('#F2ECE4');
+    this.ceiling.set('#FAFAF7');
+    this.floor.set('#C4A882');
+    this.fachadaLeft.set('#F2ECE4');
+    this.fachadaRight.set('#F2ECE4');
   }
 
   @HostListener('document:keydown.escape')

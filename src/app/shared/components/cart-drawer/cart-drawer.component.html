@@ -99,7 +99,9 @@
             </p>
             <p class="text-[12px] text-ink-mute">
               {{ item.presentationName }}
-              @if (item.sku) {
+              @if (item.productCode) {
+                · <span class="font-mono text-ink">Cód. {{ item.productCode }}</span>
+              } @else if (item.sku) {
                 · <span class="font-mono">{{ item.sku }}</span>
               }
             </p>

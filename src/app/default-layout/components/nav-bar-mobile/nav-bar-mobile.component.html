@@ -11,16 +11,12 @@
         <span class="material-symbols-outlined text-[22px] leading-none">menu</span>
       </button>
 
-      <!-- Brand -->
-      <button (click)="goHome.emit()" class="flex items-center gap-2 bg-transparent border-0 cursor-pointer p-0">
-        <div class="w-8 h-8 rounded-lg bg-yellow grid place-items-center overflow-hidden shadow-sm shrink-0">
-          <img class="w-full h-full object-cover" [src]="logoUrl || 'assets/images/logo.jpg'" alt="Logo" />
-        </div>
-        <div class="font-display font-extrabold text-[14px] leading-none tracking-tight text-ink">
-          La Casa del
-          <em class="not-italic font-hand text-coral text-[18px] font-semibold block leading-none mt-0.5">Pintor</em>
-        </div>
-      </button>
+      <!-- Ver catálogo -->
+      <a routerLink="/catalogo"
+        class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-yellow text-ink text-[13px] font-bold no-underline transition-all hover:brightness-95 active:scale-95">
+        <span class="material-symbols-outlined text-[17px] leading-none">format_paint</span>
+        Ver catálogo
+      </a>
 
     </div>
 
@@ -88,8 +84,8 @@
     <button
       (click)="openRender.emit(); closeMenu()"
       class="flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-yellow text-ink text-sm font-semibold transition-colors hover:brightness-95 border-0 cursor-pointer">
-      <span class="material-symbols-outlined text-[20px] leading-none">3d_rotation</span>
-      Ver Render
+      <span class="material-symbols-outlined text-[20px] leading-none">format_paint</span>
+      Simulador
     </button>
     <a routerLink="/auth/login"
       class="flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-ink text-white text-sm font-medium hover:bg-black transition-colors">
