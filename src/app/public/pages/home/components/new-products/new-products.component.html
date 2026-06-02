@@ -1,5 +1,5 @@
 ﻿<!-- ── Lo más nuevo ── -->
-<section class="px-6 pb-12 md:px-10">
+<section class="px-6 pb-12 md:px-10 mt-5">
   <div class="mx-auto">
 
     <!-- Header -->
@@ -23,91 +23,87 @@
 
       <!-- Skeletons mientras carga -->
       @if (loading()) {
-        @for (s of skeletons; track $index) {
-          <div class="bg-white border border-rule rounded-2xl overflow-hidden animate-pulse">
-            <div class="bg-white aspect-[4/3]"></div>
-            <div class="p-4 flex flex-col gap-2">
-              <div class="h-2.5 w-16 bg-rule rounded-full"></div>
-              <div class="h-4 w-full bg-rule rounded-full"></div>
-              <div class="h-3 w-24 bg-rule rounded-full"></div>
-            </div>
-          </div>
-        }
+      @for (s of skeletons; track $index) {
+      <div class="bg-white border border-rule rounded-2xl overflow-hidden animate-pulse">
+        <div class="bg-white aspect-[4/3]"></div>
+        <div class="p-4 flex flex-col gap-2">
+          <div class="h-2.5 w-16 bg-rule rounded-full"></div>
+          <div class="h-4 w-full bg-rule rounded-full"></div>
+          <div class="h-3 w-24 bg-rule rounded-full"></div>
+        </div>
+      </div>
+      }
       }
 
       <!-- Productos -->
       @if (!loading()) {
-        @for (product of products(); track product.id; let i = $index) {
-          <a
-            [routerLink]="['/producto', product.id]"
-            class="bg-white border border-rule rounded-2xl overflow-hidden group hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 no-underline flex flex-col"
-          >
+      @for (product of products(); track product.id; let i = $index) {
+      <a [routerLink]="['/producto', product.id]"
+        class="bg-white border border-rule rounded-2xl overflow-hidden group hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 no-underline flex flex-col">
 
-            <!-- Imagen / ilustración -->
-            <div class="relative bg-white aspect-[4/3] overflow-hidden flex items-center justify-center">
+        <!-- Imagen / ilustración -->
+        <div class="relative bg-white aspect-[4/3] overflow-hidden flex items-center justify-center">
 
-              <!-- Badge -->
-              <span class="absolute top-3 left-3 z-10 bg-coral text-white text-[10px] font-extrabold tracking-widest uppercase px-2.5 py-1 rounded-md leading-none">
-                Nuevo
-              </span>
+          <!-- Badge -->
+          <span
+            class="absolute top-3 left-3 z-10 bg-coral text-white text-[10px] font-extrabold tracking-widest uppercase px-2.5 py-1 rounded-md leading-none">
+            Nuevo
+          </span>
 
-              @if (firstImage(product)) {
-                <img
-                  [src]="firstImage(product)!"
-                  [alt]="product.name"
-                  class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
-                  loading="lazy"
-                />
-              } @else {
-                <!-- Clipboard placeholder -->
-                <div
-                  class="relative w-[90px] h-[118px] rounded-[8px_8px_13px_13px] shadow-2xl flex flex-col items-center transition-transform duration-300 group-hover:scale-105"
-                  [style.background-color]="clipboardColor(i)"
-                >
-                  <!-- clip -->
-                  <div class="absolute -top-2.5 w-9 h-4 bg-ink/75 rounded-sm"></div>
-                  <!-- inner card -->
-                  <div class="mt-7 mx-2.5 bg-white/95 rounded-md p-2 w-[calc(100%-20px)] flex flex-col gap-1.5">
-                    <p class="text-[7px] font-extrabold tracking-wider text-ink/60 uppercase leading-none">
-                      {{ product.brand.name }}
-                    </p>
-                    <div class="h-4 rounded" [style.background-color]="clipboardColor(i)"></div>
-                    <p class="text-[6px] font-mono text-ink/40 leading-none">
-                      {{ firstSku(product) }}
-                    </p>
-                    <div class="h-1.5 rounded" [style.background-color]="clipboardColor(i)" style="opacity:.35"></div>
-                    <div class="h-1.5 rounded" [style.background-color]="clipboardColor(i)" style="opacity:.18"></div>
-                  </div>
-                </div>
-              }
-            </div>
-
-            <!-- Info -->
-            <div class="p-4 flex flex-col gap-1 flex-1">
-              <p class="text-[10px] font-extrabold tracking-[0.1em] uppercase text-ink-mute leading-none">
+          @if (firstImage(product)) {
+          <img [src]="firstImage(product)!" [alt]="product.name"
+            class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+            loading="lazy" />
+          } @else {
+          <!-- Clipboard placeholder -->
+          <div
+            class="relative w-[90px] h-[118px] rounded-[8px_8px_13px_13px] shadow-2xl flex flex-col items-center transition-transform duration-300 group-hover:scale-105"
+            [style.background-color]="clipboardColor(i)">
+            <!-- clip -->
+            <div class="absolute -top-2.5 w-9 h-4 bg-ink/75 rounded-sm"></div>
+            <!-- inner card -->
+            <div class="mt-7 mx-2.5 bg-white/95 rounded-md p-2 w-[calc(100%-20px)] flex flex-col gap-1.5">
+              <p class="text-[7px] font-extrabold tracking-wider text-ink/60 uppercase leading-none">
                 {{ product.brand.name }}
               </p>
-              <p class="font-display font-bold text-ink text-[13px] leading-tight line-clamp-2 group-hover:text-coral transition-colors">
-                {{ product.name }}
+              <div class="h-4 rounded" [style.background-color]="clipboardColor(i)"></div>
+              <p class="text-[6px] font-mono text-ink/40 leading-none">
+                {{ firstSku(product) }}
               </p>
-              @if (product.categories.at(0)?.name) {
-                <p class="text-[10px] text-ink-mute leading-none">
-                  {{ product.categories.at(0)!.name }}
-                </p>
-              }
-
-              @if (webPrice(product); as price) {
-                <p class="text-[11px] sm:text-[13px] font-bold text-ink mt-1">
-                  {{ formatPrice(price) }}
-                </p>
-              }
-              <p class="text-[8px] sm:text-[10px] font-semibold text-green-600 mt-0.5 leading-tight">
-                Obtén un descuento y acumula puntos si compras con nosotros
-              </p>
+              <div class="h-1.5 rounded" [style.background-color]="clipboardColor(i)" style="opacity:.35"></div>
+              <div class="h-1.5 rounded" [style.background-color]="clipboardColor(i)" style="opacity:.18"></div>
             </div>
+          </div>
+          }
+        </div>
 
-          </a>
-        }
+        <!-- Info -->
+        <div class="p-4 flex flex-col gap-1 flex-1">
+          <p class="text-[10px] font-extrabold tracking-[0.1em] uppercase text-ink-mute leading-none">
+            {{ product.brand.name }}
+          </p>
+          <p
+            class="font-display font-bold text-ink text-[13px] leading-tight line-clamp-2 group-hover:text-coral transition-colors">
+            {{ product.name }}
+          </p>
+          @if (product.categories.at(0)?.name) {
+          <p class="text-[10px] text-ink-mute leading-none">
+            {{ product.categories.at(0)!.name }}
+          </p>
+          }
+
+          @if (webPrice(product); as price) {
+          <p class="text-[11px] sm:text-[13px] font-bold text-ink mt-1">
+            {{ formatPrice(price) }}
+          </p>
+          }
+          <p class="text-[8px] sm:text-[10px] font-semibold text-green-600 mt-0.5 leading-tight">
+            Obtén un descuento y acumula puntos si compras con nosotros
+          </p>
+        </div>
+
+      </a>
+      }
       }
 
     </div>
