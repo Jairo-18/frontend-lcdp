@@ -150,6 +150,11 @@
                 Pres.
               </th>
               <th
+                class="hidden xl:table-cell px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide"
+              >
+                Creado
+              </th>
+              <th
                 class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide text-center"
               >
                 Estado
@@ -236,6 +241,9 @@
                       <span class="text-[11px] font-semibold text-green-600">· En promoción</span>
                     }
                   </div>
+                  <p class="xl:hidden text-[11px] text-ink-mute mt-1 opacity-60">
+                    {{ formatDate(product.createdAt) }}
+                  </p>
                 </td>
                 <td class="hidden sm:table-cell px-4 py-4">
                   @if (product.code) {
@@ -274,6 +282,12 @@
                   >
                     {{ product.presentations.length }}
                   </span>
+                </td>
+                <td class="hidden xl:table-cell px-4 py-4">
+                  <p class="text-xs text-ink-mute">{{ formatDate(product.createdAt) }}</p>
+                  @if (product.updatedAt && product.updatedAt !== product.createdAt) {
+                    <p class="text-[11px] text-ink-mute opacity-60 mt-0.5">Editado {{ formatDate(product.updatedAt) }}</p>
+                  }
                 </td>
                 <td class="px-4 py-4 text-center">
                   @if (product.isActive) {

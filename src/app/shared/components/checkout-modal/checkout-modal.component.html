@@ -146,6 +146,12 @@
                       · <span class="font-mono">{{ item.sku }}</span>
                     }
                   </p>
+                  @if (item.colorHex) {
+                    <div class="flex items-center gap-1.5 mt-0.5">
+                      <span class="w-2.5 h-2.5 rounded-full shrink-0 border border-black/10" [style.background-color]="item.colorHex"></span>
+                      <span class="text-[11px] text-ink-mute">{{ item.colorName }}</span>
+                    </div>
+                  }
                 </div>
                 <p class="text-[13px] font-bold text-ink shrink-0">
                   {{ fmt(item.unitPrice * item.quantity) }}

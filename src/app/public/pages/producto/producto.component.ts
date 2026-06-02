@@ -49,13 +49,6 @@ export class ProductoComponent implements OnInit, OnDestroy {
   readonly selectedColorId = signal<number | null>(null);
   readonly qty = signal(1);
   readonly addedFeedback = signal(false);
-  readonly paymentMethod = signal<'addi' | 'sistecredito' | 'contado'>('contado');
-
-  readonly paymentOptions = [
-    { value: 'addi' as const, emoji: '💳', label: 'Addi' },
-    { value: 'sistecredito' as const, emoji: '💰', label: 'Sistecredito' },
-    { value: 'contado' as const, emoji: '✅', label: 'Contado' },
-  ];
   readonly expandedPanels = signal<Set<string>>(new Set());
 
   readonly subtotal = computed(() => {
@@ -172,25 +165,23 @@ export class ProductoComponent implements OnInit, OnDestroy {
     const sku = pres?.sku ? ` · REF ${pres.sku}` : '';
     const code = p.code ? ` · Cód. ${p.code}` : '';
     const total = this._cartService.fmt(price * this.qty());
+    const colorId = this.selectedColorId();
+    const selectedColor = colorId != null ? (p.colors ?? []).find(c => c.id === colorId) : null;
+    const colorLine = selectedColor ? `   Color: ${selectedColor.name}` : null;
     const hour = new Date().getHours();
     const greeting = hour < 12 ? 'Buenos días' : hour < 19 ? 'Buenas tardes' : 'Buenas noches';
-    const paymentLabels: Record<string, string> = {
-      addi: '💳 Addi (pago en cuotas)',
-      sistecredito: '💰 Sistecredito (financiación)',
-      contado: '✅ De contado',
-    };
-    const msg = [
+    const lines = [
       `${greeting} 🎨`,
       '',
       'Me gustaría hacer el siguiente pedido:',
       '',
       `📦 ${p.name}${sku}${code}`,
       `   ${presName ? `Presentación: ${presName} ×` : 'Cantidad:'} ${this.qty()} — ${total}`,
-      '',
-      `Método de pago: ${paymentLabels[this.paymentMethod()]}`,
+      colorLine,
       '',
       '¡Muchas gracias! 🙏',
-    ].join('\n');
+    ].filter(l => l !== null);
+    const msg = lines.join('\n');
     return `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
   }
 

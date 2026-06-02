@@ -85,8 +85,9 @@ export class CheckoutModalComponent {
 
     this._cartService.items().forEach((it) => {
       const ref = it.productCode ? ` · Cód. ${it.productCode}` : (it.sku ? ` · Ref ${it.sku}` : '');
+      const color = it.colorName ? ` · Color: ${it.colorName}` : '';
       lines.push(
-        `• ${this._titleCasePipe.transform(it.productName)}${ref} (${it.presentationName}) x${it.quantity} — ${this._cartService.fmt(it.unitPrice * it.quantity)}`,
+        `• ${this._titleCasePipe.transform(it.productName)}${ref} (${it.presentationName}${color}) x${it.quantity} — ${this._cartService.fmt(it.unitPrice * it.quantity)}`,
       );
     });
 

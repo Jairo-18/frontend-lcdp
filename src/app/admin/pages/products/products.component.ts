@@ -122,6 +122,11 @@ export class ProductsComponent implements OnInit, OnDestroy {
       });
   }
 
+  formatDate(value: string | null | undefined): string {
+    if (!value) return '—';
+    return new Intl.DateTimeFormat('es-CO', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(value));
+  }
+
   formatPrice(value: number | null | undefined): string {
     if (value == null) return '—';
     return '$' + new Intl.NumberFormat('es-CO', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(Math.round(Number(value)));

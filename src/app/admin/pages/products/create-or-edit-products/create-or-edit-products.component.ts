@@ -440,6 +440,31 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
     return this._presImages()[index] ?? [];
   }
 
+  moveImageLeft(presIndex: number, imgIndex: number): void {
+    if (imgIndex <= 0) return;
+    this._presImages.update(imgs => {
+      const updated = [...imgs];
+      const presImgs = [...updated[presIndex]];
+      [presImgs[imgIndex - 1], presImgs[imgIndex]] = [presImgs[imgIndex], presImgs[imgIndex - 1]];
+      updated[presIndex] = presImgs;
+      return updated;
+    });
+    this.form.markAsDirty();
+  }
+
+  moveImageRight(presIndex: number, imgIndex: number): void {
+    const total = this._presImages()[presIndex]?.length ?? 0;
+    if (imgIndex >= total - 1) return;
+    this._presImages.update(imgs => {
+      const updated = [...imgs];
+      const presImgs = [...updated[presIndex]];
+      [presImgs[imgIndex], presImgs[imgIndex + 1]] = [presImgs[imgIndex + 1], presImgs[imgIndex]];
+      updated[presIndex] = presImgs;
+      return updated;
+    });
+    this.form.markAsDirty();
+  }
+
   removeImage(presIndex: number, imgIndex: number): void {
     this.form.markAsDirty();
     this._presImages.update((imgs) => {

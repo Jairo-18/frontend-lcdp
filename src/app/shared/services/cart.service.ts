@@ -106,7 +106,8 @@ export class CartService {
     const productLines: string[] = [];
     items.forEach(it => {
       const ref = it.productCode ? ` · Cód. ${it.productCode}` : (it.sku ? ` · Ref ${it.sku}` : '');
-      productLines.push(`• ${it.productName}${ref} (${it.presentationName}) x${it.quantity} — ${this._fmt(it.unitPrice * it.quantity)}`);
+      const color = it.colorName ? ` · Color: ${it.colorName}` : '';
+      productLines.push(`• ${it.productName}${ref} (${it.presentationName}${color}) x${it.quantity} — ${this._fmt(it.unitPrice * it.quantity)}`);
     });
     return [
       `${greeting} 🎨`,

@@ -527,16 +527,29 @@
                         />
                         <button
                           type="button"
-                          (click)="
-                            removeImage(pi, ii); $event.stopPropagation()
-                          "
-                          class="absolute top-1 right-1 w-8 h-8 rounded-full bg-black/80 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center border-0 cursor-pointer shadow hover:bg-red-600"
+                          (click)="removeImage(pi, ii); $event.stopPropagation()"
+                          class="absolute top-1 right-1 w-7 h-7 rounded-full bg-black/80 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center border-0 cursor-pointer shadow hover:bg-red-600"
                         >
-                          <span
-                            class="material-symbols-outlined text-[15px] leading-none"
-                            >close</span
-                          >
+                          <span class="material-symbols-outlined text-[13px] leading-none">close</span>
                         </button>
+                        @if (ii > 0) {
+                          <button
+                            type="button"
+                            (click)="moveImageLeft(pi, ii); $event.stopPropagation()"
+                            class="absolute bottom-1 left-1 w-6 h-6 rounded-full bg-black/70 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center border-0 cursor-pointer shadow hover:bg-black"
+                          >
+                            <span class="material-symbols-outlined text-[12px] leading-none">arrow_back</span>
+                          </button>
+                        }
+                        @if (ii < presImages(pi).length - 1) {
+                          <button
+                            type="button"
+                            (click)="moveImageRight(pi, ii); $event.stopPropagation()"
+                            class="absolute bottom-1 right-1 w-6 h-6 rounded-full bg-black/70 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center border-0 cursor-pointer shadow hover:bg-black"
+                          >
+                            <span class="material-symbols-outlined text-[12px] leading-none">arrow_forward</span>
+                          </button>
+                        }
                       </div>
                     }
                   </div>

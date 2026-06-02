@@ -106,4 +106,6 @@ export interface Product {
   presentations: ProductPresentation[];
   markupPercentage: number | null;
   discountPercentage: number | null;
+  createdAt: string;
+  updatedAt: string | null;
 }
