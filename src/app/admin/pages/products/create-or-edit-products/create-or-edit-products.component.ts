@@ -237,7 +237,7 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
     this._cachedVideoUrl = url;
     if (!url) return (this._cachedEmbedUrl = null);
     const ytMatch = url.match(
-      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/,
     );
     this._cachedEmbedUrl = ytMatch
       ? this._sanitizer.bypassSecurityTrustResourceUrl(

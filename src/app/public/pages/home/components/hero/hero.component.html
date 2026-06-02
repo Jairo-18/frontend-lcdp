@@ -1,12 +1,21 @@
-﻿<!-- ── Hero ── -->
-<div class="px-6 py-10 md:px-10 md:py-12 max-lg:px-0 max-lg:py-0">
+<!-- ── Hero ── -->
+<div>
   <section
-    class="mx-auto rounded-3xl flex items-center justify-between gap-10 px-12 py-14 overflow-hidden relative max-lg:flex-col max-lg:justify-center max-lg:px-8 max-lg:py-12 max-lg:rounded-none max-lg:min-h-svh"
-    [style.background]="!_hasVideos() ? 'radial-gradient(ellipse 80% 100% at 70% 40%, #ffdf4a 0%, #ffcb05 55%, #f5b800 100%)' : 'transparent'"
-  >
-    <!-- Fondo: video cuando hay videos, gradiente cuando no -->
+    class="mx-auto flex items-center justify-between gap-10 px-12 py-14 overflow-hidden relative min-h-[110dvh] max-lg:flex-col max-lg:justify-center max-lg:px-8 max-lg:py-12">
+    <!-- Imagen de fondo desktop — reemplaza temporalmente el video del backend -->
+    <img src="assets/images/todos.webp" alt="" class="hidden lg:block absolute inset-0 w-full h-full object-fill z-0"
+      aria-hidden="true" />
+    <!-- Scrim solo desktop -->
+    <div
+      class="hidden lg:block absolute inset-0 bg-gradient-to-r from-black/65 via-black/30 to-transparent z-[1] pointer-events-none">
+    </div>
+    <!-- Fondo mobile: gradiente amarillo -->
+    <div class="lg:hidden absolute inset-0 z-0"
+      style="background: radial-gradient(ellipse 80% 100% at 70% 40%, #ffdf4a 0%, #ffcb05 55%, #f5b800 100%)"></div>
+
+    <!-- Video hero — comentado temporalmente mientras se usa imagen fija -->
+    <!--
     @if (_isBrowser && _hasVideos() && _currentVideo(); as video) {
-      <!-- @for con track _currentIndex() fuerza recrear el <video> al cambiar de índice -->
       @for (_ of [1]; track _currentIndex()) {
         <video
           class="absolute inset-0 w-full h-full object-cover z-0"
@@ -19,9 +28,7 @@
           (ended)="onVideoEnded()"
         ></video>
       }
-      <!-- Scrim: derecha en desktop, vertical en mobile -->
       <div class="absolute inset-0 bg-gradient-to-r from-black/65 via-black/30 to-transparent z-[1] pointer-events-none max-lg:bg-gradient-to-b max-lg:from-black/75 max-lg:via-black/50 max-lg:to-black/20"></div>
-      <!-- Dots de navegación -->
       @if (_heroVideos().length > 1) {
         <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20">
           @for (v of _heroVideos(); track v.url; let i = $index) {
@@ -35,104 +42,64 @@
         </div>
       }
     }
+    -->
 
     <!-- Left -->
     <div class="max-w-[500px] shrink-0 z-10 w-full lg:w-auto">
 
       <!-- Heading multicolor Faster One -->
-      <h1
-        class="font-faster text-[clamp(32px,4vw,50px)] leading-[1.1] m-0 mb-5 [word-spacing:.15em]"
-      >
-        <span style="color: #e23e57">T</span
-        ><span style="color: #1a56db">u</span>&nbsp;
-        <span style="color: #1e7e34">o</span
-        ><span style="color: #f97316">b</span
-        ><span style="color: #7c3aed">r</span
-        ><span style="color: #0891b2">a</span>&nbsp;
-        <span style="color: #ec4899">e</span
-        ><span style="color: #ca8a04">m</span
-        ><span style="color: #dc2626">p</span
-        ><span style="color: #2563eb">i</span
-        ><span style="color: #16a34a">e</span
-        ><span style="color: #d97706">z</span
-        ><span style="color: #9333ea">a</span>&nbsp;
-        <span style="color: #0369a1">c</span
-        ><span style="color: #be185d">o</span
-        ><span style="color: #e23e57">n</span>&nbsp;
-        <span style="color: #1a56db">e</span
-        ><span style="color: #1e7e34">l</span><br />
-        <em
-          class="font-hand not-italic font-semibold text-[clamp(36px,4.5vw,56px)]"
-        >
-          <span style="color: #f97316">c</span
-          ><span style="color: #7c3aed">o</span
-          ><span style="color: #0891b2">l</span
-          ><span style="color: #ec4899">o</span
-          ><span style="color: #ca8a04">r</span>&nbsp;<span
-            style="color: #dc2626"
-            >c</span
-          ><span style="color: #2563eb">o</span
-          ><span style="color: #16a34a">r</span
-          ><span style="color: #d97706">r</span
-          ><span style="color: #9333ea">e</span
-          ><span style="color: #0369a1">c</span
-          ><span style="color: #be185d">t</span
-          ><span style="color: #e23e57">o</span
-          ><span style="color: #1a56db">.</span>
+      <h1 class="font-faster text-[clamp(32px,4vw,50px)] leading-[1.1] m-0 mb-5 [word-spacing:.15em]">
+        <span style="color: #e23e57">T</span><span style="color: #1a56db">u</span>&nbsp;
+        <span style="color: #1e7e34">o</span><span style="color: #f97316">b</span><span
+          style="color: #7c3aed">r</span><span style="color: #0891b2">a</span>&nbsp;
+        <span style="color: #ec4899">e</span><span style="color: #ca8a04">m</span><span
+          style="color: #dc2626">p</span><span style="color: #2563eb">i</span><span style="color: #16a34a">e</span><span
+          style="color: #d97706">z</span><span style="color: #9333ea">a</span>&nbsp;
+        <span style="color: #0369a1">c</span><span style="color: #be185d">o</span><span
+          style="color: #e23e57">n</span>&nbsp;
+        <span style="color: #1a56db">e</span><span style="color: #1e7e34">l</span><br />
+        <em class="font-hand not-italic font-semibold text-[clamp(36px,4.5vw,56px)]">
+          <span style="color: #f97316">c</span><span style="color: #7c3aed">o</span><span
+            style="color: #0891b2">l</span><span style="color: #ec4899">o</span><span
+            style="color: #ca8a04">r</span>&nbsp;<span style="color: #dc2626">c</span><span
+            style="color: #2563eb">o</span><span style="color: #16a34a">r</span><span
+            style="color: #d97706">r</span><span style="color: #9333ea">e</span><span
+            style="color: #0369a1">c</span><span style="color: #be185d">t</span><span
+            style="color: #e23e57">o</span><span style="color: #1a56db">.</span>
         </em>
       </h1>
 
       <!-- Sub -->
-      <p
-        [class]="'font-alegreya text-[17px] leading-[1.7] mb-6 max-w-[420px] ' + (_hasVideos() ? 'text-white/85' : 'text-ink/70')"
-      >
+      <p class="font-alegreya text-[17px] leading-[1.7] mb-6 max-w-[420px] text-ink/70 lg:text-white/85">
         Pinturas, esmaltes, brochas y todo lo que necesitas para terminar el
         trabajo. Pedido directo a WhatsApp, sin filas ni complicaciones.
       </p>
 
-      <!-- Imágenes — solo mobile cuando no hay video (el video ya da contexto visual) -->
-      @if (!_hasVideos()) {
-      <div
-        class="flex items-end justify-center lg:hidden mb-6"
-        aria-hidden="true"
-      >
-        <img
-          src="assets/images/hero/pinturaIzquierda.webp"
-          alt=""
-          class="h-[95px] w-auto object-contain drop-shadow-xl -rotate-[4deg] translate-y-2 -mr-5 z-0"
-        />
-        <img
-          src="assets/images/hero/pinturaCentro.webp"
-          alt=""
-          class="h-[120px] w-auto object-contain drop-shadow-xl z-10 relative"
-        />
-        <img
-          src="assets/images/hero/pinturaDerecha.webp"
-          alt=""
-          class="h-[95px] w-auto object-contain drop-shadow-xl rotate-[4deg] translate-y-2 -ml-5 z-0"
-        />
+      <!-- Imágenes — solo mobile -->
+      <div class="flex items-end justify-center lg:hidden mb-6" aria-hidden="true">
+        <img src="assets/images/hero/pinturaIzquierda.webp" alt=""
+          class="h-[95px] w-auto object-contain drop-shadow-xl -rotate-[4deg] translate-y-2 -mr-5 z-0" />
+        <img src="assets/images/hero/pinturaCentro.webp" alt=""
+          class="h-[120px] w-auto object-contain drop-shadow-xl z-10 relative" />
+        <img src="assets/images/hero/pinturaDerecha.webp" alt=""
+          class="h-[95px] w-auto object-contain drop-shadow-xl rotate-[4deg] translate-y-2 -ml-5 z-0" />
       </div>
-      }
+
+      <!-- Imagen todos.webp — solo mobile, como elemento normal -->
+      <div class="lg:hidden w-full mb-6" aria-hidden="true">
+        <img src="assets/images/todos.webp" alt="Todo para tus proyectos en un solo lugar"
+          class="w-full rounded-2xl shadow-lg" />
+      </div>
 
       <!-- CTAs -->
-      <div
-        class="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 mb-10"
-      >
-        <a
-          routerLink="/catalogo"
-          class="inline-flex items-center justify-center gap-1.5 bg-ink text-white text-sm font-semibold px-6 py-3 rounded-full no-underline transition-all hover:bg-black hover:-translate-y-px"
-        >
+      <div class="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 mb-10">
+        <a routerLink="/catalogo"
+          class="inline-flex items-center justify-center gap-1.5 bg-ink text-white text-sm font-semibold px-6 py-3 rounded-full no-underline transition-all hover:bg-black hover:-translate-y-px">
           Ver catálogo completo <span>→</span>
         </a>
-        <a
-          [href]="whatsappHref()"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-flex items-center justify-center gap-2 text-[#128c46] text-sm font-semibold px-5 py-3 rounded-full border border-[#128c46]/40 no-underline transition-all hover:bg-[#25D366]/15 hover:border-[#25D366]"
-        >
-          <span class="material-symbols-outlined text-[18px] leading-none"
-            >chat</span
-          >
+        <a [href]="whatsappHref()" target="_blank" rel="noopener noreferrer"
+          class="inline-flex items-center justify-center gap-2 text-[#128c46] text-sm font-semibold px-5 py-3 rounded-full border border-[#128c46]/40 no-underline transition-all hover:bg-[#25D366]/15 hover:border-[#25D366]">
+          <span class="material-symbols-outlined text-[18px] leading-none">chat</span>
           Pedir por WhatsApp
         </a>
       </div>
@@ -140,38 +107,25 @@
       <!-- Stats -->
       <div class="flex items-center gap-8">
         @for (stat of stats(); track stat.label) {
-          <div class="flex flex-col gap-0.5">
-            <span
-              [class]="'font-display font-extrabold text-[20px] leading-none ' + (_hasVideos() ? 'text-white' : 'text-ink')"
-              >{{ stat.value }}</span
-            >
-            <span
-              [class]="'font-alegreya text-[12px] font-semibold tracking-[0.08em] uppercase ' + (_hasVideos() ? 'text-white/60' : 'text-ink/50')"
-              >{{ stat.label }}</span
-            >
-          </div>
+        <div class="flex flex-col gap-0.5">
+          <span class="font-display font-extrabold text-[20px] leading-none text-ink lg:text-white">{{ stat.value
+            }}</span>
+          <span
+            class="font-alegreya text-[12px] font-semibold tracking-[0.08em] uppercase text-ink/50 lg:text-white/60">{{
+            stat.label }}</span>
+        </div>
         }
       </div>
     </div>
 
-    
     <!-- Imágenes — solo desktop (columna derecha) -->
     <div class="hidden lg:flex items-end shrink-0 z-10" aria-hidden="true">
-      <img
-        src="assets/images/hero/pinturaIzquierda.webp"
-        alt=""
-        class="h-[220px] w-auto object-contain drop-shadow-2xl -rotate-[4deg] translate-y-4 -mr-14 z-0"
-      />
-      <img
-        src="assets/images/hero/pinturaCentro.webp"
-        alt=""
-        class="h-[260px] w-auto object-contain drop-shadow-2xl z-10 relative"
-      />
-      <img
-        src="assets/images/hero/pinturaDerecha.webp"
-        alt=""
-        class="h-[220px] w-auto object-contain drop-shadow-2xl rotate-[4deg] translate-y-4 -ml-14 z-0"
-      />
+      <img src="assets/images/hero/pinturaIzquierda.webp" alt=""
+        class="h-[220px] w-auto object-contain drop-shadow-2xl -rotate-[4deg] translate-y-4 -mr-14 z-0" />
+      <img src="assets/images/hero/pinturaCentro.webp" alt=""
+        class="h-[260px] w-auto object-contain drop-shadow-2xl z-10 relative" />
+      <img src="assets/images/hero/pinturaDerecha.webp" alt=""
+        class="h-[220px] w-auto object-contain drop-shadow-2xl rotate-[4deg] translate-y-4 -ml-14 z-0" />
     </div>
   </section>
 </div>

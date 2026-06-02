@@ -239,7 +239,7 @@ export class ProductoComponent implements OnInit, OnDestroy {
     const url = this.product()?.videoUrl;
     if (!url) return null;
     const m = url.match(
-      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/,
     );
     if (!m) return null;
     return this._domSanitizer.bypassSecurityTrustResourceUrl(
