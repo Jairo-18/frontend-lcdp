@@ -74,6 +74,31 @@
           [control]="form.get('code')"
         />
 
+        <!-- Superficies -->
+        <div>
+          <p class="text-sm font-semibold text-ink mb-1">Superficies</p>
+          <p class="text-xs text-ink-mute mb-3">¿En qué superficies se puede aplicar este color?</p>
+          <div class="flex gap-2">
+            @for (opt of SURFACE_OPTIONS; track opt.value) {
+              <button
+                type="button"
+                (click)="toggleSurface(opt.value)"
+                class="px-4 py-2 rounded-xl border text-sm font-medium transition-colors cursor-pointer"
+                [class.bg-ink]="_surfaces().includes(opt.value)"
+                [class.text-white]="_surfaces().includes(opt.value)"
+                [class.border-ink]="_surfaces().includes(opt.value)"
+                [class.border-rule]="!_surfaces().includes(opt.value)"
+                [class.text-ink]="!_surfaces().includes(opt.value)"
+              >
+                {{ opt.label }}
+              </button>
+            }
+          </div>
+          @if (_surfaces().length === 0) {
+            <p class="text-xs text-ink-mute mt-1.5 opacity-60">Si no seleccionas ninguna, el color aplica a todas.</p>
+          }
+        </div>
+
         <div class="flex items-center justify-between pt-1">
           <div>
             <p class="text-sm font-semibold text-ink">Estado</p>

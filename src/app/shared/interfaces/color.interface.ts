@@ -1,10 +1,19 @@
 import { BasePaginationParams } from './pagination.interface';
 
+export type ColorSurface = 'piso' | 'pared' | 'techo';
+
+export const COLOR_SURFACE_OPTIONS: { value: ColorSurface; label: string }[] = [
+  { value: 'piso',  label: 'Pisos'   },
+  { value: 'pared', label: 'Paredes' },
+  { value: 'techo', label: 'Techos'  },
+];
+
 export interface ColorDto {
   name: string;
   hex: string;
   colorFamily?: string;
   code?: string;
+  surfaces?: ColorSurface[];
   isActive?: boolean;
 }
 
@@ -14,6 +23,7 @@ export interface Color {
   hex: string;
   colorFamily: string | null;
   code: string | null;
+  surfaces: ColorSurface[] | null;
   isActive: boolean;
 }
 

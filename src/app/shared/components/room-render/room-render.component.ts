@@ -9,7 +9,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ColorService } from '@shared/services/color.service';
-import { Color } from '@shared/interfaces/color.interface';
+import { Color, ColorSurface } from '@shared/interfaces/color.interface';
 
 type Surface =
   | 'wall-left' | 'wall-back' | 'wall-right'
@@ -85,9 +85,27 @@ export class RoomRenderComponent implements OnInit {
     return this.surfaces.find((s) => s.key === this.activeSurface()) ?? this.surfaces[0];
   }
 
+  get activeSurfaceType(): ColorSurface | null {
+    const s = this.activeSurface();
+    if (s === 'floor') return 'piso';
+    if (s === 'ceiling') return 'techo';
+    if (s === 'wall-left' || s === 'wall-back' || s === 'wall-right' ||
+        s === 'facade-left' || s === 'facade-right') return 'pared';
+    return null;
+  }
+
   get filteredColors(): Color[] {
     const q = this.searchQuery.toLowerCase().trim();
-    const all = this.colors().filter((c) => c.isActive);
+    const surfaceType = this.activeSurfaceType;
+
+    let all = this.colors().filter((c) => {
+      if (!c.isActive) return false;
+      // Si el color no tiene superficies definidas, aplica a todo
+      if (!c.surfaces || c.surfaces.length === 0) return true;
+      // Si tiene superficies, solo mostrar si coincide con la superficie activa
+      return surfaceType ? c.surfaces.includes(surfaceType) : true;
+    });
+
     if (!q) return all;
     return all.filter(
       (c) =>

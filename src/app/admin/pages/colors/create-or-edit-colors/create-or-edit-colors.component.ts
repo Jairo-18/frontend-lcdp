@@ -11,7 +11,7 @@ import { InputFieldComponent } from '@shared/components';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ColorService } from '@shared/services/color.service';
-import { Color, ColorDto } from '@shared/interfaces/color.interface';
+import { Color, ColorDto, ColorSurface, COLOR_SURFACE_OPTIONS } from '@shared/interfaces/color.interface';
 import { CacheRouteReuseStrategy } from '@shared/strategies/cache-route-reuse.strategy';
 
 @Component({
@@ -31,6 +31,8 @@ export class CreateOrEditColorsComponent implements OnInit, OnDestroy {
   readonly _loading   = signal(false);
   readonly _saving    = signal(false);
   readonly _editingId = signal<number | null>(null);
+  readonly _surfaces  = signal<ColorSurface[]>([]);
+  readonly SURFACE_OPTIONS = COLOR_SURFACE_OPTIONS;
 
   readonly form = this._fb.nonNullable.group({
     name:        ['', [Validators.required, Validators.maxLength(100)]],
@@ -52,6 +54,7 @@ export class CreateOrEditColorsComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this._destroy$))
         .subscribe({
           next: (color: Color) => {
+            this._surfaces.set((color.surfaces ?? []) as ColorSurface[]);
             this.form.patchValue({
               name:        color.name,
               hex:         color.hex,
@@ -71,6 +74,11 @@ export class CreateOrEditColorsComponent implements OnInit, OnDestroy {
     this._destroy$.complete();
   }
 
+  toggleSurface(value: ColorSurface): void {
+    this._surfaces.update(s => s.includes(value) ? s.filter(v => v !== value) : [...s, value]);
+    this.form.markAsDirty();
+  }
+
   goBack(): void {
     this._router.navigate(['/admin/colors']);
   }
@@ -85,6 +93,7 @@ export class CreateOrEditColorsComponent implements OnInit, OnDestroy {
       hex:         raw.hex,
       colorFamily: raw.colorFamily || undefined,
       code:        raw.code || undefined,
+      surfaces:    this._surfaces().length > 0 ? this._surfaces() : undefined,
       isActive:    raw.isActive,
     };
 
