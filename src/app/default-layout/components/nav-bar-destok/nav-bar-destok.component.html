@@ -1,147 +1,130 @@
 <header
-  class="hidden lg:flex bg-paper/90 backdrop-blur-[14px] backdrop-saturate-[1.6] border-b border-rule-soft w-full items-center gap-6 px-8 py-3.5 justify-between"
+  class="hidden lg:flex flex-col bg-paper/90 backdrop-blur-[14px] backdrop-saturate-[1.6] border-b border-rule-soft w-full px-8 pt-3.5 pb-2"
 >
-  <!-- Brand → home -->
-  <a routerLink="/" class="flex items-center gap-3 no-underline shrink-0">
-    <div
-      class="w-11 h-11 rounded-xl bg-yellow grid place-items-center overflow-hidden shadow-sm shrink-0"
-    >
-      <img
-        class="w-full h-full object-cover"
-        [src]="logoUrl || 'assets/images/logo.jpg'"
-        alt="Logo"
-      />
-    </div>
-    <div
-      class="font-display font-extrabold text-[17px] leading-none tracking-tight text-ink"
-    >
-      La Casa del
-      <em
-        class="not-italic font-hand text-coral text-[22px] font-semibold block leading-none mt-0.5"
-        >Pintor</em
-      >
-    </div>
-  </a>
 
-  <!-- Search -->
-  <div
-    class="flex-1 max-w-[480px] flex items-center gap-2.5 px-4 py-2.5 bg-white border border-rule rounded-xl transition-all focus-within:border-ink focus-within:shadow-[0_0_0_3px_rgba(26,28,44,0.08)]"
-  >
-    <button
-      type="button"
-      (click)="goSearch()"
-      class="bg-transparent border-0 p-0 cursor-pointer flex items-center text-ink-mute hover:text-ink transition-colors shrink-0"
-    >
-      <span class="material-symbols-outlined text-[18px] leading-none"
-        >search</span
-      >
-    </button>
-    <input
-      class="border-0 outline-none bg-transparent flex-1 font-body text-sm text-ink"
-      type="text"
-      placeholder="Buscar productos, marcas…"
-      [(ngModel)]="searchQuery"
-      (keydown)="onSearchKeydown($event)"
-    />
-  </div>
+  <!-- Fila 1: Brand · Buscador · Catálogo -->
+  <div class="flex items-center gap-6 w-full">
 
-  <!-- Nav links + Actions -->
-  <div class="flex gap-1.5 items-center shrink-0">
-    <a routerLink="/" [routerLinkActiveOptions]="{exact:true}" routerLinkActive="!bg-ink !text-white !border-ink" title="Inicio"
-      class="px-3 py-2.5 2xl:px-3.5 rounded-lg inline-flex items-center gap-2 text-sm font-medium bg-white border border-rule text-ink-soft no-underline transition-all hover:bg-ink hover:text-white hover:border-ink">
-      <span class="material-symbols-outlined text-[18px] leading-none">home</span>
-      <span class="hidden 2xl:inline">Inicio</span>
+    <!-- Brand → home -->
+    <a routerLink="/" class="flex items-center gap-3 no-underline shrink-0">
+      <div class="w-11 h-11 rounded-xl bg-yellow grid place-items-center overflow-hidden shadow-sm shrink-0">
+        <img class="w-full h-full object-cover" [src]="logoUrl || 'assets/images/logo.jpg'" alt="Logo" />
+      </div>
+      <div class="font-display font-extrabold text-[17px] leading-none tracking-tight text-ink">
+        La Casa del
+        <em class="not-italic font-hand text-coral text-[22px] font-semibold block leading-none mt-0.5">Pintor</em>
+      </div>
     </a>
-    <a routerLink="/catalogo" routerLinkActive="!bg-ink !text-white !border-ink" title="Catálogo"
-      class="px-3 py-2.5 2xl:px-3.5 rounded-lg inline-flex items-center gap-2 text-sm font-medium bg-white border border-rule text-ink-soft no-underline transition-all hover:bg-ink hover:text-white hover:border-ink">
-      <span class="material-symbols-outlined text-[18px] leading-none">format_paint</span>
-      <span class="hidden 2xl:inline">Catálogo</span>
-    </a>
-    <a routerLink="/videos" routerLinkActive="!bg-ink !text-white !border-ink" title="Videos"
-      class="px-3 py-2.5 2xl:px-3.5 rounded-lg inline-flex items-center gap-2 text-sm font-medium bg-white border border-rule text-ink-soft no-underline transition-all hover:bg-ink hover:text-white hover:border-ink">
-      <span class="material-symbols-outlined text-[18px] leading-none">smart_display</span>
-      <span class="hidden 2xl:inline">Videos</span>
-    </a>
-    <!-- Más dropdown -->
-    <div class="relative">
+
+    <!-- Search -->
+    <div
+      class="flex-1 flex items-center gap-2.5 px-4 py-2.5 bg-white border border-rule rounded-xl transition-all focus-within:border-ink focus-within:shadow-[0_0_0_3px_rgba(26,28,44,0.08)]"
+    >
       <button
-        (click)="toggleMore($event)"
-        title="Más páginas"
-        class="px-3 py-2.5 2xl:px-3.5 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium bg-white border border-rule text-ink-soft transition-all hover:bg-ink hover:text-white hover:border-ink cursor-pointer"
-        [class.!bg-ink]="isMoreActive || moreOpen()"
-        [class.!text-white]="isMoreActive || moreOpen()"
-        [class.!border-ink]="isMoreActive || moreOpen()">
-        <span class="material-symbols-outlined text-[18px] leading-none">more_horiz</span>
-        <span class="hidden 2xl:inline">Más</span>
-        <span
-          class="material-symbols-outlined text-[14px] leading-none transition-transform duration-200"
-          [class.rotate-180]="moreOpen()">expand_more</span>
+        type="button"
+        (click)="goSearch()"
+        class="bg-transparent border-0 p-1.5 rounded-md cursor-pointer flex items-center text-ink-mute hover:text-ink hover:bg-zinc-100 active:scale-90 transition-all shrink-0"
+      >
+        <span class="material-symbols-outlined text-[18px] leading-none">search</span>
       </button>
-
-      @if (moreOpen()) {
-        <div
-          class="absolute top-[calc(100%+6px)] right-0 w-52 bg-white rounded-xl border border-rule shadow-xl py-1.5 z-50"
-          (click)="$event.stopPropagation()">
-          <a
-            routerLink="/ayuda/como-pedir"
-            routerLinkActive="!bg-gray-50 !text-ink font-semibold"
-            (click)="moreOpen.set(false)"
-            class="flex items-center gap-3 px-3.5 py-2.5 mx-1 rounded-lg text-sm text-ink-soft no-underline hover:bg-gray-50 hover:text-ink transition-colors">
-            <span class="material-symbols-outlined text-[17px] leading-none shrink-0">quiz</span>
-            Cómo pedir
-          </a>
-          <a
-            routerLink="/ayuda/garantia"
-            routerLinkActive="!bg-gray-50 !text-ink font-semibold"
-            (click)="moreOpen.set(false)"
-            class="flex items-center gap-3 px-3.5 py-2.5 mx-1 rounded-lg text-sm text-ink-soft no-underline hover:bg-gray-50 hover:text-ink transition-colors">
-            <span class="material-symbols-outlined text-[17px] leading-none shrink-0">verified</span>
-            Garantía
-          </a>
-          <a
-            routerLink="/sobre-nosotros"
-            routerLinkActive="!bg-gray-50 !text-ink font-semibold"
-            (click)="moreOpen.set(false)"
-            class="flex items-center gap-3 px-3.5 py-2.5 mx-1 rounded-lg text-sm text-ink-soft no-underline hover:bg-gray-50 hover:text-ink transition-colors">
-            <span class="material-symbols-outlined text-[17px] leading-none shrink-0">storefront</span>
-            Nosotros
-          </a>
-        </div>
+      <input
+        class="border-0 outline-none bg-transparent flex-1 font-body text-sm text-ink"
+        type="text"
+        placeholder="Buscar productos, marcas…"
+        [(ngModel)]="searchQuery"
+        (keydown)="onSearchKeydown($event)"
+      />
+      @if (searchQuery) {
+        <button
+          type="button"
+          (click)="clearSearch()"
+          class="bg-transparent border-0 p-1.5 rounded-md cursor-pointer flex items-center text-ink-mute hover:text-red-500 hover:bg-red-50 active:scale-90 transition-all shrink-0"
+          title="Borrar búsqueda"
+        >
+          <span class="material-symbols-outlined text-[18px] leading-none">close</span>
+        </button>
       }
     </div>
+
+    <!-- Catálogo — CTA primario en fila 1 -->
+    <a
+      routerLink="/catalogo"
+      routerLinkActive="!bg-ink !text-white !border-ink"
+      class="shrink-0 px-5 py-2.5 rounded-lg inline-flex items-center gap-2 text-sm font-semibold bg-white border border-rule text-ink-soft no-underline transition-all hover:bg-ink hover:text-white hover:border-ink"
+    >
+      <span class="material-symbols-outlined text-[18px] leading-none">format_paint</span>
+      Catálogo
+    </a>
+
+  </div>
+
+  <!-- Fila 2: todos los links centrados -->
+  <div class="flex items-center justify-center gap-1 pt-2 pb-0.5">
+
+    <a routerLink="/" [routerLinkActiveOptions]="{exact:true}" routerLinkActive="!bg-ink !text-white !border-ink"
+      class="px-3.5 py-1.5 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium bg-transparent border border-transparent text-ink-soft no-underline transition-all hover:bg-ink/5 hover:text-ink">
+      <span class="material-symbols-outlined text-[16px] leading-none">home</span>
+      Inicio
+    </a>
+
+    <a routerLink="/videos" routerLinkActive="!bg-ink !text-white !border-ink"
+      class="px-3.5 py-1.5 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium bg-transparent border border-transparent text-ink-soft no-underline transition-all hover:bg-ink/5 hover:text-ink">
+      <span class="material-symbols-outlined text-[16px] leading-none">smart_display</span>
+      Videos
+    </a>
+
+    <a routerLink="/ayuda/como-pedir" routerLinkActive="!bg-ink !text-white !border-ink"
+      class="px-3.5 py-1.5 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium bg-transparent border border-transparent text-ink-soft no-underline transition-all hover:bg-ink/5 hover:text-ink">
+      <span class="material-symbols-outlined text-[16px] leading-none">quiz</span>
+      Cómo pedir
+    </a>
+
+    <a routerLink="/ayuda/garantia" routerLinkActive="!bg-ink !text-white !border-ink"
+      class="px-3.5 py-1.5 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium bg-transparent border border-transparent text-ink-soft no-underline transition-all hover:bg-ink/5 hover:text-ink">
+      <span class="material-symbols-outlined text-[16px] leading-none">verified</span>
+      Garantía
+    </a>
+
+    <a routerLink="/sobre-nosotros" routerLinkActive="!bg-ink !text-white !border-ink"
+      class="px-3.5 py-1.5 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium bg-transparent border border-transparent text-ink-soft no-underline transition-all hover:bg-ink/5 hover:text-ink">
+      <span class="material-symbols-outlined text-[16px] leading-none">storefront</span>
+      Nosotros
+    </a>
+
+    <!-- Separador -->
+    <div class="w-px h-4 bg-rule mx-1.5 shrink-0"></div>
 
     <button
       (click)="openRender.emit()"
       title="Simulador"
-      class="ml-1 px-3 py-2.5 2xl:px-3.5 rounded-lg inline-flex items-center gap-2 text-sm font-medium bg-yellow text-ink border border-yellow/0 cursor-pointer transition-all hover:brightness-95">
-      <span class="material-symbols-outlined text-[18px] leading-none">format_paint</span>
-      <span class="hidden 2xl:inline font-semibold">Simulador</span>
+      class="px-3.5 py-1.5 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium bg-yellow text-ink border border-yellow/0 cursor-pointer transition-all hover:brightness-95">
+      <span class="material-symbols-outlined text-[16px] leading-none">format_paint</span>
+      Simulador
     </button>
 
-    <a routerLink="/auth/login" routerLinkActive="!bg-ink !text-white !border-ink" title="Admin"
-      class="ml-1 px-3 py-2.5 2xl:px-[18px] rounded-lg inline-flex items-center gap-2 text-sm font-medium bg-white border border-rule text-ink-soft no-underline transition-all hover:bg-ink hover:text-white hover:border-ink">
-      <span class="material-symbols-outlined text-[18px] leading-none">manage_accounts</span>
-      <span class="hidden 2xl:inline">Admin</span>
+    <a routerLink="/auth/login" routerLinkActive="!bg-ink !text-white !border-ink"
+      class="px-3.5 py-1.5 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium bg-transparent border border-transparent text-ink-soft no-underline transition-all hover:bg-ink/5 hover:text-ink">
+      <span class="material-symbols-outlined text-[16px] leading-none">manage_accounts</span>
+      Admin
     </a>
 
     <div class="relative">
       <button
-        class="bg-white border border-rule text-ink-soft px-3 py-2.5 2xl:px-[18px] rounded-lg inline-flex items-center gap-2 text-sm font-medium cursor-pointer transition-all hover:bg-ink hover:text-white hover:border-ink"
+        class="px-3.5 py-1.5 rounded-lg inline-flex items-center gap-1.5 text-sm font-medium bg-transparent border border-transparent text-ink-soft cursor-pointer transition-all hover:bg-ink/5 hover:text-ink"
         title="Carrito"
         (click)="openCart.emit()"
       >
-        <span class="material-symbols-outlined text-[18px] leading-none">shopping_bag</span>
-        <span class="hidden 2xl:inline">Carrito</span>
+        <span class="material-symbols-outlined text-[16px] leading-none">shopping_bag</span>
+        Carrito
         @if (cartCount > 0) {
-          <span
-            class="bg-yellow text-ink font-mono font-bold text-[11px] min-w-[20px] h-5 rounded-full inline-grid place-items-center px-1.5"
-          >
+          <span class="bg-yellow text-ink font-mono font-bold text-[11px] min-w-[20px] h-5 rounded-full inline-grid place-items-center px-1.5">
             {{ cartCount }}
           </span>
         }
       </button>
-
       <app-cart-popover [count]="cartCount" arrowRight="right-5" />
     </div>
+
   </div>
+
 </header>

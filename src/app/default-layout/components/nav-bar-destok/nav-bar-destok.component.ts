@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, HostListener, Input, Output, inject, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CategoryPill } from '@shared/interfaces/category.interface';
@@ -28,22 +28,6 @@ export class NavBarDestokComponent {
   @Output() openRender = new EventEmitter<void>();
 
   searchQuery: string = '';
-  moreOpen = signal(false);
-
-  get isMoreActive(): boolean {
-    const url = this._router.url;
-    return url.startsWith('/ayuda') || url.startsWith('/sobre-nosotros');
-  }
-
-  toggleMore(e: MouseEvent): void {
-    e.stopPropagation();
-    this.moreOpen.update(v => !v);
-  }
-
-  @HostListener('document:click')
-  closeMore(): void {
-    this.moreOpen.set(false);
-  }
 
   onSearch(): void {
     this.searchChange.emit(this.searchQuery);
@@ -53,6 +37,11 @@ export class NavBarDestokComponent {
     const q = this.searchQuery.trim();
     if (!q) return;
     this._router.navigate(['/catalogo'], { queryParams: { q } });
+  }
+
+  clearSearch(): void {
+    this.searchQuery = '';
+    this.searchChange.emit('');
   }
 
   onSearchKeydown(event: KeyboardEvent): void {

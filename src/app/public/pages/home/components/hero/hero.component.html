@@ -1,7 +1,7 @@
 <!-- ── Hero ── -->
 <div>
   <section
-    class="mx-auto flex items-center justify-between gap-10 px-12 py-14 overflow-hidden relative min-h-[110dvh] max-lg:flex-col max-lg:justify-center max-lg:px-8 max-lg:py-12">
+    class="mx-auto flex items-center justify-between lg:justify-end gap-10 px-12 py-14 overflow-hidden relative min-h-[110dvh] max-lg:flex-col max-lg:justify-center max-lg:px-8 max-lg:py-12">
     <!-- Imagen de fondo desktop — reemplaza temporalmente el video del backend -->
     <img src="assets/images/todos.png" alt="" class="hidden lg:block absolute inset-0 w-full h-full object-fill z-0"
       aria-hidden="true" />
@@ -44,8 +44,8 @@
     }
     -->
 
-    <!-- Left -->
-    <div class="max-w-[500px] shrink-0 z-10 w-full lg:w-auto lg:bg-white/15 lg:backdrop-blur-md lg:rounded-2xl lg:border lg:border-white/25 lg:px-8 lg:py-10">
+    <!-- Left — solo visible en mobile -->
+    <div class="max-w-[500px] shrink-0 z-10 w-full lg:hidden">
 
       <!-- Heading multicolor Faster One -->
       <h1 class="font-faster text-[clamp(32px,4vw,50px)] leading-[1.1] m-0 mb-5 [word-spacing:.15em]">
@@ -128,4 +128,116 @@
         class="h-[220px] w-auto object-contain drop-shadow-2xl rotate-[4deg] translate-y-4 -ml-14 z-0" />
     </div>
   </section>
+
+  <!-- ── Desktop: dos cards sobre un fondo compartido (video o imagen) ── -->
+  <section class="hidden lg:flex items-center min-h-[100dvh] relative overflow-hidden bg-zinc-800">
+
+    <!-- Fondo: video slider cuando hay videos, sino queda el bg-zinc-800 -->
+    @if (_isBrowser && _hasVideos() && _currentVideo(); as video) {
+    @for (_ of [1]; track _currentIndex()) {
+    <video class="absolute inset-0 w-full h-full object-cover z-0" [src]="video.url" autoplay muted playsinline
+      [attr.loop]="_heroVideos().length <= 1 ? '' : null" (canplay)="onVideoCanPlay($event)" (ended)="onVideoEnded()">
+    </video>
+    }
+    <div class="absolute inset-0 bg-black/50 z-[1] pointer-events-none"></div>
+    @if (_heroVideos().length > 1) {
+    <div class="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20">
+      @for (v of _heroVideos(); track v.url; let i = $index) {
+      <button type="button" (click)="goTo(i)" class="rounded-full border-0 cursor-pointer transition-all p-0"
+        [class]="_currentIndex() === i ? 'w-5 h-2 bg-white' : 'w-2 h-2 bg-white/30 hover:bg-white/60'">
+      </button>
+      }
+    </div>
+    }
+    }
+
+    <!-- Cards encima del fondo compartido -->
+    <div class="relative z-10 flex flex-col items-center justify-center   w-full gap-8 px-12 py-14">
+
+      <!-- Card catálogo -->
+      <div
+        class="flex-1 bg-white/15 backdrop-blur-md rounded-2xl border border-white/20 overflow-hidden flex flex-col px-8 py-10">
+        <div class="absolute top-0 left-0 right-0 h-[3px]" style="background: linear-gradient(90deg, #ffcb05, #f97316)">
+        </div>
+
+        <h1 class="font-faster text-[clamp(30px,3.5vw,46px)] leading-[1.1] m-0 mb-4 [word-spacing:.15em]">
+          <span style="color: #e23e57">T</span><span style="color: #1a56db">u</span>&nbsp;
+          <span style="color: #1e7e34">o</span><span style="color: #f97316">b</span><span
+            style="color: #7c3aed">r</span><span style="color: #0891b2">a</span>&nbsp;
+          <span style="color: #ec4899">e</span><span style="color: #ca8a04">m</span><span
+            style="color: #dc2626">p</span><span style="color: #2563eb">i</span><span
+            style="color: #16a34a">e</span><span style="color: #d97706">z</span><span
+            style="color: #9333ea">a</span>&nbsp;
+          <span style="color: #0369a1">c</span><span style="color: #be185d">o</span><span
+            style="color: #e23e57">n</span>&nbsp;
+          <span style="color: #1a56db">e</span><span style="color: #1e7e34">l</span><br />
+          <em class="font-hand not-italic font-semibold text-[clamp(34px,4vw,52px)]">
+            <span style="color: #f97316">c</span><span style="color: #7c3aed">o</span><span
+              style="color: #0891b2">l</span><span style="color: #ec4899">o</span><span
+              style="color: #ca8a04">r</span>&nbsp;<span style="color: #dc2626">c</span><span
+              style="color: #2563eb">o</span><span style="color: #16a34a">r</span><span
+              style="color: #d97706">r</span><span style="color: #9333ea">e</span><span
+              style="color: #0369a1">c</span><span style="color: #be185d">t</span><span
+              style="color: #e23e57">o</span><span style="color: #1a56db">.</span>
+          </em>
+        </h1>
+
+        <p class="font-alegreya text-[16px] leading-[1.7] mb-8 text-white/80">
+          Pinturas, esmaltes, brochas y todo lo que necesitas para terminar el
+          trabajo. Pedido directo a WhatsApp, sin filas ni complicaciones.
+        </p>
+
+        <div class="flex flex-row flex-wrap items-center gap-3">
+          <a routerLink="/catalogo"
+            class="inline-flex items-center justify-center gap-1.5 bg-white text-ink text-sm font-semibold px-6 py-3 rounded-full no-underline transition-all hover:bg-zinc-100 hover:-translate-y-px shadow-md">
+            Ver catálogo completo <span>→</span>
+          </a>
+          <a [href]="whatsappHref()" target="_blank" rel="noopener noreferrer"
+            class="inline-flex items-center justify-center gap-2 text-[#4ade80] text-sm font-semibold px-5 py-3 rounded-full border border-[#4ade80]/50 no-underline transition-all hover:bg-[#25D366]/15 hover:border-[#4ade80]">
+            <span class="material-symbols-outlined text-[18px] leading-none">chat</span>
+            Pedir por WhatsApp
+          </a>
+        </div>
+
+        <div class="flex items-center gap-8 mt-8 pt-6 border-t border-white/15">
+          @for (stat of stats(); track stat.label) {
+          <div class="flex flex-col gap-0.5">
+            <span class="font-display font-extrabold text-[20px] leading-none text-white">{{ stat.value }}</span>
+            <span class="font-alegreya text-[11px] font-semibold tracking-[0.08em] uppercase text-white/50">{{
+              stat.label }}</span>
+          </div>
+          }
+        </div>
+      </div>
+
+      <!-- Card asesoría WhatsApp -->
+      <div
+        class="flex-1 bg-white/15 backdrop-blur-md rounded-2xl border border-white/20 overflow-hidden flex flex-col px-8 py-10">
+        <div class="absolute top-0 left-0 right-0 h-[3px] bg-[#25D366]"></div>
+
+        <h2 class="font-display font-bold text-white text-[clamp(26px,3vw,40px)] leading-tight mb-3">
+          ¿Necesitas asesoría para tu proyecto?
+        </h2>
+        <p class="font-hand text-yellow text-[clamp(22px,2.5vw,34px)] leading-none mb-5">
+          Estamos aquí.
+        </p>
+        <p class="text-white/70 text-[15px] leading-relaxed mb-10">
+          Mándanos una foto del espacio y te recomendamos cantidad, color y
+          producto. Sin compromiso.
+        </p>
+        <a [href]="whatsappHref()" target="_blank" rel="noopener noreferrer"
+          class="self-start inline-flex items-center gap-2.5 bg-[#25D366] hover:bg-[#1fba58] text-white font-display font-bold text-[15px] px-7 py-3.5 rounded-full no-underline transition-all hover:-translate-y-px shadow-lg shadow-black/30">
+          <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path
+              d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+            <path
+              d="M12 0C5.373 0 0 5.373 0 12c0 2.136.562 4.14 1.532 5.875L0 24l6.302-1.513A11.947 11.947 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.001-1.364l-.36-.214-3.732.895.942-3.631-.236-.374A9.818 9.818 0 1112 21.818z" />
+          </svg>
+          Escribir por WhatsApp
+        </a>
+      </div>
+
+    </div>
+  </section>
+
 </div>
