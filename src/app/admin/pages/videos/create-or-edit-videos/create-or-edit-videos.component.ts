@@ -70,12 +70,36 @@ export class CreateOrEditVideosComponent implements OnInit, OnDestroy {
         filter((url) => !!url),
         takeUntil(this._destroy$),
       )
-      .subscribe((url) => this._fetchTitle(url));
+      .subscribe((raw) => {
+        const normalized = this._normalizeUrl(raw);
+        if (normalized !== raw) {
+          this.form.get('url')!.setValue(normalized, { emitEvent: false });
+        }
+        this._fetchTitle(normalized);
+      });
   }
 
   ngOnDestroy(): void {
     this._destroy$.next();
     this._destroy$.complete();
+  }
+
+  private _normalizeUrl(raw: string): string {
+    const s = raw.trim();
+
+    // TikTok blockquote embed → extraer cite="..."
+    const ttCite = s.match(/cite="(https:\/\/www\.tiktok\.com\/[^"]+)"/);
+    if (ttCite) return ttCite[1];
+
+    // Instagram blockquote embed → extraer data-instgrm-permalink="..."
+    const igPermalink = s.match(/data-instgrm-permalink="([^"?]+)/);
+    if (igPermalink) return igPermalink[1];
+
+    // YouTube iframe embed → extraer src y convertir a URL de watch
+    const ytSrc = s.match(/src="https?:\/\/www\.youtube(?:-nocookie)?\.com\/embed\/([A-Za-z0-9_-]{11})/);
+    if (ytSrc) return `https://www.youtube.com/watch?v=${ytSrc[1]}`;
+
+    return s;
   }
 
   private _fetchTitle(url: string): void {
@@ -98,8 +122,7 @@ export class CreateOrEditVideosComponent implements OnInit, OnDestroy {
   private _oembedUrl(url: string): string | null {
     if (/youtube\.com|youtu\.be/i.test(url))
       return `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`;
-    if (/tiktok\.com/i.test(url))
-      return `https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`;
+    // TikTok oEmbed bloquea CORS desde dominios externos — título manual
     return null;
   }
 
@@ -109,6 +132,13 @@ export class CreateOrEditVideosComponent implements OnInit, OnDestroy {
 
   save(): void {
     if (this.form.invalid || this._saving()) return;
+
+    const rawUrl = this.form.get('url')!.value;
+    const cleanUrl = this._normalizeUrl(rawUrl);
+    if (cleanUrl !== rawUrl) {
+      this.form.get('url')!.setValue(cleanUrl, { emitEvent: false });
+    }
+
     this._saving.set(true);
 
     const dto: VideoDto = this.form.getRawValue();

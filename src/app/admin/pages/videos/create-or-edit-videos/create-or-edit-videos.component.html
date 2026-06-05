@@ -28,12 +28,15 @@
         <div class="space-y-1.5">
           <app-input-field
             formControlName="url"
-            label="URL del video"
-            placeholder="https://www.youtube.com/watch?v=..."
+            label="URL o código embed del video"
+            placeholder="https://www.youtube.com/watch?v=... o pegar código embed de TikTok / Instagram"
             [required]="true"
             [control]="form.get('url')"
           />
-          <p class="text-xs text-ink-mute pl-0.5">Soporta YouTube, TikTok, Facebook e Instagram.</p>
+          <p class="text-xs text-ink-mute pl-0.5">
+            Soporta URL directa de YouTube, TikTok e Instagram. También podés pegar el código embed completo
+            (<code class="bg-paper-alt px-1 rounded text-[11px]">&lt;blockquote ...&gt;</code>) y se extrae la URL automáticamente.
+          </p>
         </div>
 
         <!-- Title field with fetch indicator -->
