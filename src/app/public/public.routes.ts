@@ -57,6 +57,14 @@ export const publicRoutes: Routes = [
             (m) => m.GarantiaComponent,
           ),
       },
+      {
+        path: 'asesor',
+        data: { reuseKey: 'public-asesor' },
+        loadComponent: () =>
+          import('./pages/asesor/asesor.component').then(
+            (m) => m.AsesorComponent,
+          ),
+      },
     ],
   },
 ];

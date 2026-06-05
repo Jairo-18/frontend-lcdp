@@ -1,0 +1,270 @@
+<div class="min-h-screen bg-paper">
+
+  <!-- Breadcrumb -->
+  <div class="px-6 md:px-10 pt-6 pb-2">
+    <p class="text-xs font-semibold text-ink-mute tracking-widest uppercase">
+      <a routerLink="/" class="hover:text-ink transition-colors">Inicio</a>
+      <span class="mx-2">/</span>
+      <span class="text-ink">¿Qué pintura me sirve?</span>
+    </p>
+  </div>
+
+  <!-- Hero -->
+  <section class="px-6 md:px-10 pt-8 pb-8">
+    <div class="max-w-2xl">
+      <p class="text-[10px] font-extrabold tracking-[0.18em] uppercase text-coral mb-3">Guía de pintura</p>
+      <h1 class="font-display font-bold text-ink text-[clamp(26px,4.5vw,46px)] leading-tight mb-4">
+        ¿Qué pintura <em class="not-italic text-coral">te sirve</em>?
+      </h1>
+      <p class="text-ink-mute text-[clamp(14px,1.3vw,17px)] leading-relaxed">
+        Respondé dos preguntas y te decimos qué pintura usar, cómo preparar la superficie y qué número de lija necesitás.
+      </p>
+    </div>
+  </section>
+
+  <!-- Step indicator -->
+  <div class="px-6 md:px-10 pb-6">
+    <div class="flex items-center gap-0 max-w-sm">
+      @for (n of [1, 2, 3]; track n) {
+        <div class="flex items-center gap-0">
+          <div class="flex flex-col items-center gap-1">
+            <div
+              class="w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-bold transition-all"
+              [class]="step() >= n
+                ? 'bg-ink text-white'
+                : 'bg-white border-2 border-rule text-ink-mute'"
+            >
+              @if (step() > n) {
+                <span class="material-symbols-outlined text-[16px] leading-none">check</span>
+              } @else {
+                {{ n }}
+              }
+            </div>
+            <span class="text-[10px] font-semibold whitespace-nowrap"
+              [class]="step() >= n ? 'text-ink' : 'text-ink-mute'">
+              @switch (n) {
+                @case (1) { ¿Qué vas a pintar? }
+                @case (2) { ¿Qué condición tiene? }
+                @case (3) { Recomendación }
+              }
+            </span>
+          </div>
+          @if (n < 3) {
+            <div class="w-12 sm:w-20 h-px mb-5 mx-1 transition-all"
+              [class]="step() > n ? 'bg-ink' : 'bg-rule'">
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- ── PASO 1: ¿Qué vas a pintar? ── -->
+  @if (step() === 1) {
+    <section class="px-6 md:px-10 pb-16">
+      <h2 class="font-display font-bold text-ink text-xl mb-6">¿Qué vas a pintar?</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        @for (s of surfaces; track s.id) {
+          <button
+            (click)="selectSurface(s.id)"
+            class="group flex flex-col items-start gap-3 p-4 bg-white border border-rule rounded-2xl text-left transition-all hover:border-ink/30 hover:shadow-md hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+          >
+            <div class="w-10 h-10 rounded-xl bg-paper-alt flex items-center justify-center shrink-0 transition-colors group-hover:bg-coral/10">
+              <span class="material-symbols-outlined text-[22px] leading-none text-ink-mute transition-colors group-hover:text-coral">{{ s.icon }}</span>
+            </div>
+            <div>
+              <p class="font-semibold text-sm text-ink leading-snug mb-0.5">{{ s.label }}</p>
+              <p class="text-[11px] text-ink-mute leading-snug">{{ s.sublabel }}</p>
+            </div>
+          </button>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- ── PASO 2: ¿Qué condición tiene? ── -->
+  @if (step() === 2) {
+    <section class="px-6 md:px-10 pb-16">
+      <div class="flex items-center gap-3 mb-6">
+        <button
+          (click)="back()"
+          class="p-2 rounded-lg bg-white border border-rule text-ink-mute hover:text-ink hover:border-ink/30 transition-all cursor-pointer"
+          title="Volver"
+        >
+          <span class="material-symbols-outlined text-[18px] leading-none">arrow_back</span>
+        </button>
+        <div>
+          <p class="text-[10px] font-extrabold tracking-widest uppercase text-coral">{{ selectedSurfaceLabel() }}</p>
+          <h2 class="font-display font-bold text-ink text-xl leading-tight">¿Qué condición tiene la superficie?</h2>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        @for (c of conditions; track c.id) {
+          <button
+            (click)="selectCondition(c.id)"
+            class="group flex flex-col items-start gap-3 p-4 bg-white border border-rule rounded-2xl text-left transition-all hover:border-ink/30 hover:shadow-md hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+          >
+            <div class="w-10 h-10 rounded-xl bg-paper-alt flex items-center justify-center shrink-0 transition-colors group-hover:bg-yellow/40">
+              <span class="material-symbols-outlined text-[22px] leading-none text-ink-mute transition-colors group-hover:text-ink">{{ c.icon }}</span>
+            </div>
+            <div>
+              <p class="font-semibold text-sm text-ink leading-snug mb-0.5">{{ c.label }}</p>
+              <p class="text-[11px] text-ink-mute leading-snug">{{ c.sublabel }}</p>
+            </div>
+          </button>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- ── PASO 3: Recomendación ── -->
+  @if (step() === 3) {
+    @if (recommendation(); as reco) {
+      <section class="px-6 md:px-10 pb-16">
+
+        <!-- Header con contexto y navegación -->
+        <div class="flex items-center gap-3 mb-8">
+          <button
+            (click)="back()"
+            class="p-2 rounded-lg bg-white border border-rule text-ink-mute hover:text-ink hover:border-ink/30 transition-all cursor-pointer shrink-0"
+            title="Volver"
+          >
+            <span class="material-symbols-outlined text-[18px] leading-none">arrow_back</span>
+          </button>
+          <div>
+            <p class="text-[10px] font-extrabold tracking-widest uppercase text-coral">
+              {{ selectedSurfaceLabel() }} · {{ selectedConditionLabel() }}
+            </p>
+            <h2 class="font-display font-bold text-ink text-xl leading-tight">Tu recomendación</h2>
+          </div>
+        </div>
+
+        <div class="grid gap-5 lg:grid-cols-3">
+
+          <!-- Pintura y capas (col span 2) -->
+          <div class="lg:col-span-2 space-y-5">
+
+            <!-- Pintura recomendada -->
+            <div class="bg-white border border-rule rounded-2xl p-6">
+              <div class="flex items-start gap-4">
+                <div class="w-11 h-11 rounded-xl bg-coral/10 flex items-center justify-center shrink-0">
+                  <span class="material-symbols-outlined text-coral text-[24px] leading-none">format_paint</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-[10px] font-extrabold tracking-widest uppercase text-ink-mute mb-1">Pintura recomendada</p>
+                  <p class="font-display font-bold text-ink text-lg leading-tight mb-2">{{ reco.paint }}</p>
+                  <p class="text-sm text-ink-mute leading-relaxed">{{ reco.paintDesc }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Imprimación / fondo (si existe) -->
+            @if (reco.primer) {
+              <div class="bg-white border border-rule rounded-2xl p-6">
+                <div class="flex items-start gap-4">
+                  <div class="w-11 h-11 rounded-xl bg-yellow/30 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-ink text-[24px] leading-none">layers</span>
+                  </div>
+                  <div>
+                    <p class="text-[10px] font-extrabold tracking-widest uppercase text-ink-mute mb-1">Imprimación / fondo previo</p>
+                    <p class="font-semibold text-ink text-sm leading-snug">{{ reco.primer }}</p>
+                    <p class="text-xs text-ink-mute mt-1">Aplicar antes de la pintura de acabado para mejor adherencia y resultado.</p>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Cantidad de manos -->
+            <div class="bg-white border border-rule rounded-2xl p-6">
+              <div class="flex items-start gap-4">
+                <div class="w-11 h-11 rounded-xl bg-ink/8 flex items-center justify-center shrink-0">
+                  <span class="material-symbols-outlined text-ink text-[24px] leading-none">repeat</span>
+                </div>
+                <div>
+                  <p class="text-[10px] font-extrabold tracking-widest uppercase text-ink-mute mb-1">Cantidad de manos</p>
+                  <p class="font-display font-bold text-ink text-3xl leading-none">
+                    {{ reco.coats }}
+                    <span class="text-base font-body font-normal text-ink-mute ml-1">manos de pintura</span>
+                  </p>
+                  <p class="text-xs text-ink-mute mt-2">Respetar el tiempo de secado entre cada mano (ver etiqueta del producto).</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Columna derecha: lija + tips -->
+          <div class="space-y-5">
+
+            <!-- Guía de lijado -->
+            <div class="bg-white border border-rule rounded-2xl p-6">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-9 h-9 rounded-xl bg-paper-alt flex items-center justify-center shrink-0">
+                  <span class="material-symbols-outlined text-ink text-[20px] leading-none">construction</span>
+                </div>
+                <p class="font-display font-bold text-ink text-base">Guía de lijado</p>
+              </div>
+              <div class="space-y-3">
+                @for (s of reco.sanding; track s.grit; let idx = $index) {
+                  <div class="flex gap-3">
+                    <div class="flex flex-col items-center shrink-0">
+                      <div class="w-7 h-7 rounded-lg bg-ink text-white flex items-center justify-center text-[10px] font-bold leading-none">
+                        {{ idx + 1 }}
+                      </div>
+                      @if (!$last) {
+                        <div class="w-px flex-1 bg-rule mt-1 min-h-[12px]"></div>
+                      }
+                    </div>
+                    <div class="pb-2">
+                      <span class="inline-block px-2 py-0.5 bg-yellow/40 text-ink text-[11px] font-bold rounded mb-1">Lija {{ s.grit }}</span>
+                      <p class="text-xs text-ink-mute leading-snug">{{ s.desc }}</p>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Consejos de preparación -->
+            <div class="bg-white border border-rule rounded-2xl p-6">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-9 h-9 rounded-xl bg-coral/10 flex items-center justify-center shrink-0">
+                  <span class="material-symbols-outlined text-coral text-[20px] leading-none">tips_and_updates</span>
+                </div>
+                <p class="font-display font-bold text-ink text-base">Consejos clave</p>
+              </div>
+              <ul class="space-y-3">
+                @for (tip of reco.tips; track tip.text) {
+                  <li class="flex gap-2.5">
+                    <span class="material-symbols-outlined text-ink-mute text-[18px] leading-none mt-0.5 shrink-0">{{ tip.icon }}</span>
+                    <span class="text-xs text-ink-mute leading-relaxed">{{ tip.text }}</span>
+                  </li>
+                }
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- CTA: volver a empezar + ir al catálogo -->
+        <div class="flex flex-wrap gap-3 mt-8 pt-6 border-t border-rule">
+          <button
+            (click)="restart()"
+            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white border border-rule text-ink-soft text-sm font-semibold transition-all hover:bg-ink/5 hover:text-ink cursor-pointer"
+          >
+            <span class="material-symbols-outlined text-[17px] leading-none">refresh</span>
+            Consultar otra combinación
+          </button>
+          <a
+            routerLink="/catalogo"
+            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-ink text-white text-sm font-semibold no-underline transition-all hover:bg-black"
+          >
+            <span class="material-symbols-outlined text-[17px] leading-none">format_paint</span>
+            Ver catálogo de productos
+          </a>
+        </div>
+
+      </section>
+    }
+  }
+
+</div>

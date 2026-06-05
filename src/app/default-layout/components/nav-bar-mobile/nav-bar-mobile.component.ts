@@ -52,6 +52,7 @@ export class NavBarMobileComponent implements OnInit, OnDestroy {
     { label: 'Cómo pedir',  icon: 'quiz',          route: '/ayuda/como-pedir'  },
     { label: 'Garantía',    icon: 'verified',      route: '/ayuda/garantia'    },
     { label: 'Nosotros',    icon: 'storefront',    route: '/sobre-nosotros'    },
+    { label: '¿Qué pintura me sirve?', icon: 'tips_and_updates', route: '/asesor' },
   ];
 
   ngOnInit(): void {

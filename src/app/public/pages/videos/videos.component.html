@@ -72,7 +72,20 @@
           @for (video of _paged(); track video.id) {
             <div class="bg-white border border-rule rounded-2xl overflow-hidden flex flex-col">
 
-              @if (isEmbed(video)) {
+              @if (isTikTok(video.url)) {
+                <div class="w-full overflow-hidden flex items-start justify-center bg-[rgba(26,28,44,0.03)]"
+                     style="min-height: 480px;">
+                  <blockquote
+                    class="tiktok-embed"
+                    [attr.cite]="video.url"
+                    [attr.data-video-id]="tiktokVideoId(video.url)"
+                    style="max-width:100%;min-width:100%;border:none;margin:0;padding:0;">
+                    <section>
+                      <a [href]="video.url" target="_blank" rel="noopener noreferrer">Ver en TikTok</a>
+                    </section>
+                  </blockquote>
+                </div>
+              } @else if (isEmbed(video)) {
                 <div class="w-full overflow-hidden"
                      [style.height]="isVertical(video.url) ? '520px' : null"
                      [style.aspect-ratio]="isVertical(video.url) ? null : '16/9'">
@@ -104,7 +117,7 @@
                   <span class="text-[11px] font-semibold text-ink-mute uppercase tracking-wide">{{ platformLabel(video.url) }}</span>
                 </div>
                 <p class="text-sm font-semibold text-ink leading-snug line-clamp-2">{{ video.title }}</p>
-                @if (!isEmbed(video)) {
+                @if (!isEmbed(video) && !isTikTok(video.url)) {
                   <a [href]="video.url" target="_blank" rel="noopener noreferrer"
                     class="mt-auto inline-flex items-center gap-1.5 text-xs font-semibold text-ink hover:underline">
                     <span class="material-symbols-outlined text-[14px] leading-none">open_in_new</span>
