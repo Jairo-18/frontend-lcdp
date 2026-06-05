@@ -73,17 +73,25 @@
             <div class="bg-white border border-rule rounded-2xl overflow-hidden flex flex-col">
 
               @if (isTikTok(video.url)) {
-                <div class="w-full overflow-hidden flex items-start justify-center bg-[rgba(26,28,44,0.03)]"
-                     style="min-height: 480px;">
-                  <blockquote
-                    class="tiktok-embed"
-                    [attr.cite]="video.url"
-                    [attr.data-video-id]="tiktokVideoId(video.url)"
-                    style="max-width:100%;min-width:100%;border:none;margin:0;padding:0;">
-                    <section>
-                      <a [href]="video.url" target="_blank" rel="noopener noreferrer">Ver en TikTok</a>
-                    </section>
-                  </blockquote>
+                <div class="w-full overflow-hidden flex flex-col" style="min-height: 480px;">
+                  <iframe
+                    [src]="tiktokEmbedUrl(video.url)"
+                    class="w-full flex-1 border-0"
+                    style="min-height: 480px;"
+                    scrolling="no"
+                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                    allowfullscreen="true"
+                    loading="lazy">
+                  </iframe>
+                  <!-- Fallback: solo visible si el iframe queda en blanco (TikTok bloqueado) -->
+                  <a [href]="video.url" target="_blank" rel="noopener noreferrer"
+                    class="flex items-center justify-center gap-2 py-2.5 bg-[rgba(26,28,44,0.04)] border-t border-rule text-[12px] font-semibold text-ink-mute hover:text-ink hover:bg-[rgba(26,28,44,0.08)] transition-colors no-underline shrink-0">
+                    <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.74a4.85 4.85 0 0 1-1.01-.05z"/>
+                    </svg>
+                    ¿No carga? Ver en TikTok
+                    <span class="material-symbols-outlined text-[13px] leading-none">open_in_new</span>
+                  </a>
                 </div>
               } @else if (isEmbed(video)) {
                 <div class="w-full overflow-hidden"

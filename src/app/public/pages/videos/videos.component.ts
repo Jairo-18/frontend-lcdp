@@ -2,13 +2,10 @@ import {
   Component,
   OnDestroy,
   OnInit,
-  PLATFORM_ID,
-  Renderer2,
   computed,
   inject,
   signal,
 } from '@angular/core';
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { VideoService } from '@shared/services/video.service';
@@ -43,10 +40,6 @@ export class VideosComponent implements OnInit, OnDestroy {
   private readonly _videoService: VideoService = inject(VideoService);
   private readonly _sanitizer: DomSanitizer = inject(DomSanitizer);
   private readonly _destroy$: Subject<void> = new Subject<void>();
-  private readonly _document: Document = inject(DOCUMENT);
-  private readonly _renderer2 = inject(Renderer2);
-  private readonly _platformId = inject(PLATFORM_ID);
-  private _tiktokScriptLoaded = false;
 
   readonly _loading   = signal(false);
   readonly _allVideos = signal<Video[]>([]);
@@ -99,11 +92,6 @@ export class VideosComponent implements OnInit, OnDestroy {
         next: (res) => {
           this._allVideos.set(res.data);
           this._loading.set(false);
-          const hasTikTok = res.data.some((v) => /tiktok\.com/i.test(v.url));
-          if (hasTikTok) {
-            this._loadTikTokScript();
-            setTimeout(() => this._retriggerTikTokEmbeds(), 800);
-          }
         },
         error: () => this._loading.set(false),
       });
@@ -123,25 +111,6 @@ export class VideosComponent implements OnInit, OnDestroy {
     if (page < 1 || page > this._pageCount() || page === this._page()) return;
     this._page.set(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  private _loadTikTokScript(): void {
-    if (!isPlatformBrowser(this._platformId) || this._tiktokScriptLoaded) return;
-    const existing = this._document.querySelector('script[src*="tiktok.com/embed.js"]');
-    if (existing) { this._tiktokScriptLoaded = true; return; }
-    const script = this._renderer2.createElement('script');
-    this._renderer2.setAttribute(script, 'src', 'https://www.tiktok.com/embed.js');
-    this._renderer2.setAttribute(script, 'async', 'true');
-    this._renderer2.appendChild(this._document.body, script);
-    this._tiktokScriptLoaded = true;
-  }
-
-  private _retriggerTikTokEmbeds(): void {
-    if (!isPlatformBrowser(this._platformId)) return;
-    const win = this._document.defaultView as any;
-    if (win?.tiktokEmbed) {
-      win.tiktokEmbed.lib.render(this._document.querySelectorAll('.tiktok-embed'));
-    }
   }
 
   private _platform(url: string): Platform {
@@ -165,8 +134,11 @@ export class VideosComponent implements OnInit, OnDestroy {
     return /tiktok\.com/i.test(url);
   }
 
-  tiktokVideoId(url: string): string {
-    return url.match(/\/video\/(\d+)/)?.[1] ?? '';
+  tiktokEmbedUrl(url: string): SafeResourceUrl {
+    const id = url.match(/\/video\/(\d+)/)?.[1] ?? '';
+    return this._sanitizer.bypassSecurityTrustResourceUrl(
+      `https://www.tiktok.com/embed/v2/${id}`,
+    );
   }
 
   embedUrl(video: Video): SafeResourceUrl | null {
