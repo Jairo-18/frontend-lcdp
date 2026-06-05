@@ -1,11 +1,13 @@
 import {
   Component,
+  PLATFORM_ID,
   OnDestroy,
   OnInit,
   computed,
   inject,
   signal,
 } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { VideoService } from '@shared/services/video.service';
@@ -14,6 +16,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 type Platform = 'all' | 'youtube' | 'tiktok' | 'instagram';
+type EmbedState = 'probing' | 'ok' | 'blocked';
 
 interface Tab {
   id: Platform;
@@ -22,6 +25,7 @@ interface Tab {
 }
 
 const PER_PAGE = 12;
+const PROBE_TIMEOUT_MS = 3000;
 
 const TABS: Tab[] = [
   { id: 'all',       label: 'Todos',     icon: 'play_circle'   },
@@ -37,14 +41,21 @@ const TABS: Tab[] = [
   templateUrl: './videos.component.html',
 })
 export class VideosComponent implements OnInit, OnDestroy {
-  private readonly _videoService: VideoService = inject(VideoService);
-  private readonly _sanitizer: DomSanitizer = inject(DomSanitizer);
-  private readonly _destroy$: Subject<void> = new Subject<void>();
+  private readonly _videoService = inject(VideoService);
+  private readonly _sanitizer    = inject(DomSanitizer);
+  private readonly _platformId   = inject(PLATFORM_ID);
+  private readonly _destroy$     = new Subject<void>();
+  private _msgListener?: (e: MessageEvent) => void;
+  private _probeTimer?: ReturnType<typeof setTimeout>;
 
   readonly _loading   = signal(false);
   readonly _allVideos = signal<Video[]>([]);
   readonly _activeTab = signal<Platform>('all');
   readonly _page      = signal(1);
+
+  // 'probing' = iframe oculto cargando, 'ok' = embed funciona, 'blocked' = mostrar tarjeta
+  readonly _tiktokState  = signal<EmbedState>('probing');
+  readonly _igState      = signal<EmbedState>('probing');
 
   readonly _filtered = computed(() => {
     const tab = this._activeTab();
@@ -78,8 +89,7 @@ export class VideosComponent implements OnInit, OnDestroy {
       count:
         t.id === 'all'
           ? this._allVideos().length
-          : this._allVideos().filter((v) => this._platform(v.url) === t.id)
-              .length,
+          : this._allVideos().filter((v) => this._platform(v.url) === t.id).length,
     })),
   );
 
@@ -92,6 +102,9 @@ export class VideosComponent implements OnInit, OnDestroy {
         next: (res) => {
           this._allVideos.set(res.data);
           this._loading.set(false);
+          const hasTT = res.data.some((v) => /tiktok\.com/i.test(v.url));
+          const hasIG = res.data.some((v) => /instagram\.com/i.test(v.url));
+          if (hasTT || hasIG) this._startEmbedProbe(hasTT, hasIG);
         },
         error: () => this._loading.set(false),
       });
@@ -100,7 +113,45 @@ export class VideosComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this._destroy$.next();
     this._destroy$.complete();
+    this._stopEmbedProbe();
   }
+
+  // ── Detección de embed ──────────────────────────────────────────────────────
+
+  private _startEmbedProbe(hasTT: boolean, hasIG: boolean): void {
+    if (!isPlatformBrowser(this._platformId)) {
+      if (hasTT) this._tiktokState.set('blocked');
+      if (hasIG)  this._igState.set('blocked');
+      return;
+    }
+
+    this._msgListener = (e: MessageEvent) => {
+      if (hasTT && /tiktok\.com$/i.test(e.origin) && this._tiktokState() === 'probing')
+        this._tiktokState.set('ok');
+      if (hasIG && /instagram\.com$/i.test(e.origin) && this._igState() === 'probing')
+        this._igState.set('ok');
+    };
+    window.addEventListener('message', this._msgListener);
+
+    this._probeTimer = setTimeout(() => {
+      if (hasTT && this._tiktokState() === 'probing') this._tiktokState.set('blocked');
+      if (hasIG  && this._igState()     === 'probing') this._igState.set('blocked');
+      this._stopEmbedProbe();
+    }, PROBE_TIMEOUT_MS);
+  }
+
+  private _stopEmbedProbe(): void {
+    if (this._msgListener) {
+      window.removeEventListener('message', this._msgListener);
+      this._msgListener = undefined;
+    }
+    if (this._probeTimer) {
+      clearTimeout(this._probeTimer);
+      this._probeTimer = undefined;
+    }
+  }
+
+  // ── Helpers de plataforma ───────────────────────────────────────────────────
 
   selectTab(tab: Platform): void {
     this._activeTab.set(tab);
@@ -113,25 +164,12 @@ export class VideosComponent implements OnInit, OnDestroy {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  private _platform(url: string): Platform {
-    if (/youtube\.com|youtu\.be/i.test(url)) return 'youtube';
-    if (/tiktok\.com/i.test(url)) return 'tiktok';
-    if (/instagram\.com/i.test(url)) return 'instagram';
-    return 'all';
-  }
-
-  platformLabel(url: string): string {
-    const p = this._platform(url);
-    return TABS.find((t) => t.id === p)?.label ?? 'Video';
-  }
-
-  platformIcon(url: string): string {
-    const p = this._platform(url);
-    return TABS.find((t) => t.id === p)?.icon ?? 'play_circle';
-  }
-
   isTikTok(url: string): boolean {
     return /tiktok\.com/i.test(url);
+  }
+
+  isInstagram(url: string): boolean {
+    return /instagram\.com/i.test(url);
   }
 
   tiktokEmbedUrl(url: string): SafeResourceUrl {
@@ -141,10 +179,13 @@ export class VideosComponent implements OnInit, OnDestroy {
     );
   }
 
+  igEmbedUrl(url: string): SafeResourceUrl {
+    const clean = url.split('?')[0].replace(/\/$/, '');
+    return this._sanitizer.bypassSecurityTrustResourceUrl(`${clean}/embed/`);
+  }
+
   embedUrl(video: Video): SafeResourceUrl | null {
     const url = video.url;
-
-    // YouTube
     const ytMatch = url.match(
       /(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/,
     );
@@ -152,18 +193,6 @@ export class VideosComponent implements OnInit, OnDestroy {
       return this._sanitizer.bypassSecurityTrustResourceUrl(
         `https://www.youtube-nocookie.com/embed/${ytMatch[1]}`,
       );
-
-    // TikTok uses blockquote + embed.js, not iframe — skip here
-    if (/tiktok\.com/i.test(url)) return null;
-
-    // Instagram — construye /embed/ desde la URL limpia
-    if (/instagram\.com/i.test(url)) {
-      const clean = url.split('?')[0].replace(/\/$/, '');
-      return this._sanitizer.bypassSecurityTrustResourceUrl(
-        `${clean}/embed/`,
-      );
-    }
-
     return null;
   }
 
@@ -172,8 +201,21 @@ export class VideosComponent implements OnInit, OnDestroy {
   }
 
   isVertical(url: string): boolean {
-    if (/instagram\.com\/reel\//i.test(url)) return true;
-    if (/youtube\.com\/shorts\//i.test(url)) return true;
-    return false;
+    return /youtube\.com\/shorts\//i.test(url);
+  }
+
+  platformLabel(url: string): string {
+    return TABS.find((t) => t.id === this._platform(url))?.label ?? 'Video';
+  }
+
+  platformIcon(url: string): string {
+    return TABS.find((t) => t.id === this._platform(url))?.icon ?? 'play_circle';
+  }
+
+  private _platform(url: string): Platform {
+    if (/youtube\.com|youtu\.be/i.test(url)) return 'youtube';
+    if (/tiktok\.com/i.test(url))            return 'tiktok';
+    if (/instagram\.com/i.test(url))         return 'instagram';
+    return 'all';
   }
 }
