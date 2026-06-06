@@ -6,12 +6,13 @@
     <div class="flex items-center gap-2 lg:gap-3 min-w-0">
       <span class="material-symbols-outlined text-[20px] lg:text-[22px] text-gray-500 shrink-0">3d_rotation</span>
       <div class="min-w-0">
-        <h2 class="font-semibold text-gray-800 text-[14px] lg:text-[15px] leading-tight truncate">Visualizador de espacios</h2>
-        <p class="text-[10px] lg:text-[11px] text-gray-400 hidden sm:block">Selecciona un espacio, haz clic en una superficie y elige el color</p>
+        <h2 class="font-semibold text-gray-800 text-[14px] lg:text-[15px] leading-tight truncate">Visualizador de
+          espacios</h2>
+        <p class="text-[10px] lg:text-[11px] text-gray-400 hidden sm:block">Selecciona un espacio, haz clic en una
+          superficie y elige el color</p>
       </div>
     </div>
-    <button
-      (click)="close.emit()"
+    <button (click)="close.emit()"
       class="w-8 h-8 lg:w-9 lg:h-9 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-all border-0 bg-transparent cursor-pointer shrink-0"
       title="Cerrar">
       <span class="material-symbols-outlined text-[20px] leading-none">close</span>
@@ -22,501 +23,809 @@
   <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
 
     <!-- ── SVG Room ── -->
-    <div class="shrink-0 lg:flex-1 bg-gradient-to-br from-slate-100 to-gray-200 flex flex-col items-center justify-center p-3 lg:p-6 overflow-hidden gap-2 lg:gap-3 h-[38dvh] lg:h-auto">
+    <div
+      class="shrink-0 lg:flex-1 bg-gradient-to-br from-slate-100 to-gray-200 flex flex-col items-center justify-center p-3 lg:p-6 overflow-hidden gap-2 lg:gap-3 h-[38dvh] lg:h-auto">
 
       <!-- View selector -->
-      <div class="flex gap-0.5 lg:gap-1 bg-white/90 backdrop-blur-sm rounded-xl p-0.5 lg:p-1 shadow-md border border-white/60 shrink-0">
+      <div
+        class="flex gap-0.5 lg:gap-1 bg-white/90 backdrop-blur-sm rounded-xl p-0.5 lg:p-1 shadow-md border border-white/60 shrink-0">
         @for (v of views; track v.key) {
-          <button
-            (click)="setView(v.key)"
-            class="flex items-center gap-1 lg:gap-1.5 px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg text-[11px] lg:text-[12px] font-medium transition-all cursor-pointer border-0"
-            [class.bg-ink]="activeView() === v.key"
-            [class.text-white]="activeView() === v.key"
-            [class.text-gray-500]="activeView() !== v.key"
-            [class.bg-transparent]="activeView() !== v.key">
-            <span class="material-symbols-outlined text-[14px] lg:text-[15px] leading-none">{{ v.icon }}</span>
-            <span class="hidden sm:inline">{{ v.label }}</span>
-          </button>
+        <button (click)="setView(v.key)"
+          class="flex items-center gap-1 lg:gap-1.5 px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg text-[11px] lg:text-[12px] font-medium transition-all cursor-pointer border-0"
+          [class.bg-ink]="activeView() === v.key" [class.text-white]="activeView() === v.key"
+          [class.text-gray-500]="activeView() !== v.key" [class.bg-transparent]="activeView() !== v.key">
+          <span class="material-symbols-outlined text-[14px] lg:text-[15px] leading-none">{{ v.icon }}</span>
+          <span class="hidden sm:inline">{{ v.label }}</span>
+        </button>
         }
       </div>
 
       <!-- SVG Canvas -->
-      <svg
-        viewBox="0 0 900 580"
-        xmlns="http://www.w3.org/2000/svg"
-        class="w-full h-full"
+      <svg viewBox="0 0 900 580" xmlns="http://www.w3.org/2000/svg" class="w-full h-full"
         style="max-height: calc(100dvh - 155px); filter: drop-shadow(0 12px 40px rgba(0,0,0,0.22))">
+
+        <!-- ═══ MODERN LIGHTING DEFS ═══ -->
+        <defs>
+          <!-- Floor: bright near back wall, darkens toward viewer -->
+          <linearGradient id="floorLight" x1="0.5" y1="0" x2="0.5" y2="1">
+            <stop offset="0%" stop-color="white" stop-opacity="0.18" />
+            <stop offset="100%" stop-color="black" stop-opacity="0.12" />
+          </linearGradient>
+          <!-- Ceiling: radial glow from center lamp -->
+          <radialGradient id="ceilingGlow" cx="0.5" cy="0.5" r="0.55">
+            <stop offset="0%" stop-color="white" stop-opacity="0.22" />
+            <stop offset="100%" stop-color="black" stop-opacity="0.06" />
+          </radialGradient>
+          <!-- Left wall: darker toward back edge -->
+          <linearGradient id="wallLeftShadow" x1="1" y1="0" x2="0" y2="0">
+            <stop offset="0%" stop-color="black" stop-opacity="0.14" />
+            <stop offset="60%" stop-color="black" stop-opacity="0.05" />
+            <stop offset="100%" stop-color="white" stop-opacity="0.04" />
+          </linearGradient>
+          <!-- Right wall: slightly lighter (receives more light) -->
+          <linearGradient id="wallRightShadow" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="black" stop-opacity="0.10" />
+            <stop offset="60%" stop-color="black" stop-opacity="0.03" />
+            <stop offset="100%" stop-color="white" stop-opacity="0.06" />
+          </linearGradient>
+          <!-- Back wall: subtle vignette from center -->
+          <radialGradient id="wallBackVignette" cx="0.5" cy="0.45" r="0.7">
+            <stop offset="0%" stop-color="white" stop-opacity="0.08" />
+            <stop offset="100%" stop-color="black" stop-opacity="0.08" />
+          </radialGradient>
+          <!-- AO: ambient occlusion strip along floor-wall junction -->
+          <linearGradient id="aoFloor" x1="0.5" y1="0" x2="0.5" y2="1">
+            <stop offset="0%" stop-color="black" stop-opacity="0.18" />
+            <stop offset="100%" stop-color="black" stop-opacity="0" />
+          </linearGradient>
+          <!-- Window glass reflection -->
+          <linearGradient id="glassReflect" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="white" stop-opacity="0.50" />
+            <stop offset="30%" stop-color="white" stop-opacity="0.12" />
+            <stop offset="60%" stop-color="white" stop-opacity="0" />
+            <stop offset="100%" stop-color="white" stop-opacity="0.08" />
+          </linearGradient>
+          <!-- Sunlight patch on floor -->
+          <radialGradient id="sunPatch" cx="0.5" cy="0.3" r="0.6">
+            <stop offset="0%" stop-color="#FFF3D0" stop-opacity="0.30" />
+            <stop offset="50%" stop-color="#FFE8A0" stop-opacity="0.12" />
+            <stop offset="100%" stop-color="#FFE8A0" stop-opacity="0" />
+          </radialGradient>
+          <!-- Modern lamp glow (soft bloom) -->
+          <filter id="lampGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <!-- Subtle large glow for ambient light -->
+          <filter id="ambientGlow" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="18" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <!-- Soft shadow for furniture -->
+          <filter id="softShadow" x="-10%" y="-10%" width="130%" height="130%">
+            <feDropShadow dx="2" dy="4" stdDeviation="5" flood-color="rgba(0,0,0,0.18)" />
+          </filter>
+          <!-- Sky gradient for fachada -->
+          <linearGradient id="skyGradient" x1="0.5" y1="0" x2="0.5" y2="1">
+            <stop offset="0%" stop-color="#5BB8D4" />
+            <stop offset="45%" stop-color="#A8D8EE" />
+            <stop offset="100%" stop-color="#D8EEF8" />
+          </linearGradient>
+          <!-- Building facade: subtle vertical light variation -->
+          <linearGradient id="buildingFacade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="white" stop-opacity="0.09" />
+            <stop offset="100%" stop-color="black" stop-opacity="0.07" />
+          </linearGradient>
+        </defs>
 
         @switch (activeView()) {
 
-          <!-- ═══════════════════════════════════════════════════════
+        <!-- ═══════════════════════════════════════════════════════
                ALCOBA
           ════════════════════════════════════════════════════════ -->
-          @case ('alcoba') {
-            <!-- Room surfaces -->
-            <polygon points="0,580 900,580 650,380 250,380" [attr.fill]="floor()" class="room-surface cursor-pointer" (click)="activeSurface.set('floor')"/>
-            <polygon points="0,0 900,0 650,80 250,80" [attr.fill]="ceiling()" class="room-surface cursor-pointer" (click)="activeSurface.set('ceiling')"/>
-            <polygon points="0,0 250,80 250,380 0,580" [attr.fill]="wallLeft()" class="room-surface cursor-pointer" (click)="activeSurface.set('wall-left')"/>
-            <polygon points="0,0 250,80 250,380 0,580" fill="rgba(0,0,0,0.09)" style="pointer-events:none"/>
-            <polygon points="900,0 650,80 650,380 900,580" [attr.fill]="wallRight()" class="room-surface cursor-pointer" (click)="activeSurface.set('wall-right')"/>
-            <polygon points="900,0 650,80 650,380 900,580" fill="rgba(0,0,0,0.05)" style="pointer-events:none"/>
-            <polygon points="250,80 650,80 650,380 250,380" [attr.fill]="wallBack()" class="room-surface cursor-pointer" (click)="activeSurface.set('wall-back')"/>
-            <!-- Highlights -->
-            @if (activeSurface() === 'floor') {
-              <polygon points="0,580 900,580 650,380 250,380" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3" class="selection-march" style="pointer-events:none"/>
-            }
-            @if (activeSurface() === 'ceiling') {
-              <polygon points="0,0 900,0 650,80 250,80" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3" class="selection-march" style="pointer-events:none"/>
-            }
-            @if (activeSurface() === 'wall-left') {
-              <polygon points="0,0 250,80 250,380 0,580" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3" class="selection-march" style="pointer-events:none"/>
-            }
-            @if (activeSurface() === 'wall-right') {
-              <polygon points="900,0 650,80 650,380 900,580" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3" class="selection-march" style="pointer-events:none"/>
-            }
-            @if (activeSurface() === 'wall-back') {
-              <polygon points="250,80 650,80 650,380 250,380" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3" class="selection-march" style="pointer-events:none"/>
-            }
-            <!-- Edges -->
-            <line x1="250" y1="80"  x2="250" y2="380" stroke="rgba(0,0,0,0.18)" stroke-width="1.5"/>
-            <line x1="650" y1="80"  x2="650" y2="380" stroke="rgba(0,0,0,0.12)" stroke-width="1.5"/>
-            <line x1="250" y1="80"  x2="650" y2="80"  stroke="rgba(0,0,0,0.10)" stroke-width="1"/>
-            <line x1="250" y1="380" x2="650" y2="380" stroke="rgba(0,0,0,0.20)" stroke-width="1.5"/>
-            <line x1="250" y1="80"  x2="0"   y2="0"   stroke="rgba(0,0,0,0.07)" stroke-width="1"/>
-            <line x1="650" y1="80"  x2="900" y2="0"   stroke="rgba(0,0,0,0.07)" stroke-width="1"/>
-            <line x1="250" y1="380" x2="0"   y2="580" stroke="rgba(0,0,0,0.10)" stroke-width="1"/>
-            <line x1="650" y1="380" x2="900" y2="580" stroke="rgba(0,0,0,0.10)" stroke-width="1"/>
-            <!-- Baseboard -->
-            <polygon points="0,569  250,373 250,380 0,580"   fill="rgba(255,255,255,0.30)"/>
-            <polygon points="900,569 650,373 650,380 900,580" fill="rgba(255,255,255,0.24)"/>
-            <rect    x="250" y="374" width="400" height="6"  fill="rgba(255,255,255,0.28)"/>
-            <!-- Window -->
-            <polygon points="335,108 362,108 368,278 327,278" fill="#A89880" opacity="0.78"/>
-            <polygon points="565,108 538,108 532,278 573,278" fill="#A89880" opacity="0.78"/>
-            <rect x="335" y="108" width="230" height="170" rx="3" fill="white" stroke="#8B9BAF" stroke-width="3"/>
-            <rect x="338" y="111" width="108" height="78"  fill="#C5E2F5"/>
-            <rect x="450" y="111" width="111" height="78"  fill="#CEE8F8"/>
-            <rect x="338" y="193" width="108" height="81"  fill="#D8EFF8"/>
-            <rect x="450" y="193" width="111" height="81"  fill="#D2EBF5"/>
-            <line x1="449" y1="111" x2="449" y2="278" stroke="#8B9BAF" stroke-width="2.5"/>
-            <line x1="338" y1="192" x2="562" y2="192" stroke="#8B9BAF" stroke-width="2.5"/>
-            <rect x="327" y="278" width="246" height="10" rx="2" fill="#BCA898"/>
-            <!-- Ceiling light -->
-            <rect x="388" y="80" width="124" height="9" rx="2" fill="rgba(0,0,0,0.22)"/>
-            <line x1="450" y1="89" x2="450" y2="116" stroke="#999" stroke-width="1.5"/>
-            <ellipse cx="450" cy="128" rx="27" ry="13" fill="#F5EDD6" stroke="#D4C8A0" stroke-width="1.5"/>
-            <ellipse cx="450" cy="141" rx="19" ry="7"  fill="rgba(255,240,150,0.32)"/>
-            <!-- Wall art: cuadro enmarcado abstracto -->
-            <polygon points="28,122 118,137 118,226 28,208" fill="#8A7A6A"/>
-            <polygon points="34,127 112,141 112,221 34,203" fill="#F5F0E8"/>
-            <!-- contenido del cuadro: cielo + paisaje -->
-            <polygon points="34,127 112,141 112,172 34,155" fill="#B8D0E4"/>
-            <polygon points="34,155 112,172 112,221 34,203" fill="#8BAA80"/>
-            <polygon points="34,179 58,166 74,182 90,158 112,172 112,221 34,203" fill="#6A8A65"/>
-            <circle cx="90" cy="150" r="9" fill="#E8C870" opacity="0.9"/>
-            <circle cx="52" cy="186" r="5" fill="#4A6A45"/>
-            <!-- Rug -->
-            <polygon points="458,394 652,394 786,514 444,514" fill="#9B7E5A" opacity="0.22"/>
-            <!-- Headboard -->
-            <rect x="472" y="200" width="176" height="112" rx="3" fill="#5C3D1E"/>
-            <rect x="469" y="196" width="182" height="13"  rx="3" fill="#6B4828"/>
-            <rect x="479" y="213" width="74"  height="88"  rx="2" fill="#4A3018"/>
-            <rect x="561" y="213" width="74"  height="88"  rx="2" fill="#4A3018"/>
-            <!-- Bed frame -->
-            <polygon points="472,312 490,418 490,505 472,390" fill="#6B4828"/>
-            <polygon points="490,418 782,418 782,505 490,505" fill="#7A5530"/>
-            <polygon points="648,312 782,418 782,505 648,390" fill="#5C3D1E"/>
-            <!-- Mattress -->
-            <polygon points="472,312 648,312 782,418 490,418" fill="#EDE5D8"/>
-            <polygon points="490,418 782,418 782,424 490,424" fill="#D4C8B4"/>
-            <!-- Blanket (borde superior horizontal, sigue la forma del colchón) -->
-            <polygon points="479,354 702,354 782,418 490,418" fill="#C4D4E4"/>
-            <!-- Doblez de la cobija (franja horizontal limpia) -->
-            <polygon points="479,348 702,348 702,356 479,356" fill="#B6C8DC"/>
-            <polygon points="490,415 782,415 782,424 490,424" fill="#B0C2D6"/>
-            <!-- Pillows -->
-            <polygon points="484,310 553,310 550,342 481,342" fill="#F5F0E8"/>
-            <polygon points="559,310 643,310 648,342 555,342" fill="#F8F4EC"/>
-            <polygon points="485,340 552,340 549,344 483,344" fill="rgba(0,0,0,0.08)"/>
-            <polygon points="559,340 643,340 648,344 556,344" fill="rgba(0,0,0,0.08)"/>
-            <!-- Bedside table -->
-            <polygon points="410,334 472,334 490,398 402,398" fill="#6B4828"/>
-            <polygon points="402,398 490,398 490,456 402,456" fill="#7A5530"/>
-            <polygon points="472,334 490,398 490,456 472,390" fill="#5C3D1E"/>
-            <line x1="406" y1="427" x2="488" y2="427" stroke="rgba(0,0,0,0.28)" stroke-width="1"/>
-            <rect x="430" y="422" width="28" height="4" rx="2" fill="#A08060"/>
-            <!-- Bedside lamp (base centrada en el velador, tallo corto) -->
-            <!-- Base sobre el velador (centro del velador ≈ x=447, y=362) -->
-            <ellipse cx="447" cy="362" rx="11" ry="4" fill="#B09060"/>
-            <!-- Tallo vertical -->
-            <line x1="447" y1="362" x2="447" y2="330" stroke="#C0A070" stroke-width="3" stroke-linecap="round"/>
-            <!-- Pantalla de la lámpara (encima del tallo) -->
-            <polygon points="424,330 470,330 464,313 430,313" fill="#F0E0BE"/>
-            <polygon points="428,328 466,328 461,315 433,315" fill="#E4D0A8"/>
-            <!-- Luz cálida -->
-            <ellipse cx="447" cy="340" rx="20" ry="7" fill="rgba(255,220,120,0.15)"/>
-          }
+        @case ('alcoba') {
+        <!-- Room surfaces -->
+        <polygon points="0,580 900,580 650,380 250,380" [attr.fill]="floor()" class="room-surface cursor-pointer"
+          (click)="activeSurface.set('floor')" />
+        <polygon points="0,580 900,580 650,380 250,380" fill="url(#floorLight)" style="pointer-events:none" />
+        <polygon points="0,0 900,0 650,80 250,80" [attr.fill]="ceiling()" class="room-surface cursor-pointer"
+          (click)="activeSurface.set('ceiling')" />
+        <polygon points="0,0 900,0 650,80 250,80" fill="url(#ceilingGlow)" style="pointer-events:none" />
+        <polygon points="0,0 250,80 250,380 0,580" [attr.fill]="wallLeft()" class="room-surface cursor-pointer"
+          (click)="activeSurface.set('wall-left')" />
+        <polygon points="0,0 250,80 250,380 0,580" fill="url(#wallLeftShadow)" style="pointer-events:none" />
+        <polygon points="900,0 650,80 650,380 900,580" [attr.fill]="wallRight()" class="room-surface cursor-pointer"
+          (click)="activeSurface.set('wall-right')" />
+        <polygon points="900,0 650,80 650,380 900,580" fill="url(#wallRightShadow)" style="pointer-events:none" />
+        <polygon points="250,80 650,80 650,380 250,380" [attr.fill]="wallBack()" class="room-surface cursor-pointer"
+          (click)="activeSurface.set('wall-back')" />
+        <polygon points="250,80 650,80 650,380 250,380" fill="url(#wallBackVignette)" style="pointer-events:none" />
+        <!-- AO strips along floor-wall junctions -->
+        <polygon points="250,380 650,380 650,395 250,395" fill="url(#aoFloor)" style="pointer-events:none" />
+        <polygon points="0,565 250,373 250,390 0,580" fill="url(#aoFloor)" style="pointer-events:none" opacity="0.6" />
+        <polygon points="900,565 650,373 650,390 900,580" fill="url(#aoFloor)" style="pointer-events:none"
+          opacity="0.5" />
+        <!-- Sunlight patch on floor below window -->
+        <polygon points="340,385 560,385 620,480 280,480" fill="url(#sunPatch)" style="pointer-events:none" />
+        <!-- Highlights -->
+        @if (activeSurface() === 'floor') {
+        <polygon points="0,580 900,580 650,380 250,380" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+          class="selection-march" style="pointer-events:none" />
+        }
+        @if (activeSurface() === 'ceiling') {
+        <polygon points="0,0 900,0 650,80 250,80" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+          class="selection-march" style="pointer-events:none" />
+        }
+        @if (activeSurface() === 'wall-left') {
+        <polygon points="0,0 250,80 250,380 0,580" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+          class="selection-march" style="pointer-events:none" />
+        }
+        @if (activeSurface() === 'wall-right') {
+        <polygon points="900,0 650,80 650,380 900,580" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+          class="selection-march" style="pointer-events:none" />
+        }
+        @if (activeSurface() === 'wall-back') {
+        <polygon points="250,80 650,80 650,380 250,380" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+          class="selection-march" style="pointer-events:none" />
+        }
+        <!-- Edges (softer, modern) -->
+        <line x1="250" y1="80" x2="250" y2="380" stroke="rgba(0,0,0,0.12)" stroke-width="1" />
+        <line x1="650" y1="80" x2="650" y2="380" stroke="rgba(0,0,0,0.08)" stroke-width="1" />
+        <line x1="250" y1="80" x2="650" y2="80" stroke="rgba(0,0,0,0.06)" stroke-width="0.5" />
+        <line x1="250" y1="380" x2="650" y2="380" stroke="rgba(0,0,0,0.15)" stroke-width="1" />
+        <line x1="250" y1="80" x2="0" y2="0" stroke="rgba(0,0,0,0.04)" stroke-width="0.5" />
+        <line x1="650" y1="80" x2="900" y2="0" stroke="rgba(0,0,0,0.04)" stroke-width="0.5" />
+        <line x1="250" y1="380" x2="0" y2="580" stroke="rgba(0,0,0,0.06)" stroke-width="0.5" />
+        <line x1="650" y1="380" x2="900" y2="580" stroke="rgba(0,0,0,0.06)" stroke-width="0.5" />
+        <!-- Baseboard (modern profile) -->
+        <polygon points="0,569  250,373 250,380 0,580" fill="rgba(255,255,255,0.35)" />
+        <polygon points="900,569 650,373 650,380 900,580" fill="rgba(255,255,255,0.28)" />
+        <rect x="250" y="374" width="400" height="6" fill="rgba(255,255,255,0.32)" />
+        <!-- Window (modern frame) -->
+        <polygon points="335,108 362,108 368,278 327,278" fill="#B0A090" opacity="0.7" />
+        <polygon points="565,108 538,108 532,278 573,278" fill="#B0A090" opacity="0.7" />
+        <rect x="335" y="108" width="230" height="170" rx="2" fill="white" stroke="#A0AABB" stroke-width="2.5" />
+        <rect x="338" y="111" width="108" height="78" fill="#B8D8F0" />
+        <rect x="450" y="111" width="111" height="78" fill="#C4E0F5" />
+        <rect x="338" y="193" width="108" height="81" fill="#CCE8F8" />
+        <rect x="450" y="193" width="111" height="81" fill="#C8E4F5" />
+        <!-- Glass reflection overlays -->
+        <rect x="338" y="111" width="108" height="78" fill="url(#glassReflect)" style="pointer-events:none" />
+        <rect x="450" y="111" width="111" height="78" fill="url(#glassReflect)" style="pointer-events:none"
+          opacity="0.7" />
+        <rect x="338" y="193" width="108" height="81" fill="url(#glassReflect)" style="pointer-events:none"
+          opacity="0.5" />
+        <rect x="450" y="193" width="111" height="81" fill="url(#glassReflect)" style="pointer-events:none"
+          opacity="0.4" />
+        <line x1="449" y1="111" x2="449" y2="278" stroke="#A0AABB" stroke-width="2" />
+        <line x1="338" y1="192" x2="562" y2="192" stroke="#A0AABB" stroke-width="2" />
+        <rect x="327" y="278" width="246" height="8" rx="1.5" fill="#C0B0A0" />
+        <!-- Modern ceiling light (sleek pendant) -->
+        <rect x="420" y="80" width="60" height="4" rx="2" fill="rgba(0,0,0,0.15)" />
+        <line x1="450" y1="84" x2="450" y2="108" stroke="#888" stroke-width="1.2" />
+        <!-- Pendant shade (modern disc) -->
+        <ellipse cx="450" cy="112" rx="34" ry="5" fill="#2A2A2A" />
+        <ellipse cx="450" cy="111" rx="32" ry="4" fill="#3A3A3A" />
+        <ellipse cx="450" cy="113" rx="28" ry="3" fill="#4A4A4A" />
+        <!-- Light glow from pendant -->
+        <ellipse cx="450" cy="118" rx="22" ry="4" fill="rgba(255,245,220,0.60)" filter="url(#lampGlow)" />
+        <!-- Ambient light cone on back wall -->
+        <ellipse cx="450" cy="230" rx="120" ry="100" fill="rgba(255,248,230,0.08)" filter="url(#ambientGlow)"
+          style="pointer-events:none" />
+        <!-- Wall art: cuadro enmarcado abstracto -->
+        <g filter="url(#softShadow)">
+          <polygon points="28,122 118,137 118,226 28,208" fill="#8A7A6A" />
+          <polygon points="34,127 112,141 112,221 34,203" fill="#F5F0E8" />
+          <!-- contenido del cuadro: cielo + paisaje -->
+          <polygon points="34,127 112,141 112,172 34,155" fill="#B8D0E4" />
+          <polygon points="34,155 112,172 112,221 34,203" fill="#8BAA80" />
+          <polygon points="34,179 58,166 74,182 90,158 112,172 112,221 34,203" fill="#6A8A65" />
+          <circle cx="90" cy="150" r="9" fill="#E8C870" opacity="0.9" />
+          <circle cx="52" cy="186" r="5" fill="#4A6A45" />
+        </g>
+        <!-- Rug -->
+        <polygon points="458,394 652,394 786,514 444,514" fill="#9B7E5A" opacity="0.22" />
+        <!-- Headboard -->
+        <rect x="472" y="200" width="176" height="112" rx="3" fill="#5C3D1E" />
+        <rect x="469" y="196" width="182" height="13" rx="3" fill="#6B4828" />
+        <rect x="479" y="213" width="74" height="88" rx="2" fill="#4A3018" />
+        <rect x="561" y="213" width="74" height="88" rx="2" fill="#4A3018" />
+        <!-- Bed frame -->
+        <polygon points="472,312 490,418 490,505 472,390" fill="#6B4828" />
+        <polygon points="490,418 782,418 782,505 490,505" fill="#7A5530" />
+        <polygon points="648,312 782,418 782,505 648,390" fill="#5C3D1E" />
+        <!-- Mattress -->
+        <polygon points="472,312 648,312 782,418 490,418" fill="#EDE5D8" />
+        <polygon points="490,418 782,418 782,424 490,424" fill="#D4C8B4" />
+        <!-- Blanket (borde superior horizontal, sigue la forma del colchón) -->
+        <polygon points="479,354 702,354 782,418 490,418" fill="#C4D4E4" />
+        <!-- Doblez de la cobija (franja horizontal limpia) -->
+        <polygon points="479,348 702,348 702,356 479,356" fill="#B6C8DC" />
+        <polygon points="490,415 782,415 782,424 490,424" fill="#B0C2D6" />
+        <!-- Pillows -->
+        <polygon points="484,310 553,310 550,342 481,342" fill="#F5F0E8" />
+        <polygon points="559,310 643,310 648,342 555,342" fill="#F8F4EC" />
+        <polygon points="485,340 552,340 549,344 483,344" fill="rgba(0,0,0,0.08)" />
+        <polygon points="559,340 643,340 648,344 556,344" fill="rgba(0,0,0,0.08)" />
+        <!-- Bedside table -->
+        <polygon points="410,334 472,334 490,398 402,398" fill="#6B4828" />
+        <polygon points="402,398 490,398 490,456 402,456" fill="#7A5530" />
+        <polygon points="472,334 490,398 490,456 472,390" fill="#5C3D1E" />
+        <line x1="406" y1="427" x2="488" y2="427" stroke="rgba(0,0,0,0.28)" stroke-width="1" />
+        <rect x="430" y="422" width="28" height="4" rx="2" fill="#A08060" />
+        <!-- Bedside lamp (base centrada en el velador, tallo corto) -->
+        <!-- Base sobre el velador (centro del velador ≈ x=447, y=362) -->
+        <ellipse cx="447" cy="362" rx="11" ry="4" fill="#B09060" />
+        <!-- Tallo vertical -->
+        <line x1="447" y1="362" x2="447" y2="330" stroke="#C0A070" stroke-width="3" stroke-linecap="round" />
+        <!-- Pantalla de la lámpara (encima del tallo) -->
+        <polygon points="424,330 470,330 464,313 430,313" fill="#F0E0BE" />
+        <polygon points="428,328 466,328 461,315 433,315" fill="#E4D0A8" />
+        <!-- Luz cálida -->
+        <ellipse cx="447" cy="340" rx="20" ry="7" fill="rgba(255,220,120,0.15)" />
+        }
 
-          <!-- ═══════════════════════════════════════════════════════
+        <!-- ═══════════════════════════════════════════════════════
                SALA
           ════════════════════════════════════════════════════════ -->
-          @case ('sala') {
-            <!-- Room surfaces -->
-            <polygon points="0,580 900,580 650,380 250,380" [attr.fill]="floor()" class="room-surface cursor-pointer" (click)="activeSurface.set('floor')"/>
-            <polygon points="0,0 900,0 650,80 250,80" [attr.fill]="ceiling()" class="room-surface cursor-pointer" (click)="activeSurface.set('ceiling')"/>
-            <polygon points="0,0 250,80 250,380 0,580" [attr.fill]="wallLeft()" class="room-surface cursor-pointer" (click)="activeSurface.set('wall-left')"/>
-            <polygon points="0,0 250,80 250,380 0,580" fill="rgba(0,0,0,0.09)" style="pointer-events:none"/>
-            <polygon points="900,0 650,80 650,380 900,580" [attr.fill]="wallRight()" class="room-surface cursor-pointer" (click)="activeSurface.set('wall-right')"/>
-            <polygon points="900,0 650,80 650,380 900,580" fill="rgba(0,0,0,0.05)" style="pointer-events:none"/>
-            <polygon points="250,80 650,80 650,380 250,380" [attr.fill]="wallBack()" class="room-surface cursor-pointer" (click)="activeSurface.set('wall-back')"/>
-            <!-- Highlights -->
-            @if (activeSurface() === 'floor') {
-              <polygon points="0,580 900,580 650,380 250,380" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3" class="selection-march" style="pointer-events:none"/>
-            }
-            @if (activeSurface() === 'ceiling') {
-              <polygon points="0,0 900,0 650,80 250,80" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3" class="selection-march" style="pointer-events:none"/>
-            }
-            @if (activeSurface() === 'wall-left') {
-              <polygon points="0,0 250,80 250,380 0,580" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3" class="selection-march" style="pointer-events:none"/>
-            }
-            @if (activeSurface() === 'wall-right') {
-              <polygon points="900,0 650,80 650,380 900,580" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3" class="selection-march" style="pointer-events:none"/>
-            }
-            @if (activeSurface() === 'wall-back') {
-              <polygon points="250,80 650,80 650,380 250,380" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3" class="selection-march" style="pointer-events:none"/>
-            }
-            <!-- Edges -->
-            <line x1="250" y1="80"  x2="250" y2="380" stroke="rgba(0,0,0,0.18)" stroke-width="1.5"/>
-            <line x1="650" y1="80"  x2="650" y2="380" stroke="rgba(0,0,0,0.12)" stroke-width="1.5"/>
-            <line x1="250" y1="80"  x2="650" y2="80"  stroke="rgba(0,0,0,0.10)" stroke-width="1"/>
-            <line x1="250" y1="380" x2="650" y2="380" stroke="rgba(0,0,0,0.20)" stroke-width="1.5"/>
-            <line x1="250" y1="80"  x2="0"   y2="0"   stroke="rgba(0,0,0,0.07)" stroke-width="1"/>
-            <line x1="650" y1="80"  x2="900" y2="0"   stroke="rgba(0,0,0,0.07)" stroke-width="1"/>
-            <line x1="250" y1="380" x2="0"   y2="580" stroke="rgba(0,0,0,0.10)" stroke-width="1"/>
-            <line x1="650" y1="380" x2="900" y2="580" stroke="rgba(0,0,0,0.10)" stroke-width="1"/>
-            <!-- Baseboard -->
-            <polygon points="0,569  250,373 250,380 0,580"   fill="rgba(255,255,255,0.30)"/>
-            <polygon points="900,569 650,373 650,380 900,580" fill="rgba(255,255,255,0.24)"/>
-            <rect    x="250" y="374" width="400" height="6"  fill="rgba(255,255,255,0.28)"/>
-            <!-- Window (centered, same as alcoba) -->
-            <polygon points="335,108 362,108 368,278 327,278" fill="#A89880" opacity="0.78"/>
-            <polygon points="565,108 538,108 532,278 573,278" fill="#A89880" opacity="0.78"/>
-            <rect x="335" y="108" width="230" height="170" rx="3" fill="white" stroke="#8B9BAF" stroke-width="3"/>
-            <rect x="338" y="111" width="108" height="78"  fill="#C5E2F5"/>
-            <rect x="450" y="111" width="111" height="78"  fill="#CEE8F8"/>
-            <rect x="338" y="193" width="108" height="81"  fill="#D8EFF8"/>
-            <rect x="450" y="193" width="111" height="81"  fill="#D2EBF5"/>
-            <line x1="449" y1="111" x2="449" y2="278" stroke="#8B9BAF" stroke-width="2.5"/>
-            <line x1="338" y1="192" x2="562" y2="192" stroke="#8B9BAF" stroke-width="2.5"/>
-            <rect x="327" y="278" width="246" height="10" rx="2" fill="#BCA898"/>
-            <!-- Ceiling light -->
-            <rect x="388" y="80" width="124" height="9" rx="2" fill="rgba(0,0,0,0.22)"/>
-            <line x1="450" y1="89" x2="450" y2="116" stroke="#999" stroke-width="1.5"/>
-            <ellipse cx="450" cy="128" rx="27" ry="13" fill="#F5EDD6" stroke="#D4C8A0" stroke-width="1.5"/>
-            <ellipse cx="450" cy="141" rx="19" ry="7"  fill="rgba(255,240,150,0.32)"/>
-            <!-- Area rug -->
-            <polygon points="256,395 600,395 660,510 196,510" fill="#7A5C3C" opacity="0.24"/>
-            <!-- ── TV + CONSOLA (primero en z-order, quedan detrás del sofá) ── -->
-            <!-- TV screen -->
-            <rect x="568" y="190" width="82" height="102" rx="3" fill="#1A1A1A"/>
-            <rect x="571" y="193" width="76" height="96" rx="2" fill="#080808"/>
-            <rect x="578" y="284" width="62" height="4" rx="1" fill="rgba(255,255,255,0.07)"/>
-            <rect x="593" y="291" width="22" height="3" rx="2" fill="#2A2A2A"/>
-            <!-- Media console: inmediatamente debajo del TV (sin gap) -->
-            <polygon points="558,292 648,292 650,304 556,304" fill="#5C3D1E"/>
-            <rect x="556" y="304" width="94" height="42" rx="1" fill="#7A5530"/>
-            <line x1="560" y1="326" x2="646" y2="326" stroke="rgba(0,0,0,0.22)" stroke-width="1"/>
-            <rect x="590" y="322" width="22" height="3" rx="1.5" fill="#A08060"/>
-            <!-- ── SOFA (centrado, con espacio a la derecha para el TV) ── -->
-            <!-- Backrest -->
-            <rect x="330" y="288" width="204" height="48" rx="3" fill="#4A5568"/>
-            <line x1="432" y1="288" x2="432" y2="336" stroke="rgba(0,0,0,0.22)" stroke-width="1.5"/>
-            <rect x="340" y="290" width="44" height="44" rx="2" fill="#6B7D90"/>
-            <rect x="494" y="290" width="44" height="44" rx="2" fill="#6B7D90"/>
-            <!-- Arms -->
-            <rect x="320" y="283" width="12" height="57" rx="2" fill="#374151"/>
-            <rect x="532" y="283" width="12" height="57" rx="2" fill="#374151"/>
-            <!-- Seat top (perspectiva) -->
-            <polygon points="320,336 544,336 568,410 296,410" fill="#58687A"/>
-            <!-- Seat front face -->
-            <polygon points="296,408 568,408 571,422 293,422" fill="#4A5568"/>
-            <!-- Arm side faces -->
-            <polygon points="320,336 332,336 308,410 296,410" fill="#2D3748"/>
-            <polygon points="532,336 544,336 568,410 556,410" fill="#2D3748"/>
-            <!-- ── COFFEE TABLE ── -->
-            <polygon points="333,436 565,436 590,474 308,474" fill="#9B6914"/>
-            <polygon points="308,472 590,472 594,486 304,486" fill="#7A5010"/>
-            <line x1="331" y1="472" x2="323" y2="506" stroke="#7A5010" stroke-width="5" stroke-linecap="round"/>
-            <line x1="580" y1="472" x2="588" y2="506" stroke="#7A5010" stroke-width="5" stroke-linecap="round"/>
-            <polygon points="380,432 438,431 438,438 380,439" fill="#E0C87A"/>
-            <polygon points="454,430 502,429 502,436 454,437" fill="#C8B8A0"/>
-            <!-- ── PLANTA (esquina izquierda, a nivel del suelo) ── -->
-            <polygon points="90,492 128,492 131,506 87,506" fill="#8B6014"/>
-            <ellipse cx="109" cy="506" rx="22" ry="7" fill="#7A5010"/>
-            <circle cx="104" cy="474" r="18" fill="#4A7C3F"/>
-            <circle cx="118" cy="462" r="13" fill="#3D6B35"/>
-            <circle cx="100" cy="466" r="14" fill="#527A45"/>
-          }
+        @case ('sala') {
+        <!-- Room surfaces -->
+        <polygon points="0,580 900,580 650,380 250,380" [attr.fill]="floor()" class="room-surface cursor-pointer"
+          (click)="activeSurface.set('floor')" />
+        <polygon points="0,580 900,580 650,380 250,380" fill="url(#floorLight)" style="pointer-events:none" />
+        <polygon points="0,0 900,0 650,80 250,80" [attr.fill]="ceiling()" class="room-surface cursor-pointer"
+          (click)="activeSurface.set('ceiling')" />
+        <polygon points="0,0 900,0 650,80 250,80" fill="url(#ceilingGlow)" style="pointer-events:none" />
+        <polygon points="0,0 250,80 250,380 0,580" [attr.fill]="wallLeft()" class="room-surface cursor-pointer"
+          (click)="activeSurface.set('wall-left')" />
+        <polygon points="0,0 250,80 250,380 0,580" fill="url(#wallLeftShadow)" style="pointer-events:none" />
+        <polygon points="900,0 650,80 650,380 900,580" [attr.fill]="wallRight()" class="room-surface cursor-pointer"
+          (click)="activeSurface.set('wall-right')" />
+        <polygon points="900,0 650,80 650,380 900,580" fill="url(#wallRightShadow)" style="pointer-events:none" />
+        <polygon points="250,80 650,80 650,380 250,380" [attr.fill]="wallBack()" class="room-surface cursor-pointer"
+          (click)="activeSurface.set('wall-back')" />
+        <polygon points="250,80 650,80 650,380 250,380" fill="url(#wallBackVignette)" style="pointer-events:none" />
+        <!-- AO strips -->
+        <polygon points="250,380 650,380 650,395 250,395" fill="url(#aoFloor)" style="pointer-events:none" />
+        <polygon points="0,565 250,373 250,390 0,580" fill="url(#aoFloor)" style="pointer-events:none" opacity="0.6" />
+        <polygon points="900,565 650,373 650,390 900,580" fill="url(#aoFloor)" style="pointer-events:none"
+          opacity="0.5" />
+        <!-- Sunlight patch -->
+        <polygon points="340,385 560,385 620,480 280,480" fill="url(#sunPatch)" style="pointer-events:none" />
+        <!-- Highlights -->
+        @if (activeSurface() === 'floor') {
+        <polygon points="0,580 900,580 650,380 250,380" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+          class="selection-march" style="pointer-events:none" />
+        }
+        @if (activeSurface() === 'ceiling') {
+        <polygon points="0,0 900,0 650,80 250,80" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+          class="selection-march" style="pointer-events:none" />
+        }
+        @if (activeSurface() === 'wall-left') {
+        <polygon points="0,0 250,80 250,380 0,580" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+          class="selection-march" style="pointer-events:none" />
+        }
+        @if (activeSurface() === 'wall-right') {
+        <polygon points="900,0 650,80 650,380 900,580" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+          class="selection-march" style="pointer-events:none" />
+        }
+        @if (activeSurface() === 'wall-back') {
+        <polygon points="250,80 650,80 650,380 250,380" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+          class="selection-march" style="pointer-events:none" />
+        }
+        <!-- Edges (softer) -->
+        <line x1="250" y1="80" x2="250" y2="380" stroke="rgba(0,0,0,0.12)" stroke-width="1" />
+        <line x1="650" y1="80" x2="650" y2="380" stroke="rgba(0,0,0,0.08)" stroke-width="1" />
+        <line x1="250" y1="80" x2="650" y2="80" stroke="rgba(0,0,0,0.06)" stroke-width="0.5" />
+        <line x1="250" y1="380" x2="650" y2="380" stroke="rgba(0,0,0,0.15)" stroke-width="1" />
+        <line x1="250" y1="80" x2="0" y2="0" stroke="rgba(0,0,0,0.04)" stroke-width="0.5" />
+        <line x1="650" y1="80" x2="900" y2="0" stroke="rgba(0,0,0,0.04)" stroke-width="0.5" />
+        <line x1="250" y1="380" x2="0" y2="580" stroke="rgba(0,0,0,0.06)" stroke-width="0.5" />
+        <line x1="650" y1="380" x2="900" y2="580" stroke="rgba(0,0,0,0.06)" stroke-width="0.5" />
+        <!-- Baseboard -->
+        <polygon points="0,569  250,373 250,380 0,580" fill="rgba(255,255,255,0.35)" />
+        <polygon points="900,569 650,373 650,380 900,580" fill="rgba(255,255,255,0.28)" />
+        <rect x="250" y="374" width="400" height="6" fill="rgba(255,255,255,0.32)" />
+        <!-- Window (modern frame) -->
+        <polygon points="335,108 362,108 368,278 327,278" fill="#B0A090" opacity="0.7" />
+        <polygon points="565,108 538,108 532,278 573,278" fill="#B0A090" opacity="0.7" />
+        <rect x="335" y="108" width="230" height="170" rx="2" fill="white" stroke="#A0AABB" stroke-width="2.5" />
+        <rect x="338" y="111" width="108" height="78" fill="#B8D8F0" />
+        <rect x="450" y="111" width="111" height="78" fill="#C4E0F5" />
+        <rect x="338" y="193" width="108" height="81" fill="#CCE8F8" />
+        <rect x="450" y="193" width="111" height="81" fill="#C8E4F5" />
+        <!-- Glass reflections -->
+        <rect x="338" y="111" width="108" height="78" fill="url(#glassReflect)" style="pointer-events:none" />
+        <rect x="450" y="111" width="111" height="78" fill="url(#glassReflect)" style="pointer-events:none"
+          opacity="0.7" />
+        <rect x="338" y="193" width="108" height="81" fill="url(#glassReflect)" style="pointer-events:none"
+          opacity="0.5" />
+        <rect x="450" y="193" width="111" height="81" fill="url(#glassReflect)" style="pointer-events:none"
+          opacity="0.4" />
+        <line x1="449" y1="111" x2="449" y2="278" stroke="#A0AABB" stroke-width="2" />
+        <line x1="338" y1="192" x2="562" y2="192" stroke="#A0AABB" stroke-width="2" />
+        <rect x="327" y="278" width="246" height="8" rx="1.5" fill="#C0B0A0" />
+        <!-- Modern ceiling light -->
+        <rect x="420" y="80" width="60" height="4" rx="2" fill="rgba(0,0,0,0.15)" />
+        <line x1="450" y1="84" x2="450" y2="108" stroke="#888" stroke-width="1.2" />
+        <ellipse cx="450" cy="112" rx="34" ry="5" fill="#2A2A2A" />
+        <ellipse cx="450" cy="111" rx="32" ry="4" fill="#3A3A3A" />
+        <ellipse cx="450" cy="113" rx="28" ry="3" fill="#4A4A4A" />
+        <ellipse cx="450" cy="118" rx="22" ry="4" fill="rgba(255,245,220,0.60)" filter="url(#lampGlow)" />
+        <!-- Ambient light cone -->
+        <ellipse cx="450" cy="230" rx="120" ry="100" fill="rgba(255,248,230,0.08)" filter="url(#ambientGlow)"
+          style="pointer-events:none" />
+        <!-- Area rug -->
+        <polygon points="256,395 600,395 660,510 196,510" fill="#7A5C3C" opacity="0.24" />
+        <!-- ── TV + CONSOLA (primero en z-order, quedan detrás del sofá) ── -->
+        <!-- TV screen -->
+        <rect x="568" y="190" width="82" height="102" rx="3" fill="#1A1A1A" />
+        <rect x="571" y="193" width="76" height="96" rx="2" fill="#080808" />
+        <rect x="578" y="284" width="62" height="4" rx="1" fill="rgba(255,255,255,0.07)" />
+        <rect x="593" y="291" width="22" height="3" rx="2" fill="#2A2A2A" />
+        <!-- Media console: inmediatamente debajo del TV (sin gap) -->
+        <polygon points="558,292 648,292 650,304 556,304" fill="#5C3D1E" />
+        <rect x="556" y="304" width="94" height="42" rx="1" fill="#7A5530" />
+        <line x1="560" y1="326" x2="646" y2="326" stroke="rgba(0,0,0,0.22)" stroke-width="1" />
+        <rect x="590" y="322" width="22" height="3" rx="1.5" fill="#A08060" />
+        <!-- ── SOFA (centrado, con espacio a la derecha para el TV) ── -->
+        <!-- Backrest -->
+        <rect x="330" y="288" width="204" height="48" rx="3" fill="#4A5568" />
+        <line x1="432" y1="288" x2="432" y2="336" stroke="rgba(0,0,0,0.22)" stroke-width="1.5" />
+        <rect x="340" y="290" width="44" height="44" rx="2" fill="#6B7D90" />
+        <rect x="494" y="290" width="44" height="44" rx="2" fill="#6B7D90" />
+        <!-- Arms -->
+        <rect x="320" y="283" width="12" height="57" rx="2" fill="#374151" />
+        <rect x="532" y="283" width="12" height="57" rx="2" fill="#374151" />
+        <!-- Seat top (perspectiva) -->
+        <polygon points="320,336 544,336 568,410 296,410" fill="#58687A" />
+        <!-- Seat front face -->
+        <polygon points="296,408 568,408 571,422 293,422" fill="#4A5568" />
+        <!-- Arm side faces -->
+        <polygon points="320,336 332,336 308,410 296,410" fill="#2D3748" />
+        <polygon points="532,336 544,336 568,410 556,410" fill="#2D3748" />
+        <!-- ── COFFEE TABLE ── -->
+        <polygon points="333,436 565,436 590,474 308,474" fill="#9B6914" />
+        <polygon points="308,472 590,472 594,486 304,486" fill="#7A5010" />
+        <line x1="331" y1="472" x2="323" y2="506" stroke="#7A5010" stroke-width="5" stroke-linecap="round" />
+        <line x1="580" y1="472" x2="588" y2="506" stroke="#7A5010" stroke-width="5" stroke-linecap="round" />
+        <polygon points="380,432 438,431 438,438 380,439" fill="#E0C87A" />
+        <polygon points="454,430 502,429 502,436 454,437" fill="#C8B8A0" />
+        <!-- ── PLANTA (esquina izquierda, a nivel del suelo) ── -->
+        <polygon points="90,492 128,492 131,506 87,506" fill="#8B6014" />
+        <ellipse cx="109" cy="506" rx="22" ry="7" fill="#7A5010" />
+        <circle cx="104" cy="474" r="18" fill="#4A7C3F" />
+        <circle cx="118" cy="462" r="13" fill="#3D6B35" />
+        <circle cx="100" cy="466" r="14" fill="#527A45" />
+        }
 
-          <!-- ═══════════════════════════════════════════════════════
+        <!-- ═══════════════════════════════════════════════════════
                COCINA
           ════════════════════════════════════════════════════════ -->
-          @case ('cocina') {
-            <!-- Room surfaces -->
-            <polygon points="0,580 900,580 650,380 250,380" [attr.fill]="floor()" class="room-surface cursor-pointer" (click)="activeSurface.set('floor')"/>
-            <polygon points="0,0 900,0 650,80 250,80" [attr.fill]="ceiling()" class="room-surface cursor-pointer" (click)="activeSurface.set('ceiling')"/>
-            <polygon points="0,0 250,80 250,380 0,580" [attr.fill]="wallLeft()" class="room-surface cursor-pointer" (click)="activeSurface.set('wall-left')"/>
-            <polygon points="0,0 250,80 250,380 0,580" fill="rgba(0,0,0,0.09)" style="pointer-events:none"/>
-            <polygon points="900,0 650,80 650,380 900,580" [attr.fill]="wallRight()" class="room-surface cursor-pointer" (click)="activeSurface.set('wall-right')"/>
-            <polygon points="900,0 650,80 650,380 900,580" fill="rgba(0,0,0,0.05)" style="pointer-events:none"/>
-            <polygon points="250,80 650,80 650,380 250,380" [attr.fill]="wallBack()" class="room-surface cursor-pointer" (click)="activeSurface.set('wall-back')"/>
-            <!-- Highlights -->
-            @if (activeSurface() === 'floor') {
-              <polygon points="0,580 900,580 650,380 250,380" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3" class="selection-march" style="pointer-events:none"/>
-            }
-            @if (activeSurface() === 'ceiling') {
-              <polygon points="0,0 900,0 650,80 250,80" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3" class="selection-march" style="pointer-events:none"/>
-            }
-            @if (activeSurface() === 'wall-left') {
-              <polygon points="0,0 250,80 250,380 0,580" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3" class="selection-march" style="pointer-events:none"/>
-            }
-            @if (activeSurface() === 'wall-right') {
-              <polygon points="900,0 650,80 650,380 900,580" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3" class="selection-march" style="pointer-events:none"/>
-            }
-            @if (activeSurface() === 'wall-back') {
-              <polygon points="250,80 650,80 650,380 250,380" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3" class="selection-march" style="pointer-events:none"/>
-            }
-            <!-- Edges -->
-            <line x1="250" y1="80"  x2="250" y2="380" stroke="rgba(0,0,0,0.18)" stroke-width="1.5"/>
-            <line x1="650" y1="80"  x2="650" y2="380" stroke="rgba(0,0,0,0.12)" stroke-width="1.5"/>
-            <line x1="250" y1="80"  x2="650" y2="80"  stroke="rgba(0,0,0,0.10)" stroke-width="1"/>
-            <line x1="250" y1="380" x2="650" y2="380" stroke="rgba(0,0,0,0.20)" stroke-width="1.5"/>
-            <line x1="250" y1="80"  x2="0"   y2="0"   stroke="rgba(0,0,0,0.07)" stroke-width="1"/>
-            <line x1="650" y1="80"  x2="900" y2="0"   stroke="rgba(0,0,0,0.07)" stroke-width="1"/>
-            <line x1="250" y1="380" x2="0"   y2="580" stroke="rgba(0,0,0,0.10)" stroke-width="1"/>
-            <line x1="650" y1="380" x2="900" y2="580" stroke="rgba(0,0,0,0.10)" stroke-width="1"/>
-            <!-- Baseboard -->
-            <polygon points="0,569  250,373 250,380 0,580"   fill="rgba(255,255,255,0.30)"/>
-            <polygon points="900,569 650,373 650,380 900,580" fill="rgba(255,255,255,0.24)"/>
-            <rect    x="250" y="374" width="400" height="6"  fill="rgba(255,255,255,0.28)"/>
-            <!-- Ceiling light -->
-            <rect x="388" y="80" width="124" height="9" rx="2" fill="rgba(0,0,0,0.22)"/>
-            <line x1="450" y1="89" x2="450" y2="116" stroke="#999" stroke-width="1.5"/>
-            <ellipse cx="450" cy="128" rx="27" ry="13" fill="#F5EDD6" stroke="#D4C8A0" stroke-width="1.5"/>
-            <ellipse cx="450" cy="141" rx="19" ry="7"  fill="rgba(255,240,150,0.32)"/>
-            <!-- ── UPPER CABINETS ── -->
-            <!-- Upper left cabinet (left of window) -->
-            <rect x="255" y="90" width="76" height="178" rx="2" fill="#D4C5A9"/>
-            <rect x="258" y="94"  width="33" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5"/>
-            <rect x="295" y="94"  width="33" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5"/>
-            <rect x="258" y="180" width="33" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5"/>
-            <rect x="295" y="180" width="33" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5"/>
-            <!-- Handles -->
-            <circle cx="280" cy="135" r="2.5" fill="#A0906A"/>
-            <circle cx="316" cy="135" r="2.5" fill="#A0906A"/>
-            <circle cx="280" cy="221" r="2.5" fill="#A0906A"/>
-            <circle cx="316" cy="221" r="2.5" fill="#A0906A"/>
-            <!-- Upper right cabinet (right of window, termina antes de la nevera) -->
-            <rect x="569" y="90" width="42" height="178" rx="2" fill="#D4C5A9"/>
-            <rect x="572" y="94"  width="36" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5"/>
-            <rect x="572" y="180" width="36" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5"/>
-            <circle cx="586" cy="135" r="2.5" fill="#A0906A"/>
-            <circle cx="586" cy="221" r="2.5" fill="#A0906A"/>
-            <!-- ── RANGE HOOD ── -->
-            <polygon points="258,270 332,270 336,288 254,288" fill="#909090"/>
-            <polygon points="254,286 336,286 338,292 252,292" fill="#787878"/>
-            <!-- Vent slats -->
-            <line x1="272" y1="272" x2="272" y2="286" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
-            <line x1="286" y1="272" x2="286" y2="286" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
-            <line x1="300" y1="272" x2="300" y2="286" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
-            <line x1="314" y1="272" x2="314" y2="286" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
-            <!-- Duct from hood to upper cabinet -->
-            <rect x="284" y="90" width="46" height="180" rx="1" fill="#A0A0A0" opacity="0.5"/>
-            <!-- ── WINDOW (kitchen, same position, smaller) ── -->
-            <rect x="360" y="112" width="180" height="135" rx="3" fill="white" stroke="#8B9BAF" stroke-width="2.5"/>
-            <rect x="363" y="115" width="84"  height="62"  fill="#C5E2F5"/>
-            <rect x="452" y="115" width="84"  height="62"  fill="#CEE8F8"/>
-            <rect x="363" y="181" width="84"  height="62"  fill="#D8EFF8"/>
-            <rect x="452" y="181" width="84"  height="62"  fill="#D2EBF5"/>
-            <line x1="451" y1="115" x2="451" y2="247" stroke="#8B9BAF" stroke-width="2"/>
-            <line x1="363" y1="180" x2="537" y2="180" stroke="#8B9BAF" stroke-width="2"/>
-            <rect x="354" y="247" width="192" height="8" rx="2" fill="#BCA898"/>
-            <!-- ── LOWER CABINETS (debajo del mesón) ── -->
-            <!-- Left section -->
-            <rect x="255" y="316" width="100" height="60" rx="1" fill="#C8B898"/>
-            <rect x="258" y="319" width="46" height="28" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5"/>
-            <rect x="308" y="319" width="44" height="28" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5"/>
-            <rect x="258" y="350" width="46" height="22" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5"/>
-            <rect x="308" y="350" width="44" height="22" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5"/>
-            <!-- Center section (oven/stove) — empieza en y=316 bajo el mesón -->
-            <rect x="355" y="316" width="190" height="60" rx="1" fill="#7A7A7A"/>
-            <rect x="358" y="318" width="184" height="55" rx="2" fill="#3A3A3A"/>
-            <rect x="368" y="324" width="164" height="42" rx="2" fill="#2A2A2A"/>
-            <!-- Oven handle -->
-            <line x1="396" y1="321" x2="506" y2="321" stroke="#C0C0C0" stroke-width="3" stroke-linecap="round"/>
-            <!-- Right section (termina en x=609 antes de la nevera) -->
-            <rect x="545" y="316" width="64" height="60" rx="1" fill="#C8B898"/>
-            <rect x="548" y="319" width="28" height="28" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5"/>
-            <rect x="579" y="319" width="28" height="28" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5"/>
-            <rect x="548" y="350" width="28" height="22" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5"/>
-            <rect x="579" y="350" width="28" height="22" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5"/>
-            <!-- Handles lower -->
-            <rect x="274" y="334" width="22" height="3" rx="1.5" fill="#A09070"/>
-            <rect x="322" y="334" width="18" height="3" rx="1.5" fill="#A09070"/>
-            <rect x="556" y="334" width="14" height="3" rx="1.5" fill="#A09070"/>
-            <rect x="584" y="334" width="14" height="3" rx="1.5" fill="#A09070"/>
-            <!-- ── COUNTERTOP (termina antes de la nevera en x=609) ── -->
-            <polygon points="244,284 609,284 615,300 238,300" fill="#E8DCC8"/>
-            <polygon points="238,298 615,298 621,316 232,316" fill="#C8B898"/>
-            <!-- ── SINK (center of counter) ── -->
-            <rect x="406" y="286" width="88" height="15" rx="3" fill="#8BAABB"/>
-            <rect x="410" y="288" width="80" height="11" rx="2" fill="#7A9AAA"/>
-            <!-- Faucet -->
-            <line x1="450" y1="270" x2="450" y2="286" stroke="#A0A8B0" stroke-width="3" stroke-linecap="round"/>
-            <line x1="440" y1="270" x2="460" y2="270" stroke="#A0A8B0" stroke-width="2.5" stroke-linecap="round"/>
-            <!-- ── STOVE BURNERS (on counter, left area) ── -->
-            <circle cx="272" cy="288" r="5" fill="#555"/>
-            <circle cx="288" cy="288" r="5" fill="#555"/>
-            <circle cx="272" cy="297" r="4" fill="#606060"/>
-            <circle cx="288" cy="297" r="4" fill="#606060"/>
-            <!-- ── REFRIGERATOR (separada del mesón, x=613-650) ── -->
-            <rect x="613" y="90" width="37" height="290" rx="2" fill="#E8E8E0"/>
-            <rect x="615" y="92" width="33" height="286" rx="1" fill="#F0F0E8"/>
-            <!-- Fridge separator (freezer/fridge) -->
-            <line x1="613" y1="195" x2="650" y2="195" stroke="#C8C8C0" stroke-width="1.5"/>
-            <!-- Fridge handle top (freezer) -->
-            <line x1="619" y1="115" x2="619" y2="175" stroke="#B0B0A8" stroke-width="3" stroke-linecap="round"/>
-            <!-- Fridge handle bottom -->
-            <line x1="619" y1="215" x2="619" y2="355" stroke="#B0B0A8" stroke-width="3" stroke-linecap="round"/>
-            <!-- Fridge top face (3D) -->
-            <polygon points="613,88 650,88 654,95 615,95" fill="#D8D8D0"/>
-            <!-- ── FLOOR MAT ── -->
-            <polygon points="258,388 548,388 590,450 216,450" fill="#8B6A4A" opacity="0.22"/>
-          }
+        @case ('cocina') {
+        <!-- Room surfaces -->
+        <polygon points="0,580 900,580 650,380 250,380" [attr.fill]="floor()" class="room-surface cursor-pointer"
+          (click)="activeSurface.set('floor')" />
+        <polygon points="0,580 900,580 650,380 250,380" fill="url(#floorLight)" style="pointer-events:none" />
+        <polygon points="0,0 900,0 650,80 250,80" [attr.fill]="ceiling()" class="room-surface cursor-pointer"
+          (click)="activeSurface.set('ceiling')" />
+        <polygon points="0,0 900,0 650,80 250,80" fill="url(#ceilingGlow)" style="pointer-events:none" />
+        <polygon points="0,0 250,80 250,380 0,580" [attr.fill]="wallLeft()" class="room-surface cursor-pointer"
+          (click)="activeSurface.set('wall-left')" />
+        <polygon points="0,0 250,80 250,380 0,580" fill="url(#wallLeftShadow)" style="pointer-events:none" />
+        <polygon points="900,0 650,80 650,380 900,580" [attr.fill]="wallRight()" class="room-surface cursor-pointer"
+          (click)="activeSurface.set('wall-right')" />
+        <polygon points="900,0 650,80 650,380 900,580" fill="url(#wallRightShadow)" style="pointer-events:none" />
+        <polygon points="250,80 650,80 650,380 250,380" [attr.fill]="wallBack()" class="room-surface cursor-pointer"
+          (click)="activeSurface.set('wall-back')" />
+        <polygon points="250,80 650,80 650,380 250,380" fill="url(#wallBackVignette)" style="pointer-events:none" />
+        <!-- AO strips -->
+        <polygon points="250,380 650,380 650,395 250,395" fill="url(#aoFloor)" style="pointer-events:none" />
+        <polygon points="0,565 250,373 250,390 0,580" fill="url(#aoFloor)" style="pointer-events:none" opacity="0.6" />
+        <polygon points="900,565 650,373 650,390 900,580" fill="url(#aoFloor)" style="pointer-events:none"
+          opacity="0.5" />
+        <!-- Highlights -->
+        @if (activeSurface() === 'floor') {
+        <polygon points="0,580 900,580 650,380 250,380" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+          class="selection-march" style="pointer-events:none" />
+        }
+        @if (activeSurface() === 'ceiling') {
+        <polygon points="0,0 900,0 650,80 250,80" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+          class="selection-march" style="pointer-events:none" />
+        }
+        @if (activeSurface() === 'wall-left') {
+        <polygon points="0,0 250,80 250,380 0,580" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+          class="selection-march" style="pointer-events:none" />
+        }
+        @if (activeSurface() === 'wall-right') {
+        <polygon points="900,0 650,80 650,380 900,580" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+          class="selection-march" style="pointer-events:none" />
+        }
+        @if (activeSurface() === 'wall-back') {
+        <polygon points="250,80 650,80 650,380 250,380" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+          class="selection-march" style="pointer-events:none" />
+        }
+        <!-- Edges (softer) -->
+        <line x1="250" y1="80" x2="250" y2="380" stroke="rgba(0,0,0,0.12)" stroke-width="1" />
+        <line x1="650" y1="80" x2="650" y2="380" stroke="rgba(0,0,0,0.08)" stroke-width="1" />
+        <line x1="250" y1="80" x2="650" y2="80" stroke="rgba(0,0,0,0.06)" stroke-width="0.5" />
+        <line x1="250" y1="380" x2="650" y2="380" stroke="rgba(0,0,0,0.15)" stroke-width="1" />
+        <line x1="250" y1="80" x2="0" y2="0" stroke="rgba(0,0,0,0.04)" stroke-width="0.5" />
+        <line x1="650" y1="80" x2="900" y2="0" stroke="rgba(0,0,0,0.04)" stroke-width="0.5" />
+        <line x1="250" y1="380" x2="0" y2="580" stroke="rgba(0,0,0,0.06)" stroke-width="0.5" />
+        <line x1="650" y1="380" x2="900" y2="580" stroke="rgba(0,0,0,0.06)" stroke-width="0.5" />
+        <!-- Baseboard -->
+        <polygon points="0,569  250,373 250,380 0,580" fill="rgba(255,255,255,0.35)" />
+        <polygon points="900,569 650,373 650,380 900,580" fill="rgba(255,255,255,0.28)" />
+        <rect x="250" y="374" width="400" height="6" fill="rgba(255,255,255,0.32)" />
+        <!-- Modern ceiling light -->
+        <rect x="420" y="80" width="60" height="4" rx="2" fill="rgba(0,0,0,0.15)" />
+        <line x1="450" y1="84" x2="450" y2="108" stroke="#888" stroke-width="1.2" />
+        <ellipse cx="450" cy="112" rx="34" ry="5" fill="#2A2A2A" />
+        <ellipse cx="450" cy="111" rx="32" ry="4" fill="#3A3A3A" />
+        <ellipse cx="450" cy="113" rx="28" ry="3" fill="#4A4A4A" />
+        <ellipse cx="450" cy="118" rx="22" ry="4" fill="rgba(255,245,220,0.60)" filter="url(#lampGlow)" />
+        <!-- Ambient light cone -->
+        <ellipse cx="450" cy="230" rx="120" ry="100" fill="rgba(255,248,230,0.08)" filter="url(#ambientGlow)"
+          style="pointer-events:none" />
+        <!-- ── UPPER CABINETS ── -->
+        <!-- Upper left cabinet (left of window) -->
+        <rect x="255" y="90" width="76" height="178" rx="2" fill="#D4C5A9" />
+        <rect x="258" y="94" width="33" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5" />
+        <rect x="295" y="94" width="33" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5" />
+        <rect x="258" y="180" width="33" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5" />
+        <rect x="295" y="180" width="33" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5" />
+        <!-- Handles -->
+        <circle cx="280" cy="135" r="2.5" fill="#A0906A" />
+        <circle cx="316" cy="135" r="2.5" fill="#A0906A" />
+        <circle cx="280" cy="221" r="2.5" fill="#A0906A" />
+        <circle cx="316" cy="221" r="2.5" fill="#A0906A" />
+        <!-- Upper right cabinet (right of window, termina antes de la nevera) -->
+        <rect x="569" y="90" width="42" height="178" rx="2" fill="#D4C5A9" />
+        <rect x="572" y="94" width="36" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5" />
+        <rect x="572" y="180" width="36" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5" />
+        <circle cx="586" cy="135" r="2.5" fill="#A0906A" />
+        <circle cx="586" cy="221" r="2.5" fill="#A0906A" />
+        <!-- ── RANGE HOOD ── -->
+        <polygon points="258,270 332,270 336,288 254,288" fill="#909090" />
+        <polygon points="254,286 336,286 338,292 252,292" fill="#787878" />
+        <!-- Vent slats -->
+        <line x1="272" y1="272" x2="272" y2="286" stroke="rgba(0,0,0,0.2)" stroke-width="1" />
+        <line x1="286" y1="272" x2="286" y2="286" stroke="rgba(0,0,0,0.2)" stroke-width="1" />
+        <line x1="300" y1="272" x2="300" y2="286" stroke="rgba(0,0,0,0.2)" stroke-width="1" />
+        <line x1="314" y1="272" x2="314" y2="286" stroke="rgba(0,0,0,0.2)" stroke-width="1" />
+        <!-- Duct from hood to upper cabinet -->
+        <rect x="284" y="90" width="46" height="180" rx="1" fill="#A0A0A0" opacity="0.5" />
+        <!-- ── WINDOW (kitchen, same position, smaller) ── -->
+        <rect x="360" y="112" width="180" height="135" rx="3" fill="white" stroke="#8B9BAF" stroke-width="2.5" />
+        <rect x="363" y="115" width="84" height="62" fill="#C5E2F5" />
+        <rect x="452" y="115" width="84" height="62" fill="#CEE8F8" />
+        <rect x="363" y="181" width="84" height="62" fill="#D8EFF8" />
+        <rect x="452" y="181" width="84" height="62" fill="#D2EBF5" />
+        <line x1="451" y1="115" x2="451" y2="247" stroke="#8B9BAF" stroke-width="2" />
+        <line x1="363" y1="180" x2="537" y2="180" stroke="#8B9BAF" stroke-width="2" />
+        <rect x="354" y="247" width="192" height="8" rx="2" fill="#BCA898" />
+        <!-- ── LOWER CABINETS (debajo del mesón) ── -->
+        <!-- Left section -->
+        <rect x="255" y="316" width="100" height="60" rx="1" fill="#C8B898" />
+        <rect x="258" y="319" width="46" height="28" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
+        <rect x="308" y="319" width="44" height="28" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
+        <rect x="258" y="350" width="46" height="22" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
+        <rect x="308" y="350" width="44" height="22" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
+        <!-- Center section (oven/stove) — empieza en y=316 bajo el mesón -->
+        <rect x="355" y="316" width="190" height="60" rx="1" fill="#7A7A7A" />
+        <rect x="358" y="318" width="184" height="55" rx="2" fill="#3A3A3A" />
+        <rect x="368" y="324" width="164" height="42" rx="2" fill="#2A2A2A" />
+        <!-- Oven handle -->
+        <line x1="396" y1="321" x2="506" y2="321" stroke="#C0C0C0" stroke-width="3" stroke-linecap="round" />
+        <!-- Right section (termina en x=609 antes de la nevera) -->
+        <rect x="545" y="316" width="64" height="60" rx="1" fill="#C8B898" />
+        <rect x="548" y="319" width="28" height="28" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
+        <rect x="579" y="319" width="28" height="28" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
+        <rect x="548" y="350" width="28" height="22" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
+        <rect x="579" y="350" width="28" height="22" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
+        <!-- Handles lower -->
+        <rect x="274" y="334" width="22" height="3" rx="1.5" fill="#A09070" />
+        <rect x="322" y="334" width="18" height="3" rx="1.5" fill="#A09070" />
+        <rect x="556" y="334" width="14" height="3" rx="1.5" fill="#A09070" />
+        <rect x="584" y="334" width="14" height="3" rx="1.5" fill="#A09070" />
+        <!-- ── COUNTERTOP (termina antes de la nevera en x=609) ── -->
+        <polygon points="244,284 609,284 615,300 238,300" fill="#E8DCC8" />
+        <polygon points="238,298 615,298 621,316 232,316" fill="#C8B898" />
+        <!-- ── SINK (center of counter) ── -->
+        <rect x="406" y="286" width="88" height="15" rx="3" fill="#8BAABB" />
+        <rect x="410" y="288" width="80" height="11" rx="2" fill="#7A9AAA" />
+        <!-- Faucet -->
+        <line x1="450" y1="270" x2="450" y2="286" stroke="#A0A8B0" stroke-width="3" stroke-linecap="round" />
+        <line x1="440" y1="270" x2="460" y2="270" stroke="#A0A8B0" stroke-width="2.5" stroke-linecap="round" />
+        <!-- ── STOVE BURNERS (on counter, left area) ── -->
+        <circle cx="272" cy="288" r="5" fill="#555" />
+        <circle cx="288" cy="288" r="5" fill="#555" />
+        <circle cx="272" cy="297" r="4" fill="#606060" />
+        <circle cx="288" cy="297" r="4" fill="#606060" />
+        <!-- ── REFRIGERATOR (separada del mesón, x=613-650) ── -->
+        <rect x="613" y="90" width="37" height="290" rx="2" fill="#E8E8E0" />
+        <rect x="615" y="92" width="33" height="286" rx="1" fill="#F0F0E8" />
+        <!-- Fridge separator (freezer/fridge) -->
+        <line x1="613" y1="195" x2="650" y2="195" stroke="#C8C8C0" stroke-width="1.5" />
+        <!-- Fridge handle top (freezer) -->
+        <line x1="619" y1="115" x2="619" y2="175" stroke="#B0B0A8" stroke-width="3" stroke-linecap="round" />
+        <!-- Fridge handle bottom -->
+        <line x1="619" y1="215" x2="619" y2="355" stroke="#B0B0A8" stroke-width="3" stroke-linecap="round" />
+        <!-- Fridge top face (3D) -->
+        <polygon points="613,88 650,88 654,95 615,95" fill="#D8D8D0" />
+        <!-- ── FLOOR MAT ── -->
+        <polygon points="258,388 548,388 590,450 216,450" fill="#8B6A4A" opacity="0.22" />
+        }
 
-          <!-- ═══════════════════════════════════════════════════════
-               FACHADA  (perspectiva de esquina — frente + costado)
+        <!-- ═══════════════════════════════════════════════════════
+               FACHADA  (perspectiva 3/4 — edificio moderno 4 pisos)
+               Front: 88,418→88,78→545,60→545,418
+               Side : 545,60→760,110→760,418→545,418
+               Roof : 88,78→545,60→760,110→303,128  (depth +215,+50)
           ════════════════════════════════════════════════════════ -->
-          @case ('fachada') {
-            <!-- Sky -->
-            <rect x="0" y="0" width="900" height="580" fill="#C8DFF0"/>
-            <!-- Clouds -->
-            <ellipse cx="160" cy="95"  rx="60" ry="28" fill="white" opacity="0.85"/>
-            <ellipse cx="210" cy="80"  rx="44" ry="22" fill="white" opacity="0.85"/>
-            <ellipse cx="135" cy="108" rx="34" ry="18" fill="white" opacity="0.75"/>
-            <ellipse cx="700" cy="75"  rx="52" ry="26" fill="white" opacity="0.80"/>
-            <ellipse cx="748" cy="60"  rx="38" ry="20" fill="white" opacity="0.80"/>
-            <!-- Ground / lawn (clickable) -->
-            <rect x="0" y="418" width="900" height="162" [attr.fill]="floor()" class="room-surface cursor-pointer" (click)="activeSurface.set('floor')"/>
-            @if (activeSurface() === 'floor') {
-              <rect x="0" y="418" width="900" height="162" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3" class="selection-march" style="pointer-events:none"/>
-            }
-            <!-- Driveway/path -->
-            <polygon points="235,418 360,418 400,580 195,580" fill="#C8C0B0"/>
-            <line x1="298" y1="418" x2="298" y2="580" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-dasharray="16 10"/>
-            <!-- ── SIDE FACE (right, in shadow) ── -->
-            <polygon points="545,192 760,242 760,418 545,418" [attr.fill]="fachadaRight()" class="room-surface cursor-pointer" (click)="activeSurface.set('facade-right')"/>
-            <!-- Shadow overlay on side face (receives less light) -->
-            <polygon points="545,192 760,242 760,418 545,418" fill="rgba(0,0,0,0.16)" style="pointer-events:none"/>
-            @if (activeSurface() === 'facade-right') {
-              <polygon points="545,192 760,242 760,418 545,418" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3" class="selection-march" style="pointer-events:none"/>
-            }
-            <!-- ── FRONT FACE (main, includes gable) ── -->
-            <polygon points="88,418 88,228 328,62 545,192 545,418" [attr.fill]="fachadaLeft()" class="room-surface cursor-pointer" (click)="activeSurface.set('facade-left')"/>
-            @if (activeSurface() === 'facade-left') {
-              <polygon points="88,418 88,228 328,62 545,192 545,418" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3" class="selection-march" style="pointer-events:none"/>
-            }
-            <!-- ── ROOF SLOPE (visible side) ── -->
-            <polygon points="328,62 608,100 760,242 545,192" [attr.fill]="ceiling()" class="room-surface cursor-pointer" (click)="activeSurface.set('ceiling')"/>
-            <!-- Roof shadow & tile texture -->
-            <polygon points="328,62 608,100 760,242 545,192" fill="rgba(0,0,0,0.07)" style="pointer-events:none"/>
-            @if (activeSurface() === 'ceiling') {
-              <polygon points="328,62 608,100 760,242 545,192" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3" class="selection-march" style="pointer-events:none"/>
-            }
-            <!-- Roof ridge -->
-            <line x1="328" y1="62" x2="608" y2="100" stroke="rgba(0,0,0,0.35)" stroke-width="2.5"/>
-            <!-- Eave shadows (underside of overhang) -->
-            <polygon points="85,228 545,190 545,200 85,238" fill="rgba(0,0,0,0.14)" style="pointer-events:none"/>
-            <polygon points="545,190 760,242 760,252 545,200" fill="rgba(0,0,0,0.12)" style="pointer-events:none"/>
-            <!-- Corner edge line -->
-            <line x1="545" y1="192" x2="545" y2="418" stroke="rgba(0,0,0,0.28)" stroke-width="2"/>
-            <!-- ── CHIMNEY (on roof slope, visible from corner) ── -->
-            <polygon points="582,66 610,72 610,148 582,142" fill="#B09878"/>
-            <polygon points="578,62 614,68 614,75 578,69" fill="#8A7458"/>
-            <ellipse cx="596" cy="54" rx="7" ry="10" fill="rgba(210,210,210,0.32)"/>
-            <ellipse cx="600" cy="40" rx="5" ry="8"  fill="rgba(210,210,210,0.22)"/>
-            <!-- ── FRONT DOOR (on front face) ── -->
-            <polygon points="288,418 288,305 348,302 348,418" fill="#5C3D1E"/>
-            <polygon points="292,418 292,309 344,306 344,418" fill="#7A4E28"/>
-            <!-- Door glass -->
-            <polygon points="296,310 340,308 340,344 296,346" fill="rgba(180,215,235,0.60)"/>
-            <line x1="318" y1="308" x2="318" y2="346" stroke="#8B9BAF" stroke-width="1.5"/>
-            <line x1="296" y1="327" x2="340" y2="326" stroke="#8B9BAF" stroke-width="1.5"/>
-            <!-- Door panels (lower) -->
-            <polygon points="296,350 316,349 316,414 296,416" fill="#6B3C18" opacity="0.55"/>
-            <polygon points="320,349 340,348 340,414 320,415" fill="#6B3C18" opacity="0.55"/>
-            <!-- Door knob -->
-            <circle cx="341" cy="376" r="5"   fill="#C8A050"/>
-            <circle cx="341" cy="376" r="2.5" fill="#E0B860"/>
-            <!-- Door step -->
-            <polygon points="275,417 360,416 365,425 270,426" fill="#B8B0A0"/>
-            <!-- ── WINDOWS (front face) ── -->
-            <!-- Window 1: left area of front face -->
-            <polygon points="110,340 112,263 204,258 202,334" fill="white" stroke="#8B9BAF" stroke-width="2"/>
-            <polygon points="113,266 156,264 155,297 113,299" fill="#C5E2F5"/>
-            <polygon points="158,263 201,261 200,294 158,296" fill="#CEE8F8"/>
-            <polygon points="113,299 156,297 155,331 113,333" fill="#D8EFF8"/>
-            <polygon points="158,296 201,294 200,327 158,329" fill="#D2EBF5"/>
-            <line x1="157" y1="263" x2="156" y2="331" stroke="#8B9BAF" stroke-width="1.5"/>
-            <line x1="113" y1="298" x2="201" y2="296" stroke="#8B9BAF" stroke-width="1.5"/>
-            <!-- Sill w1 -->
-            <polygon points="107,333 205,328 205,335 107,340" fill="#BCA898"/>
-            <!-- Shutters w1 -->
-            <polygon points="88,262 109,261 109,335 88,337" fill="#7A5C3A" opacity="0.85"/>
-            <line x1="88" y1="273" x2="109" y2="273" stroke="rgba(0,0,0,0.18)" stroke-width="1"/>
-            <line x1="88" y1="284" x2="109" y2="284" stroke="rgba(0,0,0,0.18)" stroke-width="1"/>
-            <line x1="88" y1="295" x2="109" y2="295" stroke="rgba(0,0,0,0.18)" stroke-width="1"/>
-            <line x1="88" y1="306" x2="109" y2="306" stroke="rgba(0,0,0,0.18)" stroke-width="1"/>
-            <line x1="88" y1="317" x2="109" y2="317" stroke="rgba(0,0,0,0.18)" stroke-width="1"/>
-            <polygon points="203,258 224,257 224,330 203,332" fill="#7A5C3A" opacity="0.85"/>
-            <line x1="203" y1="268" x2="224" y2="268" stroke="rgba(0,0,0,0.18)" stroke-width="1"/>
-            <line x1="203" y1="279" x2="224" y2="279" stroke="rgba(0,0,0,0.18)" stroke-width="1"/>
-            <line x1="203" y1="290" x2="224" y2="290" stroke="rgba(0,0,0,0.18)" stroke-width="1"/>
-            <line x1="203" y1="301" x2="224" y2="301" stroke="rgba(0,0,0,0.18)" stroke-width="1"/>
-            <line x1="203" y1="312" x2="224" y2="312" stroke="rgba(0,0,0,0.18)" stroke-width="1"/>
-            <!-- Window 2: right area of front face (near corner) -->
-            <polygon points="415,325 417,256 504,250 502,319" fill="white" stroke="#8B9BAF" stroke-width="2"/>
-            <polygon points="420,259 460,257 459,286 419,288" fill="#C5E2F5"/>
-            <polygon points="462,256 501,254 500,283 461,285" fill="#CEE8F8"/>
-            <polygon points="420,288 460,286 459,315 419,317" fill="#D8EFF8"/>
-            <polygon points="462,285 501,283 500,312 461,314" fill="#D2EBF5"/>
-            <line x1="461" y1="256" x2="460" y2="315" stroke="#8B9BAF" stroke-width="1.5"/>
-            <line x1="420" y1="287" x2="501" y2="285" stroke="#8B9BAF" stroke-width="1.5"/>
-            <!-- Sill w2 -->
-            <polygon points="412,318 505,312 505,319 412,325" fill="#BCA898"/>
-            <!-- ── WINDOW (side face — paralelogramo siguiendo pendiente del muro) ── -->
-            <!-- La pared lateral tiene pendiente: 50px de y por cada 215px de x -->
-            <!-- Ventana: x=592-662, y base sube con el muro -->
-            <polygon points="592,268 662,284 662,364 592,348" fill="white" stroke="#8B9BAF" stroke-width="2"/>
-            <!-- Pane top -->
-            <polygon points="595,272 659,287 659,322 595,307" fill="#C5E2F5"/>
-            <!-- Pane bottom -->
-            <polygon points="595,323 659,338 659,361 595,346" fill="#D8EFF8"/>
-            <!-- Horizontal divider -->
-            <line x1="595" y1="322" x2="659" y2="337" stroke="#8B9BAF" stroke-width="1.5"/>
-            <!-- Sill -->
-            <polygon points="589,347 665,364 665,371 589,354" fill="#BCA898"/>
-            <!-- ── FOUNDATION ── -->
-            <polygon points="85,416 547,416 547,424 85,424" fill="rgba(0,0,0,0.20)"/>
-            <polygon points="547,416 762,416 762,424 547,424" fill="rgba(0,0,0,0.26)"/>
-            <!-- ── BUSHES ── -->
-            <circle cx="175" cy="418" r="24" fill="#4A7C3F"/>
-            <circle cx="157" cy="422" r="16" fill="#3D6B35"/>
-            <circle cx="188" cy="425" r="19" fill="#527A45"/>
-            <circle cx="490" cy="418" r="22" fill="#4A7C3F"/>
-            <circle cx="508" cy="422" r="15" fill="#3D6B35"/>
-            <circle cx="476" cy="424" r="17" fill="#527A45"/>
-          }
+        @case ('fachada') {
+        <!-- Sky -->
+        <rect x="0" y="0" width="900" height="580" fill="url(#skyGradient)" />
+        <!-- Distant city silhouette -->
+        <rect x="0" y="220" width="76" height="200" rx="1" fill="rgba(148,162,178,0.38)" />
+        <rect x="16" y="250" width="48" height="170" rx="1" fill="rgba(158,172,188,0.26)" />
+        <rect x="796" y="228" width="104" height="192" rx="1" fill="rgba(148,162,178,0.35)" />
+        <rect x="826" y="258" width="62" height="162" rx="1" fill="rgba(158,172,188,0.24)" />
+        <rect x="844" y="238" width="42" height="182" rx="1" fill="rgba(138,150,166,0.28)" />
+        <!-- Clouds -->
+        <ellipse cx="172" cy="52" rx="72" ry="26" fill="white" opacity="0.90" />
+        <ellipse cx="238" cy="36" rx="54" ry="22" fill="white" opacity="0.82" />
+        <ellipse cx="148" cy="66" rx="42" ry="16" fill="white" opacity="0.68" />
+        <ellipse cx="672" cy="44" rx="68" ry="24" fill="white" opacity="0.84" />
+        <ellipse cx="732" cy="28" rx="50" ry="20" fill="white" opacity="0.76" />
+        <ellipse cx="820" cy="72" rx="36" ry="14" fill="white" opacity="0.62" />
+
+        <!-- Ground (clickable) -->
+        <rect x="0" y="418" width="900" height="162" [attr.fill]="floor()" class="room-surface cursor-pointer"
+          (click)="activeSurface.set('floor')" />
+        @if (activeSurface() === 'floor') {
+        <rect x="0" y="418" width="900" height="162" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+          class="selection-march" style="pointer-events:none" />
+        }
+        <!-- Sidewalk -->
+        <polygon points="88,418 760,418 760,448 88,448" fill="rgba(196,193,187,0.88)" />
+        <line x1="88" y1="433" x2="760" y2="433" stroke="rgba(255,255,255,0.20)" stroke-width="1" />
+        <line x1="204" y1="418" x2="204" y2="448" stroke="rgba(0,0,0,0.07)" stroke-width="0.5" />
+        <line x1="320" y1="418" x2="320" y2="448" stroke="rgba(0,0,0,0.07)" stroke-width="0.5" />
+        <line x1="436" y1="418" x2="436" y2="448" stroke="rgba(0,0,0,0.07)" stroke-width="0.5" />
+        <line x1="552" y1="418" x2="552" y2="448" stroke="rgba(0,0,0,0.07)" stroke-width="0.5" />
+
+        <!-- ── SIDE FACE (facade-right, in shadow) ── -->
+        <polygon points="545,60 760,110 760,418 545,418" [attr.fill]="fachadaRight()"
+          class="room-surface cursor-pointer" (click)="activeSurface.set('facade-right')" />
+        <polygon points="545,60 760,110 760,418 545,418" fill="rgba(0,0,0,0.22)" style="pointer-events:none" />
+        @if (activeSurface() === 'facade-right') {
+        <polygon points="545,60 760,110 760,418 545,418" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+          class="selection-march" style="pointer-events:none" />
+        }
+        <!-- Side face floor bands (4 floors) -->
+        <!-- floor tops at x=545: 60,144,228,312,418 / at x=760: 110,192,274,356,418 -->
+        <polygon points="545,144 760,192 760,200 545,152" fill="rgba(0,0,0,0.20)" style="pointer-events:none" />
+        <polygon points="545,228 760,274 760,282 545,236" fill="rgba(0,0,0,0.20)" style="pointer-events:none" />
+        <polygon points="545,312 760,356 760,364 545,320" fill="rgba(0,0,0,0.20)" style="pointer-events:none" />
+        <!-- Side face windows: floor 4 -->
+        <polygon points="590,122 660,131 660,186 590,177" fill="#9EC6DC" opacity="0.62" />
+        <polygon points="590,122 660,131 660,186 590,177" fill="url(#glassReflect)" style="pointer-events:none" opacity="0.5" />
+        <polygon points="588,120 662,129 662,188 588,179" fill="none" stroke="#88A4BE" stroke-width="1.5" />
+        <line x1="625" y1="126" x2="625" y2="184" stroke="#88A4BE" stroke-width="1" />
+        <!-- Side windows: floor 3 -->
+        <polygon points="590,208 660,217 660,268 590,259" fill="#96C0D6" opacity="0.56" />
+        <polygon points="590,208 660,217 660,268 590,259" fill="url(#glassReflect)" style="pointer-events:none" opacity="0.40" />
+        <polygon points="588,206 662,215 662,270 588,261" fill="none" stroke="#88A4BE" stroke-width="1.5" />
+        <line x1="625" y1="212" x2="625" y2="266" stroke="#88A4BE" stroke-width="1" />
+        <!-- Side windows: floor 2 -->
+        <polygon points="590,292 660,301 660,350 590,341" fill="#90BCD2" opacity="0.50" />
+        <polygon points="590,292 660,301 660,350 590,341" fill="url(#glassReflect)" style="pointer-events:none" opacity="0.32" />
+        <polygon points="588,290 662,299 662,352 588,343" fill="none" stroke="#88A4BE" stroke-width="1.5" />
+        <line x1="625" y1="296" x2="625" y2="348" stroke="#88A4BE" stroke-width="1" />
+
+        <!-- ── FRONT FACE (facade-left, full 4-story facade) ── -->
+        <polygon points="88,418 88,78 545,60 545,418" [attr.fill]="fachadaLeft()"
+          class="room-surface cursor-pointer" (click)="activeSurface.set('facade-left')" />
+        <polygon points="88,418 88,78 545,60 545,418" fill="url(#buildingFacade)" style="pointer-events:none" />
+        @if (activeSurface() === 'facade-left') {
+        <polygon points="88,418 88,78 545,60 545,418" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+          class="selection-march" style="pointer-events:none" />
+        }
+        <!-- Floor slab bands on front face -->
+        <!-- floor tops at x=88: 78,162,246,330 / at x=545: 60,146,232,318 -->
+        <polygon points="88,162 545,146 545,154 88,170" fill="rgba(0,0,0,0.13)" style="pointer-events:none" />
+        <line x1="88" y1="162" x2="545" y2="146" stroke="rgba(255,255,255,0.18)" stroke-width="1" />
+        <polygon points="88,246 545,232 545,240 88,254" fill="rgba(0,0,0,0.13)" style="pointer-events:none" />
+        <line x1="88" y1="246" x2="545" y2="232" stroke="rgba(255,255,255,0.18)" stroke-width="1" />
+        <polygon points="88,330 545,318 545,326 88,338" fill="rgba(0,0,0,0.13)" style="pointer-events:none" />
+        <line x1="88" y1="330" x2="545" y2="318" stroke="rgba(255,255,255,0.18)" stroke-width="1" />
+        <!-- Subtle vertical column seams -->
+        <line x1="207" y1="77" x2="207" y2="418" stroke="rgba(0,0,0,0.06)" stroke-width="1" />
+        <line x1="326" y1="74" x2="326" y2="418" stroke="rgba(0,0,0,0.06)" stroke-width="1" />
+        <line x1="445" y1="71" x2="445" y2="418" stroke="rgba(0,0,0,0.06)" stroke-width="1" />
+
+        <!-- ═══ FLOOR 4 (y ≈ 78–162 left / 60–146 right) ═══ -->
+        <rect x="108" y="92" width="72" height="56" rx="1" fill="#A4CEDE" />
+        <rect x="108" y="92" width="72" height="56" rx="1" fill="url(#glassReflect)" style="pointer-events:none" />
+        <rect x="106" y="90" width="76" height="60" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" />
+        <line x1="144" y1="90" x2="144" y2="150" stroke="#8AAEC4" stroke-width="1" />
+        <rect x="224" y="89" width="72" height="56" rx="1" fill="#AACED0" />
+        <rect x="224" y="89" width="72" height="56" rx="1" fill="url(#glassReflect)" style="pointer-events:none" />
+        <rect x="222" y="87" width="76" height="60" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" />
+        <line x1="260" y1="87" x2="260" y2="147" stroke="#8AAEC4" stroke-width="1" />
+        <rect x="340" y="86" width="72" height="56" rx="1" fill="#A6CCE0" />
+        <rect x="340" y="86" width="72" height="56" rx="1" fill="url(#glassReflect)" style="pointer-events:none" />
+        <rect x="338" y="84" width="76" height="60" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" />
+        <line x1="376" y1="84" x2="376" y2="144" stroke="#8AAEC4" stroke-width="1" />
+        <rect x="456" y="83" width="72" height="56" rx="1" fill="#A0CADC" />
+        <rect x="456" y="83" width="72" height="56" rx="1" fill="url(#glassReflect)" style="pointer-events:none" />
+        <rect x="454" y="81" width="76" height="60" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" />
+        <line x1="492" y1="81" x2="492" y2="141" stroke="#8AAEC4" stroke-width="1" />
+
+        <!-- ═══ FLOOR 3 (y ≈ 170–246 left / 154–232 right) ═══ -->
+        <rect x="108" y="176" width="72" height="56" rx="1" fill="#A0CAD8" />
+        <rect x="108" y="176" width="72" height="56" rx="1" fill="url(#glassReflect)" style="pointer-events:none" />
+        <rect x="106" y="174" width="76" height="60" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" />
+        <line x1="144" y1="174" x2="144" y2="234" stroke="#8AAEC4" stroke-width="1" />
+        <rect x="224" y="173" width="72" height="56" rx="1" fill="#A6CCE0" />
+        <rect x="224" y="173" width="72" height="56" rx="1" fill="url(#glassReflect)" style="pointer-events:none" />
+        <rect x="222" y="171" width="76" height="60" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" />
+        <line x1="260" y1="171" x2="260" y2="231" stroke="#8AAEC4" stroke-width="1" />
+        <rect x="340" y="170" width="72" height="56" rx="1" fill="#A2C8DC" />
+        <rect x="340" y="170" width="72" height="56" rx="1" fill="url(#glassReflect)" style="pointer-events:none" />
+        <rect x="338" y="168" width="76" height="60" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" />
+        <line x1="376" y1="168" x2="376" y2="228" stroke="#8AAEC4" stroke-width="1" />
+        <rect x="456" y="167" width="72" height="56" rx="1" fill="#9EC6DA" />
+        <rect x="456" y="167" width="72" height="56" rx="1" fill="url(#glassReflect)" style="pointer-events:none" />
+        <rect x="454" y="165" width="76" height="60" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" />
+        <line x1="492" y1="165" x2="492" y2="225" stroke="#8AAEC4" stroke-width="1" />
+        <!-- Floor 3 balcony slab + glass railings -->
+        <polygon points="96,232 554,218 558,226 96,240" fill="rgba(198,194,190,0.94)" style="pointer-events:none" />
+        <rect x="100" y="240" width="80" height="16" rx="1" fill="rgba(190,212,228,0.30)" stroke="rgba(172,196,214,0.70)" stroke-width="1" />
+        <rect x="216" y="238" width="80" height="16" rx="1" fill="rgba(190,212,228,0.30)" stroke="rgba(172,196,214,0.70)" stroke-width="1" />
+        <rect x="332" y="236" width="80" height="16" rx="1" fill="rgba(190,212,228,0.30)" stroke="rgba(172,196,214,0.70)" stroke-width="1" />
+        <rect x="448" y="234" width="80" height="16" rx="1" fill="rgba(190,212,228,0.30)" stroke="rgba(172,196,214,0.70)" stroke-width="1" />
+        <line x1="112" y1="242" x2="112" y2="256" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="124" y1="242" x2="124" y2="256" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="136" y1="242" x2="136" y2="256" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="148" y1="242" x2="148" y2="256" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="160" y1="242" x2="160" y2="256" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="172" y1="242" x2="172" y2="256" stroke="rgba(172,196,214,0.78)" stroke-width="1" />
+        <line x1="228" y1="240" x2="228" y2="254" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="240" y1="240" x2="240" y2="254" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="252" y1="240" x2="252" y2="254" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="264" y1="240" x2="264" y2="254" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="276" y1="240" x2="276" y2="254" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="288" y1="240" x2="288" y2="254" stroke="rgba(172,196,214,0.78)" stroke-width="1" />
+        <line x1="344" y1="238" x2="344" y2="252" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="356" y1="238" x2="356" y2="252" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="368" y1="238" x2="368" y2="252" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="380" y1="238" x2="380" y2="252" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="392" y1="238" x2="392" y2="252" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="404" y1="238" x2="404" y2="252" stroke="rgba(172,196,214,0.78)" stroke-width="1" />
+        <line x1="460" y1="236" x2="460" y2="250" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="472" y1="236" x2="472" y2="250" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="484" y1="236" x2="484" y2="250" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="496" y1="236" x2="496" y2="250" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="508" y1="236" x2="508" y2="250" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="520" y1="236" x2="520" y2="250" stroke="rgba(172,196,214,0.78)" stroke-width="1" />
+
+        <!-- ═══ FLOOR 2 (y ≈ 254–330 left / 240–318 right) ═══ -->
+        <rect x="108" y="260" width="72" height="56" rx="1" fill="#9CC8D8" />
+        <rect x="108" y="260" width="72" height="56" rx="1" fill="url(#glassReflect)" style="pointer-events:none" />
+        <rect x="106" y="258" width="76" height="60" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" />
+        <line x1="144" y1="258" x2="144" y2="318" stroke="#8AAEC4" stroke-width="1" />
+        <rect x="224" y="257" width="72" height="56" rx="1" fill="#A2CCDC" />
+        <rect x="224" y="257" width="72" height="56" rx="1" fill="url(#glassReflect)" style="pointer-events:none" />
+        <rect x="222" y="255" width="76" height="60" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" />
+        <line x1="260" y1="255" x2="260" y2="315" stroke="#8AAEC4" stroke-width="1" />
+        <rect x="340" y="254" width="72" height="56" rx="1" fill="#9EC8DA" />
+        <rect x="340" y="254" width="72" height="56" rx="1" fill="url(#glassReflect)" style="pointer-events:none" />
+        <rect x="338" y="252" width="76" height="60" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" />
+        <line x1="376" y1="252" x2="376" y2="312" stroke="#8AAEC4" stroke-width="1" />
+        <rect x="456" y="251" width="72" height="56" rx="1" fill="#9AC4D6" />
+        <rect x="456" y="251" width="72" height="56" rx="1" fill="url(#glassReflect)" style="pointer-events:none" />
+        <rect x="454" y="249" width="76" height="60" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" />
+        <line x1="492" y1="249" x2="492" y2="309" stroke="#8AAEC4" stroke-width="1" />
+        <!-- Floor 2 balcony slab + railings -->
+        <polygon points="96,316 554,302 558,310 96,324" fill="rgba(198,194,190,0.94)" style="pointer-events:none" />
+        <rect x="100" y="324" width="80" height="16" rx="1" fill="rgba(190,212,228,0.30)" stroke="rgba(172,196,214,0.70)" stroke-width="1" />
+        <rect x="216" y="322" width="80" height="16" rx="1" fill="rgba(190,212,228,0.30)" stroke="rgba(172,196,214,0.70)" stroke-width="1" />
+        <rect x="332" y="320" width="80" height="16" rx="1" fill="rgba(190,212,228,0.30)" stroke="rgba(172,196,214,0.70)" stroke-width="1" />
+        <rect x="448" y="318" width="80" height="16" rx="1" fill="rgba(190,212,228,0.30)" stroke="rgba(172,196,214,0.70)" stroke-width="1" />
+        <line x1="112" y1="326" x2="112" y2="340" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="124" y1="326" x2="124" y2="340" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="136" y1="326" x2="136" y2="340" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="148" y1="326" x2="148" y2="340" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="160" y1="326" x2="160" y2="340" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="172" y1="326" x2="172" y2="340" stroke="rgba(172,196,214,0.78)" stroke-width="1" />
+        <line x1="228" y1="324" x2="228" y2="338" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="240" y1="324" x2="240" y2="338" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="252" y1="324" x2="252" y2="338" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="264" y1="324" x2="264" y2="338" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="276" y1="324" x2="276" y2="338" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="288" y1="324" x2="288" y2="338" stroke="rgba(172,196,214,0.78)" stroke-width="1" />
+        <line x1="344" y1="322" x2="344" y2="336" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="356" y1="322" x2="356" y2="336" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="368" y1="322" x2="368" y2="336" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="380" y1="322" x2="380" y2="336" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="392" y1="322" x2="392" y2="336" stroke="rgba(172,196,214,0.78)" stroke-width="1" /><line x1="404" y1="322" x2="404" y2="336" stroke="rgba(172,196,214,0.78)" stroke-width="1" />
+
+        <!-- ═══ GROUND FLOOR LOBBY (y ≈ 338–418) ═══ -->
+        <!-- Canopy slab -->
+        <polygon points="190,326 526,314 532,323 532,334 188,346 186,336" fill="rgba(192,188,184,0.96)" style="pointer-events:none" />
+        <polygon points="190,326 526,314 530,314 530,323 190,335" fill="rgba(218,214,210,0.70)" style="pointer-events:none" />
+        <!-- Curtain-wall glazing panels -->
+        <rect x="216" y="340" width="46" height="78" rx="1" fill="rgba(170,208,230,0.65)" />
+        <rect x="216" y="340" width="46" height="78" rx="1" fill="url(#glassReflect)" style="pointer-events:none" opacity="0.65" />
+        <rect x="214" y="338" width="50" height="82" rx="1" fill="none" stroke="#88A4BE" stroke-width="1.5" />
+        <rect x="268" y="339" width="46" height="79" rx="1" fill="rgba(162,204,228,0.70)" />
+        <rect x="268" y="339" width="46" height="79" rx="1" fill="url(#glassReflect)" style="pointer-events:none" opacity="0.55" />
+        <rect x="266" y="337" width="50" height="83" rx="1" fill="none" stroke="#88A4BE" stroke-width="1.5" />
+        <line x1="291" y1="337" x2="291" y2="418" stroke="#88A4BE" stroke-width="1" />
+        <rect x="286" y="376" width="9" height="3" rx="1.5" fill="#B09848" />
+        <rect x="297" y="376" width="9" height="3" rx="1.5" fill="#B09848" />
+        <rect x="320" y="338" width="46" height="80" rx="1" fill="rgba(170,208,230,0.65)" />
+        <rect x="320" y="338" width="46" height="80" rx="1" fill="url(#glassReflect)" style="pointer-events:none" opacity="0.60" />
+        <rect x="318" y="336" width="50" height="84" rx="1" fill="none" stroke="#88A4BE" stroke-width="1.5" />
+        <rect x="372" y="337" width="46" height="81" rx="1" fill="rgba(162,204,228,0.65)" />
+        <rect x="372" y="337" width="46" height="81" rx="1" fill="url(#glassReflect)" style="pointer-events:none" opacity="0.57" />
+        <rect x="370" y="335" width="50" height="85" rx="1" fill="none" stroke="#88A4BE" stroke-width="1.5" />
+        <rect x="424" y="336" width="46" height="82" rx="1" fill="rgba(170,208,230,0.62)" />
+        <rect x="424" y="336" width="46" height="82" rx="1" fill="url(#glassReflect)" style="pointer-events:none" opacity="0.53" />
+        <rect x="422" y="334" width="50" height="86" rx="1" fill="none" stroke="#88A4BE" stroke-width="1.5" />
+        <!-- Ground floor side windows -->
+        <rect x="108" y="343" width="72" height="73" rx="1" fill="rgba(158,200,226,0.55)" />
+        <rect x="108" y="343" width="72" height="73" rx="1" fill="url(#glassReflect)" style="pointer-events:none" opacity="0.40" />
+        <rect x="106" y="341" width="76" height="77" rx="2" fill="none" stroke="#88A4BE" stroke-width="1.5" />
+        <line x1="144" y1="341" x2="144" y2="414" stroke="#88A4BE" stroke-width="1" />
+
+        <!-- ── AZOTEA VISIBLE (ceiling — flat roof, click to color) ── -->
+        <!-- Roof top face (drone angle: depth +215,+50) -->
+        <polygon points="88,78 545,60 760,110 303,128" [attr.fill]="ceiling()"
+          class="room-surface cursor-pointer" (click)="activeSurface.set('ceiling')" />
+        <polygon points="88,78 545,60 760,110 303,128" fill="rgba(0,0,0,0.07)" style="pointer-events:none" />
+        @if (activeSurface() === 'ceiling') {
+        <polygon points="88,78 545,60 760,110 303,128" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+          class="selection-march" style="pointer-events:none" />
+        }
+        <!-- Parapet front top-face strip -->
+        <polygon points="88,78 545,60 558,68 101,86" fill="rgba(212,208,204,0.95)" style="pointer-events:none" />
+        <polygon points="88,78 545,60 558,68 101,86" fill="rgba(0,0,0,0.06)" style="pointer-events:none" />
+        <!-- Parapet side top-face strip -->
+        <polygon points="545,60 760,110 752,118 537,68" fill="rgba(192,188,184,0.90)" style="pointer-events:none" />
+        <polygon points="545,60 760,110 752,118 537,68" fill="rgba(0,0,0,0.12)" style="pointer-events:none" />
+        <!-- Parapet top-edge highlight lines -->
+        <line x1="88" y1="78" x2="545" y2="60" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" />
+        <line x1="545" y1="60" x2="760" y2="110" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" />
+        <!-- Rooftop equipment (visible on azotea strip) -->
+        <!-- HVAC unit (center-left on roof) -->
+        <polygon points="148,88 228,84 236,74 156,78" fill="#989EA8" />
+        <polygon points="148,88 228,84 228,96 148,100" fill="#A4AAB4" />
+        <polygon points="228,84 236,74 236,86 228,96" fill="#84888E" />
+        <line x1="160" y1="87" x2="160" y2="77" stroke="rgba(0,0,0,0.15)" stroke-width="0.8" />
+        <line x1="172" y1="87" x2="172" y2="77" stroke="rgba(0,0,0,0.15)" stroke-width="0.8" />
+        <line x1="184" y1="86" x2="184" y2="76" stroke="rgba(0,0,0,0.15)" stroke-width="0.8" />
+        <line x1="196" y1="86" x2="196" y2="76" stroke="rgba(0,0,0,0.15)" stroke-width="0.8" />
+        <line x1="208" y1="85" x2="208" y2="75" stroke="rgba(0,0,0,0.15)" stroke-width="0.8" />
+        <line x1="220" y1="85" x2="220" y2="75" stroke="rgba(0,0,0,0.15)" stroke-width="0.8" />
+        <!-- HVAC unit 2 (center-right on roof) -->
+        <polygon points="360,78 440,74 448,64 368,68" fill="#989EA8" />
+        <polygon points="360,78 440,74 440,86 360,90" fill="#A4AAB4" />
+        <polygon points="440,74 448,64 448,76 440,86" fill="#84888E" />
+        <!-- Antenna / mast -->
+        <line x1="498" y1="68" x2="498" y2="44" stroke="#8A8E96" stroke-width="2" />
+        <line x1="490" y1="52" x2="506" y2="50" stroke="#8A8E96" stroke-width="1.5" />
+        <circle cx="498" cy="43" r="3" fill="#A0A4AC" />
+        <!-- Roof edge shadow under parapet (onto front face top) -->
+        <polygon points="88,78 545,60 545,68 88,86" fill="rgba(0,0,0,0.10)" style="pointer-events:none" />
+
+        <!-- Corner fold edge line -->
+        <line x1="545" y1="60" x2="545" y2="418" stroke="rgba(0,0,0,0.28)" stroke-width="2.5" />
+
+        <!-- Foundation strips -->
+        <polygon points="85,414 547,414 547,422 85,422" fill="rgba(0,0,0,0.18)" />
+        <polygon points="547,414 762,414 762,422 547,422" fill="rgba(0,0,0,0.24)" />
+
+        <!-- Landscaping -->
+        <!-- Entry planters -->
+        <rect x="188" y="410" width="26" height="14" rx="2" fill="#786852" />
+        <rect x="188" y="405" width="26" height="7" rx="2" fill="#48663E" />
+        <ellipse cx="201" cy="400" rx="15" ry="10" fill="#3A6236" />
+        <ellipse cx="197" cy="395" rx="11" ry="8" fill="#487040" />
+        <rect x="414" y="410" width="26" height="14" rx="2" fill="#786852" />
+        <rect x="414" y="405" width="26" height="7" rx="2" fill="#48663E" />
+        <ellipse cx="427" cy="400" rx="15" ry="10" fill="#3A6236" />
+        <ellipse cx="423" cy="395" rx="11" ry="8" fill="#487040" />
+        <!-- Street trees -->
+        <rect x="143" y="388" width="8" height="36" rx="2" fill="#5C4E2E" />
+        <ellipse cx="147" cy="378" rx="25" ry="27" fill="#386030" />
+        <ellipse cx="143" cy="372" rx="18" ry="21" fill="#487040" />
+        <ellipse cx="153" cy="375" rx="15" ry="18" fill="#3C6832" />
+        <rect x="487" y="388" width="8" height="36" rx="2" fill="#5C4E2E" />
+        <ellipse cx="491" cy="378" rx="25" ry="27" fill="#386030" />
+        <ellipse cx="487" cy="372" rx="18" ry="21" fill="#487040" />
+        <ellipse cx="497" cy="375" rx="15" ry="18" fill="#3C6832" />
+        <!-- Street lamp -->
+        <rect x="87" y="376" width="5" height="58" rx="2" fill="#64686E" />
+        <path d="M 89 376 Q 108 358 118 360" fill="none" stroke="#64686E" stroke-width="3" stroke-linecap="round" />
+        <circle cx="119" cy="360" r="6" fill="#EEE070" opacity="0.90" />
+        <circle cx="119" cy="360" r="6" fill="rgba(252,236,90,0.32)" filter="url(#lampGlow)" />
+        }
 
         }
 
@@ -524,7 +833,8 @@
     </div>
 
     <!-- ── COLOR PICKER PANEL ── -->
-    <div class="flex-1 lg:flex-none lg:w-72 xl:w-80 flex flex-col border-t lg:border-t-0 lg:border-l border-gray-200 bg-white overflow-hidden">
+    <div
+      class="flex-1 lg:flex-none lg:w-72 xl:w-80 flex flex-col border-t lg:border-t-0 lg:border-l border-gray-200 bg-white overflow-hidden">
 
       <!-- Surface selector + Search -->
       <div class="px-3 lg:px-4 pt-3 lg:pt-4 pb-2 lg:pb-3 border-b border-gray-100">
@@ -532,29 +842,25 @@
         <div class="overflow-x-auto lg:overflow-x-visible -mx-1 px-1 mb-2 lg:mb-2.5">
           <div class="flex lg:flex-col gap-1.5 lg:gap-1 min-w-max lg:min-w-0">
             @for (s of surfaces; track s.key) {
-              <button
-                (click)="activeSurface.set(s.key)"
-                class="flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 lg:py-2 rounded-xl border-2 text-[11px] font-medium transition-all cursor-pointer whitespace-nowrap lg:w-full"
-                [class.border-ink]="activeSurface() === s.key"
-                [class.bg-ink]="activeSurface() === s.key"
-                [class.text-white]="activeSurface() === s.key"
-                [class.border-gray-200]="activeSurface() !== s.key"
-                [class.text-gray-500]="activeSurface() !== s.key">
-                <span
-                  class="w-4 h-4 rounded-full border border-gray-200 shadow-sm shrink-0 transition-colors"
-                  [style.background]="s.color()">
-                </span>
-                <span class="material-symbols-outlined text-[14px] leading-none hidden lg:inline shrink-0">{{ s.icon }}</span>
-                {{ s.label }}
-              </button>
+            <button (click)="activeSurface.set(s.key)"
+              class="flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 lg:py-2 rounded-xl border-2 text-[11px] font-medium transition-all cursor-pointer whitespace-nowrap lg:w-full"
+              [class.border-ink]="activeSurface() === s.key" [class.bg-ink]="activeSurface() === s.key"
+              [class.text-white]="activeSurface() === s.key" [class.border-gray-200]="activeSurface() !== s.key"
+              [class.text-gray-500]="activeSurface() !== s.key">
+              <span class="w-4 h-4 rounded-full border border-gray-200 shadow-sm shrink-0 transition-colors"
+                [style.background]="s.color()">
+              </span>
+              <span class="material-symbols-outlined text-[14px] leading-none hidden lg:inline shrink-0">{{ s.icon
+                }}</span>
+              {{ s.label }}
+            </button>
             }
           </div>
         </div>
-        <div class="flex items-center gap-2 px-3 py-1.5 lg:py-2 bg-gray-50 rounded-lg border border-gray-200 focus-within:border-gray-400 transition-colors">
+        <div
+          class="flex items-center gap-2 px-3 py-1.5 lg:py-2 bg-gray-50 rounded-lg border border-gray-200 focus-within:border-gray-400 transition-colors">
           <span class="material-symbols-outlined text-[15px] text-gray-400 shrink-0 leading-none">search</span>
-          <input
-            type="text"
-            placeholder="Buscar color o familia…"
+          <input type="text" placeholder="Buscar color o familia…"
             class="flex-1 bg-transparent text-sm outline-none text-gray-700 placeholder:text-gray-400"
             [(ngModel)]="searchQuery" />
         </div>
@@ -563,57 +869,50 @@
       <!-- Color grid -->
       <div class="flex-1 overflow-y-auto px-3 lg:px-4 pb-3 lg:pb-4 pt-2 lg:pt-0 color-scroll">
         @if (loading()) {
-          <div class="flex items-center justify-center py-8 lg:py-12 gap-2.5">
-            <div class="w-5 h-5 border-2 border-gray-200 border-t-gray-600 rounded-full animate-spin"></div>
-            <span class="text-sm text-gray-400">Cargando colores…</span>
-          </div>
+        <div class="flex items-center justify-center py-8 lg:py-12 gap-2.5">
+          <div class="w-5 h-5 border-2 border-gray-200 border-t-gray-600 rounded-full animate-spin"></div>
+          <span class="text-sm text-gray-400">Cargando colores…</span>
+        </div>
         } @else if (colorsByFamily.length === 0) {
-          <div class="text-center py-6 lg:py-10">
-            <span class="material-symbols-outlined text-[40px] text-gray-200 leading-none">palette</span>
-            <p class="text-sm text-gray-400 mt-2">Sin resultados</p>
-          </div>
+        <div class="text-center py-6 lg:py-10">
+          <span class="material-symbols-outlined text-[40px] text-gray-200 leading-none">palette</span>
+          <p class="text-sm text-gray-400 mt-2">Sin resultados</p>
+        </div>
         } @else {
-          @for (group of colorsByFamily; track group.family) {
-            <div class="mb-3 lg:mb-4">
-              <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-1.5 lg:mb-2 leading-none">
-                {{ group.family }}
-              </p>
-              <div class="grid grid-cols-8 sm:grid-cols-10 lg:grid-cols-7 gap-1.5">
-                @for (color of group.colors; track color.id) {
-                  <button
-                    (click)="selectColor(color)"
-                    [title]="color.name + (color.code ? ' · ' + color.code : '')"
-                    class="w-full aspect-square rounded-lg border-2 transition-all hover:scale-105 relative overflow-hidden cursor-pointer"
-                    [style.background]="color.hex"
-                    [class.border-ink]="isSelected(color)"
-                    [class.scale-105]="isSelected(color)"
-                    [class.border-transparent]="!isSelected(color)">
-                    @if (isSelected(color)) {
-                      <span class="absolute inset-0 flex items-center justify-center">
-                        <span
-                          class="material-symbols-outlined text-[12px] leading-none font-bold"
-                          [style.color]="isLight(color.hex) ? '#1a1c2c' : '#ffffff'">
-                          check
-                        </span>
-                      </span>
-                    }
-                  </button>
-                }
-              </div>
-            </div>
-          }
+        @for (group of colorsByFamily; track group.family) {
+        <div class="mb-3 lg:mb-4">
+          <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-1.5 lg:mb-2 leading-none">
+            {{ group.family }}
+          </p>
+          <div class="grid grid-cols-8 sm:grid-cols-10 lg:grid-cols-7 gap-1.5">
+            @for (color of group.colors; track color.id) {
+            <button (click)="selectColor(color)" [title]="color.name + (color.code ? ' · ' + color.code : '')"
+              class="w-full aspect-square rounded-lg border-2 transition-all hover:scale-105 relative overflow-hidden cursor-pointer"
+              [style.background]="color.hex" [class.border-ink]="isSelected(color)"
+              [class.scale-105]="isSelected(color)" [class.border-transparent]="!isSelected(color)">
+              @if (isSelected(color)) {
+              <span class="absolute inset-0 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[12px] leading-none font-bold"
+                  [style.color]="isLight(color.hex) ? '#1a1c2c' : '#ffffff'">
+                  check
+                </span>
+              </span>
+              }
+            </button>
+            }
+          </div>
+        </div>
+        }
         }
       </div>
 
       <!-- Footer: active color + reset -->
       <div class="px-3 lg:px-4 py-2.5 lg:py-3 border-t border-gray-100 flex items-center gap-3 shrink-0">
-        <span
-          class="w-7 h-7 lg:w-8 lg:h-8 rounded-xl shrink-0 border border-gray-200 shadow-sm transition-colors"
+        <span class="w-7 h-7 lg:w-8 lg:h-8 rounded-xl shrink-0 border border-gray-200 shadow-sm transition-colors"
           [style.background]="activeSurfaceCfg.color()">
         </span>
         <span class="text-xs text-gray-500 flex-1 truncate">{{ activeSurfaceCfg.label }}</span>
-        <button
-          (click)="reset()"
+        <button (click)="reset()"
           class="text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-all shrink-0 cursor-pointer bg-white">
           Restablecer
         </button>

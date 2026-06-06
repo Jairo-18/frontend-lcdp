@@ -90,7 +90,7 @@ export class RoomRenderComponent implements OnInit {
     if (s === 'floor') return 'piso';
     if (s === 'ceiling') return 'techo';
     if (s === 'wall-left' || s === 'wall-back' || s === 'wall-right' ||
-        s === 'facade-left' || s === 'facade-right') return 'pared';
+      s === 'facade-left' || s === 'facade-right') return 'pared';
     return null;
   }
 
