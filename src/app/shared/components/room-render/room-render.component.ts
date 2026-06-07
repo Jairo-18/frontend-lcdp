@@ -6,30 +6,16 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { ColorService } from '@shared/services/color.service';
-import { Color, ColorSurface } from '@shared/interfaces/color.interface';
-
-type Surface =
-  | 'wall-left' | 'wall-back' | 'wall-right'
-  | 'ceiling' | 'floor'
-  | 'facade-left' | 'facade-right';
-
-type RoomView = 'alcoba' | 'sala' | 'cocina' | 'fachada';
-
-interface SurfaceConfig {
-  key: Surface;
-  label: string;
-  icon: string;
-  color: () => string;
-  set: (h: string) => void;
-}
+import { Color } from '@shared/interfaces/color.interface';
+import { Surface, RoomView, SurfaceConfig } from './room-render.types';
+import { RoomSvgCanvasComponent } from './room-svg-canvas/room-svg-canvas.component';
+import { RoomColorPickerComponent } from './room-color-picker/room-color-picker.component';
 
 @Component({
   selector: 'app-room-render',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [RoomSvgCanvasComponent, RoomColorPickerComponent],
   templateUrl: './room-render.component.html',
   styleUrl: './room-render.component.scss',
 })
@@ -42,8 +28,6 @@ export class RoomRenderComponent implements OnInit {
   readonly loading = signal(true);
   readonly activeSurface = signal<Surface>('wall-back');
   readonly activeView = signal<RoomView>('alcoba');
-
-  searchQuery = '';
 
   // Interior wall colors (each wall independently)
   readonly wallLeft = signal('#F2ECE4');
@@ -85,49 +69,6 @@ export class RoomRenderComponent implements OnInit {
     return this.surfaces.find((s) => s.key === this.activeSurface()) ?? this.surfaces[0];
   }
 
-  get activeSurfaceType(): ColorSurface | null {
-    const s = this.activeSurface();
-    if (s === 'floor') return 'piso';
-    if (s === 'ceiling') return 'techo';
-    if (s === 'wall-left' || s === 'wall-back' || s === 'wall-right' ||
-      s === 'facade-left' || s === 'facade-right') return 'pared';
-    return null;
-  }
-
-  get filteredColors(): Color[] {
-    const q = this.searchQuery.toLowerCase().trim();
-    const surfaceType = this.activeSurfaceType;
-
-    let all = this.colors().filter((c) => {
-      if (!c.isActive) return false;
-      // Si el color no tiene superficies definidas, aplica a todo
-      if (!c.surfaces || c.surfaces.length === 0) return true;
-      // Si tiene superficies, solo mostrar si coincide con la superficie activa
-      return surfaceType ? c.surfaces.includes(surfaceType) : true;
-    });
-
-    if (!q) return all;
-    return all.filter(
-      (c) =>
-        c.name.toLowerCase().includes(q) ||
-        (c.code?.toLowerCase().includes(q) ?? false) ||
-        (c.colorFamily?.toLowerCase().includes(q) ?? false),
-    );
-  }
-
-  get colorsByFamily(): { family: string; colors: Color[] }[] {
-    const map = new Map<string, Color[]>();
-    for (const c of this.filteredColors) {
-      const fam = c.colorFamily ?? 'Otros';
-      if (!map.has(fam)) map.set(fam, []);
-      map.get(fam)!.push(c);
-    }
-    return Array.from(map.entries()).map(([family, colors]) => ({
-      family,
-      colors,
-    }));
-  }
-
   ngOnInit(): void {
     this._colorService.getAll().subscribe({
       next: (colors) => {
@@ -145,18 +86,6 @@ export class RoomRenderComponent implements OnInit {
 
   selectColor(color: Color): void {
     this.activeSurfaceCfg.set(color.hex);
-  }
-
-  isSelected(color: Color): boolean {
-    return this.activeSurfaceCfg.color() === color.hex;
-  }
-
-  isLight(hex: string): boolean {
-    if (!hex || hex.length < 7) return true;
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return r * 0.299 + g * 0.587 + b * 0.114 > 186;
   }
 
   reset(): void {

@@ -1,0 +1,84 @@
+<div
+  class="flex-1 lg:flex-none lg:w-72 xl:w-80 flex flex-col border-t lg:border-t-0 lg:border-l border-gray-200 bg-white overflow-hidden">
+
+  <!-- Surface selector + Search -->
+  <div class="px-3 lg:px-4 pt-3 lg:pt-4 pb-2 lg:pb-3 border-b border-gray-100">
+    <div class="overflow-x-auto lg:overflow-x-visible -mx-1 px-1 mb-2 lg:mb-2.5">
+      <div class="flex lg:flex-col gap-1.5 lg:gap-1 min-w-max lg:min-w-0">
+        @for (s of surfaces(); track s.key) {
+        <button (click)="surfaceSelected.emit(s.key)"
+          class="flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 lg:py-2 rounded-xl border-2 text-[11px] font-medium transition-all cursor-pointer whitespace-nowrap lg:w-full"
+          [class.border-ink]="activeSurface() === s.key" [class.bg-ink]="activeSurface() === s.key"
+          [class.text-white]="activeSurface() === s.key" [class.border-gray-200]="activeSurface() !== s.key"
+          [class.text-gray-500]="activeSurface() !== s.key">
+          <span class="w-4 h-4 rounded-full border border-gray-200 shadow-sm shrink-0 transition-colors"
+            [style.background]="s.color()">
+          </span>
+          <span class="material-symbols-outlined text-[14px] leading-none hidden lg:inline shrink-0">{{ s.icon }}</span>
+          {{ s.label }}
+        </button>
+        }
+      </div>
+    </div>
+    <div
+      class="flex items-center gap-2 px-3 py-1.5 lg:py-2 bg-gray-50 rounded-lg border border-gray-200 focus-within:border-gray-400 transition-colors">
+      <span class="material-symbols-outlined text-[15px] text-gray-400 shrink-0 leading-none">search</span>
+      <input type="text" placeholder="Buscar color o familia…"
+        class="flex-1 bg-transparent text-sm outline-none text-gray-700 placeholder:text-gray-400"
+        [(ngModel)]="searchQuery" />
+    </div>
+  </div>
+
+  <!-- Color grid -->
+  <div class="flex-1 overflow-y-auto px-3 lg:px-4 pb-3 lg:pb-4 pt-2 lg:pt-0 color-scroll">
+    @if (loading()) {
+    <div class="flex items-center justify-center py-8 lg:py-12 gap-2.5">
+      <div class="w-5 h-5 border-2 border-gray-200 border-t-gray-600 rounded-full animate-spin"></div>
+      <span class="text-sm text-gray-400">Cargando colores…</span>
+    </div>
+    } @else if (colorsByFamily.length === 0) {
+    <div class="text-center py-6 lg:py-10">
+      <span class="material-symbols-outlined text-[40px] text-gray-200 leading-none">palette</span>
+      <p class="text-sm text-gray-400 mt-2">Sin resultados</p>
+    </div>
+    } @else {
+    @for (group of colorsByFamily; track group.family) {
+    <div class="mb-3 lg:mb-4">
+      <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-1.5 lg:mb-2 leading-none">
+        {{ group.family }}
+      </p>
+      <div class="grid grid-cols-8 sm:grid-cols-10 lg:grid-cols-7 gap-1.5">
+        @for (color of group.colors; track color.id) {
+        <button (click)="colorSelected.emit(color)" [title]="color.name + (color.code ? ' · ' + color.code : '')"
+          class="w-full aspect-square rounded-lg border-2 transition-all hover:scale-105 relative overflow-hidden cursor-pointer"
+          [style.background]="color.hex" [class.border-ink]="isSelected(color)"
+          [class.scale-105]="isSelected(color)" [class.border-transparent]="!isSelected(color)">
+          @if (isSelected(color)) {
+          <span class="absolute inset-0 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[12px] leading-none font-bold"
+              [style.color]="isLight(color.hex) ? '#1a1c2c' : '#ffffff'">
+              check
+            </span>
+          </span>
+          }
+        </button>
+        }
+      </div>
+    </div>
+    }
+    }
+  </div>
+
+  <!-- Footer: active color + reset -->
+  <div class="px-3 lg:px-4 py-2.5 lg:py-3 border-t border-gray-100 flex items-center gap-3 shrink-0">
+    <span class="w-7 h-7 lg:w-8 lg:h-8 rounded-xl shrink-0 border border-gray-200 shadow-sm transition-colors"
+      [style.background]="activeSurfaceCfg().color()">
+    </span>
+    <span class="text-xs text-gray-500 flex-1 truncate">{{ activeSurfaceCfg().label }}</span>
+    <button (click)="resetClicked.emit()"
+      class="text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-all shrink-0 cursor-pointer bg-white">
+      Restablecer
+    </button>
+  </div>
+
+</div>

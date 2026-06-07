@@ -1,0 +1,514 @@
+<div
+  class="shrink-0 lg:flex-1 bg-gradient-to-br from-slate-100 to-gray-200 flex flex-col items-center justify-center p-3 lg:p-6 overflow-hidden gap-2 lg:gap-3 h-[38dvh] lg:h-auto">
+
+  <!-- View selector -->
+  <div
+    class="flex gap-0.5 lg:gap-1 bg-white/90 backdrop-blur-sm rounded-xl p-0.5 lg:p-1 shadow-md border border-white/60 shrink-0">
+    @for (v of views(); track v.key) {
+    <button (click)="viewChanged.emit(v.key)"
+      class="flex items-center gap-1 lg:gap-1.5 px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg text-[11px] lg:text-[12px] font-medium transition-all cursor-pointer border-0"
+      [class.bg-ink]="activeView() === v.key" [class.text-white]="activeView() === v.key"
+      [class.text-gray-500]="activeView() !== v.key" [class.bg-transparent]="activeView() !== v.key">
+      <span class="material-symbols-outlined text-[14px] lg:text-[15px] leading-none">{{ v.icon }}</span>
+      <span class="hidden sm:inline">{{ v.label }}</span>
+    </button>
+    }
+  </div>
+
+  <!-- SVG Canvas -->
+  <svg viewBox="0 0 900 580" xmlns="http://www.w3.org/2000/svg" class="w-full h-full"
+    style="max-height: calc(100dvh - 155px); filter: drop-shadow(0 12px 40px rgba(0,0,0,0.22))">
+
+    <defs>
+      <linearGradient id="floorLight" x1="0.5" y1="0" x2="0.5" y2="1">
+        <stop offset="0%" stop-color="white" stop-opacity="0.18" />
+        <stop offset="100%" stop-color="black" stop-opacity="0.12" />
+      </linearGradient>
+      <radialGradient id="ceilingGlow" cx="0.5" cy="0.5" r="0.55">
+        <stop offset="0%" stop-color="white" stop-opacity="0.22" />
+        <stop offset="100%" stop-color="black" stop-opacity="0.06" />
+      </radialGradient>
+      <linearGradient id="wallLeftShadow" x1="1" y1="0" x2="0" y2="0">
+        <stop offset="0%" stop-color="black" stop-opacity="0.14" />
+        <stop offset="60%" stop-color="black" stop-opacity="0.05" />
+        <stop offset="100%" stop-color="white" stop-opacity="0.04" />
+      </linearGradient>
+      <linearGradient id="wallRightShadow" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="black" stop-opacity="0.10" />
+        <stop offset="60%" stop-color="black" stop-opacity="0.03" />
+        <stop offset="100%" stop-color="white" stop-opacity="0.06" />
+      </linearGradient>
+      <radialGradient id="wallBackVignette" cx="0.5" cy="0.45" r="0.7">
+        <stop offset="0%" stop-color="white" stop-opacity="0.08" />
+        <stop offset="100%" stop-color="black" stop-opacity="0.08" />
+      </radialGradient>
+      <linearGradient id="aoFloor" x1="0.5" y1="0" x2="0.5" y2="1">
+        <stop offset="0%" stop-color="black" stop-opacity="0.18" />
+        <stop offset="100%" stop-color="black" stop-opacity="0" />
+      </linearGradient>
+      <linearGradient id="glassReflect" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="white" stop-opacity="0.50" />
+        <stop offset="30%" stop-color="white" stop-opacity="0.12" />
+        <stop offset="60%" stop-color="white" stop-opacity="0" />
+        <stop offset="100%" stop-color="white" stop-opacity="0.08" />
+      </linearGradient>
+      <radialGradient id="sunPatch" cx="0.5" cy="0.3" r="0.6">
+        <stop offset="0%" stop-color="#FFF3D0" stop-opacity="0.30" />
+        <stop offset="50%" stop-color="#FFE8A0" stop-opacity="0.12" />
+        <stop offset="100%" stop-color="#FFE8A0" stop-opacity="0" />
+      </radialGradient>
+      <filter id="lampGlow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
+        <feMerge>
+          <feMergeNode in="blur" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+      <filter id="ambientGlow" x="-80%" y="-80%" width="260%" height="260%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="18" result="blur" />
+        <feMerge>
+          <feMergeNode in="blur" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+      <filter id="softShadow" x="-10%" y="-10%" width="130%" height="130%">
+        <feDropShadow dx="2" dy="4" stdDeviation="5" flood-color="rgba(0,0,0,0.18)" />
+      </filter>
+      <linearGradient id="skyGradient" x1="0.5" y1="0" x2="0.5" y2="1">
+        <stop offset="0%" stop-color="#5BB8D4" />
+        <stop offset="45%" stop-color="#A8D8EE" />
+        <stop offset="100%" stop-color="#D8EEF8" />
+      </linearGradient>
+      <linearGradient id="buildingFacade" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="white" stop-opacity="0.09" />
+        <stop offset="100%" stop-color="black" stop-opacity="0.07" />
+      </linearGradient>
+    </defs>
+
+    <!-- Shared room base template: surfaces + overlays + highlights + edges + baseboard + light + window -->
+    <ng-template #roomBase [ngTemplateOutlet]="roomBase" let-sunlight="sunlight" let-window="window">
+    </ng-template>
+
+    @switch (activeView()) {
+
+    <!-- ═══════════════════════════════════════════════════════
+           ALCOBA
+      ════════════════════════════════════════════════════════ -->
+    @case ('alcoba') {
+    <ng-container *ngTemplateOutlet="interiorRoom; context: { sunlight: true, standardWindow: true }"></ng-container>
+    <!-- Wall art -->
+    <g filter="url(#softShadow)">
+      <polygon points="28,122 118,137 118,226 28,208" fill="#8A7A6A" />
+      <polygon points="34,127 112,141 112,221 34,203" fill="#F5F0E8" />
+      <polygon points="34,127 112,141 112,172 34,155" fill="#B8D0E4" />
+      <polygon points="34,155 112,172 112,221 34,203" fill="#8BAA80" />
+      <polygon points="34,179 58,166 74,182 90,158 112,172 112,221 34,203" fill="#6A8A65" />
+      <circle cx="90" cy="150" r="9" fill="#E8C870" opacity="0.9" />
+      <circle cx="52" cy="186" r="5" fill="#4A6A45" />
+    </g>
+    <!-- Rug -->
+    <polygon points="458,394 652,394 786,514 444,514" fill="#9B7E5A" opacity="0.22" />
+    <!-- Headboard -->
+    <rect x="472" y="200" width="176" height="112" rx="3" fill="#5C3D1E" />
+    <rect x="469" y="196" width="182" height="13" rx="3" fill="#6B4828" />
+    <rect x="479" y="213" width="74" height="88" rx="2" fill="#4A3018" />
+    <rect x="561" y="213" width="74" height="88" rx="2" fill="#4A3018" />
+    <!-- Bed frame -->
+    <polygon points="472,312 490,418 490,505 472,390" fill="#6B4828" />
+    <polygon points="490,418 782,418 782,505 490,505" fill="#7A5530" />
+    <polygon points="648,312 782,418 782,505 648,390" fill="#5C3D1E" />
+    <!-- Mattress -->
+    <polygon points="472,312 648,312 782,418 490,418" fill="#EDE5D8" />
+    <polygon points="490,418 782,418 782,424 490,424" fill="#D4C8B4" />
+    <!-- Blanket -->
+    <polygon points="479,354 702,354 782,418 490,418" fill="#C4D4E4" />
+    <polygon points="479,348 702,348 702,356 479,356" fill="#B6C8DC" />
+    <polygon points="490,415 782,415 782,424 490,424" fill="#B0C2D6" />
+    <!-- Pillows -->
+    <polygon points="484,310 553,310 550,342 481,342" fill="#F5F0E8" />
+    <polygon points="559,310 643,310 648,342 555,342" fill="#F8F4EC" />
+    <polygon points="485,340 552,340 549,344 483,344" fill="rgba(0,0,0,0.08)" />
+    <polygon points="559,340 643,340 648,344 556,344" fill="rgba(0,0,0,0.08)" />
+    <!-- Bedside table -->
+    <polygon points="410,334 472,334 490,398 402,398" fill="#6B4828" />
+    <polygon points="402,398 490,398 490,456 402,456" fill="#7A5530" />
+    <polygon points="472,334 490,398 490,456 472,390" fill="#5C3D1E" />
+    <line x1="406" y1="427" x2="488" y2="427" stroke="rgba(0,0,0,0.28)" stroke-width="1" />
+    <rect x="430" y="422" width="28" height="4" rx="2" fill="#A08060" />
+    <!-- Bedside lamp -->
+    <ellipse cx="447" cy="362" rx="11" ry="4" fill="#B09060" />
+    <line x1="447" y1="362" x2="447" y2="330" stroke="#C0A070" stroke-width="3" stroke-linecap="round" />
+    <polygon points="424,330 470,330 464,313 430,313" fill="#F0E0BE" />
+    <polygon points="428,328 466,328 461,315 433,315" fill="#E4D0A8" />
+    <ellipse cx="447" cy="340" rx="20" ry="7" fill="rgba(255,220,120,0.15)" />
+    }
+
+    <!-- ═══════════════════════════════════════════════════════
+           SALA
+      ════════════════════════════════════════════════════════ -->
+    @case ('sala') {
+    <ng-container *ngTemplateOutlet="interiorRoom; context: { sunlight: true, standardWindow: true }"></ng-container>
+    <!-- Area rug -->
+    <polygon points="256,395 600,395 660,510 196,510" fill="#7A5C3C" opacity="0.24" />
+    <!-- TV screen -->
+    <rect x="568" y="190" width="82" height="102" rx="3" fill="#1A1A1A" />
+    <rect x="571" y="193" width="76" height="96" rx="2" fill="#080808" />
+    <rect x="578" y="284" width="62" height="4" rx="1" fill="rgba(255,255,255,0.07)" />
+    <rect x="593" y="291" width="22" height="3" rx="2" fill="#2A2A2A" />
+    <!-- Media console -->
+    <polygon points="558,292 648,292 650,304 556,304" fill="#5C3D1E" />
+    <rect x="556" y="304" width="94" height="42" rx="1" fill="#7A5530" />
+    <line x1="560" y1="326" x2="646" y2="326" stroke="rgba(0,0,0,0.22)" stroke-width="1" />
+    <rect x="590" y="322" width="22" height="3" rx="1.5" fill="#A08060" />
+    <!-- Sofa backrest -->
+    <rect x="330" y="288" width="204" height="48" rx="3" fill="#4A5568" />
+    <line x1="432" y1="288" x2="432" y2="336" stroke="rgba(0,0,0,0.22)" stroke-width="1.5" />
+    <rect x="340" y="290" width="44" height="44" rx="2" fill="#6B7D90" />
+    <rect x="494" y="290" width="44" height="44" rx="2" fill="#6B7D90" />
+    <!-- Sofa arms -->
+    <rect x="320" y="283" width="12" height="57" rx="2" fill="#374151" />
+    <rect x="532" y="283" width="12" height="57" rx="2" fill="#374151" />
+    <!-- Sofa seat -->
+    <polygon points="320,336 544,336 568,410 296,410" fill="#58687A" />
+    <polygon points="296,408 568,408 571,422 293,422" fill="#4A5568" />
+    <polygon points="320,336 332,336 308,410 296,410" fill="#2D3748" />
+    <polygon points="532,336 544,336 568,410 556,410" fill="#2D3748" />
+    <!-- Coffee table -->
+    <polygon points="333,436 565,436 590,474 308,474" fill="#9B6914" />
+    <polygon points="308,472 590,472 594,486 304,486" fill="#7A5010" />
+    <line x1="331" y1="472" x2="323" y2="506" stroke="#7A5010" stroke-width="5" stroke-linecap="round" />
+    <line x1="580" y1="472" x2="588" y2="506" stroke="#7A5010" stroke-width="5" stroke-linecap="round" />
+    <polygon points="380,432 438,431 438,438 380,439" fill="#E0C87A" />
+    <polygon points="454,430 502,429 502,436 454,437" fill="#C8B8A0" />
+    <!-- Plant -->
+    <polygon points="90,492 128,492 131,506 87,506" fill="#8B6014" />
+    <ellipse cx="109" cy="506" rx="22" ry="7" fill="#7A5010" />
+    <circle cx="104" cy="474" r="18" fill="#4A7C3F" />
+    <circle cx="118" cy="462" r="13" fill="#3D6B35" />
+    <circle cx="100" cy="466" r="14" fill="#527A45" />
+    }
+
+    <!-- ═══════════════════════════════════════════════════════
+           COCINA
+      ════════════════════════════════════════════════════════ -->
+    @case ('cocina') {
+    <ng-container *ngTemplateOutlet="interiorRoom; context: { sunlight: false, standardWindow: false }"></ng-container>
+    <!-- Upper left cabinet -->
+    <rect x="255" y="90" width="76" height="178" rx="2" fill="#D4C5A9" />
+    <rect x="258" y="94" width="33" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5" />
+    <rect x="295" y="94" width="33" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5" />
+    <rect x="258" y="180" width="33" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5" />
+    <rect x="295" y="180" width="33" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5" />
+    <circle cx="280" cy="135" r="2.5" fill="#A0906A" />
+    <circle cx="316" cy="135" r="2.5" fill="#A0906A" />
+    <circle cx="280" cy="221" r="2.5" fill="#A0906A" />
+    <circle cx="316" cy="221" r="2.5" fill="#A0906A" />
+    <!-- Upper right cabinet -->
+    <rect x="569" y="90" width="42" height="178" rx="2" fill="#D4C5A9" />
+    <rect x="572" y="94" width="36" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5" />
+    <rect x="572" y="180" width="36" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5" />
+    <circle cx="586" cy="135" r="2.5" fill="#A0906A" />
+    <circle cx="586" cy="221" r="2.5" fill="#A0906A" />
+    <!-- Range hood -->
+    <polygon points="258,270 332,270 336,288 254,288" fill="#909090" />
+    <polygon points="254,286 336,286 338,292 252,292" fill="#787878" />
+    <line x1="272" y1="272" x2="272" y2="286" stroke="rgba(0,0,0,0.2)" stroke-width="1" />
+    <line x1="286" y1="272" x2="286" y2="286" stroke="rgba(0,0,0,0.2)" stroke-width="1" />
+    <line x1="300" y1="272" x2="300" y2="286" stroke="rgba(0,0,0,0.2)" stroke-width="1" />
+    <line x1="314" y1="272" x2="314" y2="286" stroke="rgba(0,0,0,0.2)" stroke-width="1" />
+    <rect x="284" y="90" width="46" height="180" rx="1" fill="#A0A0A0" opacity="0.5" />
+    <!-- Kitchen window -->
+    <rect x="360" y="112" width="180" height="135" rx="3" fill="white" stroke="#8B9BAF" stroke-width="2.5" />
+    <rect x="363" y="115" width="84" height="62" fill="#C5E2F5" />
+    <rect x="452" y="115" width="84" height="62" fill="#CEE8F8" />
+    <rect x="363" y="181" width="84" height="62" fill="#D8EFF8" />
+    <rect x="452" y="181" width="84" height="62" fill="#D2EBF5" />
+    <line x1="451" y1="115" x2="451" y2="247" stroke="#8B9BAF" stroke-width="2" />
+    <line x1="363" y1="180" x2="537" y2="180" stroke="#8B9BAF" stroke-width="2" />
+    <rect x="354" y="247" width="192" height="8" rx="2" fill="#BCA898" />
+    <!-- Lower cabinets left -->
+    <rect x="255" y="316" width="100" height="60" rx="1" fill="#C8B898" />
+    <rect x="258" y="319" width="46" height="28" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
+    <rect x="308" y="319" width="44" height="28" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
+    <rect x="258" y="350" width="46" height="22" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
+    <rect x="308" y="350" width="44" height="22" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
+    <!-- Oven/stove -->
+    <rect x="355" y="316" width="190" height="60" rx="1" fill="#7A7A7A" />
+    <rect x="358" y="318" width="184" height="55" rx="2" fill="#3A3A3A" />
+    <rect x="368" y="324" width="164" height="42" rx="2" fill="#2A2A2A" />
+    <line x1="396" y1="321" x2="506" y2="321" stroke="#C0C0C0" stroke-width="3" stroke-linecap="round" />
+    <!-- Lower cabinets right -->
+    <rect x="545" y="316" width="64" height="60" rx="1" fill="#C8B898" />
+    <rect x="548" y="319" width="28" height="28" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
+    <rect x="579" y="319" width="28" height="28" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
+    <rect x="548" y="350" width="28" height="22" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
+    <rect x="579" y="350" width="28" height="22" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
+    <!-- Cabinet handles -->
+    <rect x="274" y="334" width="22" height="3" rx="1.5" fill="#A09070" />
+    <rect x="322" y="334" width="18" height="3" rx="1.5" fill="#A09070" />
+    <rect x="556" y="334" width="14" height="3" rx="1.5" fill="#A09070" />
+    <rect x="584" y="334" width="14" height="3" rx="1.5" fill="#A09070" />
+    <!-- Countertop -->
+    <polygon points="244,284 609,284 615,300 238,300" fill="#E8DCC8" />
+    <polygon points="238,298 615,298 621,316 232,316" fill="#C8B898" />
+    <!-- Sink -->
+    <rect x="406" y="286" width="88" height="15" rx="3" fill="#8BAABB" />
+    <rect x="410" y="288" width="80" height="11" rx="2" fill="#7A9AAA" />
+    <!-- Faucet -->
+    <line x1="450" y1="270" x2="450" y2="286" stroke="#A0A8B0" stroke-width="3" stroke-linecap="round" />
+    <line x1="440" y1="270" x2="460" y2="270" stroke="#A0A8B0" stroke-width="2.5" stroke-linecap="round" />
+    <!-- Stove burners -->
+    <circle cx="272" cy="288" r="5" fill="#555" />
+    <circle cx="288" cy="288" r="5" fill="#555" />
+    <circle cx="272" cy="297" r="4" fill="#606060" />
+    <circle cx="288" cy="297" r="4" fill="#606060" />
+    <!-- Refrigerator -->
+    <rect x="613" y="90" width="37" height="290" rx="2" fill="#E8E8E0" />
+    <rect x="615" y="92" width="33" height="286" rx="1" fill="#F0F0E8" />
+    <line x1="613" y1="195" x2="650" y2="195" stroke="#C8C8C0" stroke-width="1.5" />
+    <line x1="619" y1="115" x2="619" y2="175" stroke="#B0B0A8" stroke-width="3" stroke-linecap="round" />
+    <line x1="619" y1="215" x2="619" y2="355" stroke="#B0B0A8" stroke-width="3" stroke-linecap="round" />
+    <polygon points="613,88 650,88 654,95 615,95" fill="#D8D8D0" />
+    <!-- Floor mat -->
+    <polygon points="258,388 548,388 590,450 216,450" fill="#8B6A4A" opacity="0.22" />
+    }
+
+    <!-- ═══════════════════════════════════════════════════════
+           FACHADA
+      ════════════════════════════════════════════════════════ -->
+    @case ('fachada') {
+    <!-- Sky -->
+    <rect x="0" y="0" width="900" height="580" fill="url(#skyGradient)" />
+    <!-- Distant city silhouette -->
+    <rect x="0" y="310" width="65" height="130" rx="1" fill="rgba(148,162,178,0.30)" />
+    <rect x="848" y="318" width="52" height="122" rx="1" fill="rgba(148,162,178,0.28)" />
+    <!-- Clouds -->
+    <ellipse cx="155" cy="58" rx="68" ry="25" fill="white" opacity="0.92" />
+    <ellipse cx="218" cy="42" rx="50" ry="20" fill="white" opacity="0.84" />
+    <ellipse cx="134" cy="70" rx="38" ry="14" fill="white" opacity="0.70" />
+    <ellipse cx="688" cy="50" rx="62" ry="22" fill="white" opacity="0.87" />
+    <ellipse cx="746" cy="34" rx="46" ry="18" fill="white" opacity="0.79" />
+    <!-- Ground (clickable) -->
+    <rect x="0" y="440" width="900" height="140" [attr.fill]="floor()" class="room-surface cursor-pointer"
+      (click)="surfaceClicked.emit('floor')" />
+    @if (activeSurface() === 'floor') {
+    <rect x="0" y="440" width="900" height="140" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+      class="selection-march" style="pointer-events:none" />
+    }
+    <!-- Sidewalk -->
+    <rect x="60" y="440" width="790" height="18" fill="rgba(193,189,182,0.92)" />
+    <line x1="60" y1="449" x2="850" y2="449" stroke="rgba(255,255,255,0.25)" stroke-width="1" />
+    <line x1="175" y1="440" x2="175" y2="458" stroke="rgba(0,0,0,0.07)" stroke-width="0.5" /><line x1="290" y1="440" x2="290" y2="458" stroke="rgba(0,0,0,0.07)" stroke-width="0.5" /><line x1="405" y1="440" x2="405" y2="458" stroke="rgba(0,0,0,0.07)" stroke-width="0.5" /><line x1="520" y1="440" x2="520" y2="458" stroke="rgba(0,0,0,0.07)" stroke-width="0.5" /><line x1="635" y1="440" x2="635" y2="458" stroke="rgba(0,0,0,0.07)" stroke-width="0.5" /><line x1="750" y1="440" x2="750" y2="458" stroke="rgba(0,0,0,0.07)" stroke-width="0.5" />
+    <!-- Side face (right / facade-right) -->
+    <polygon points="660,52 834,75 834,440 660,440" [attr.fill]="fachadaRight()"
+      class="room-surface cursor-pointer" (click)="surfaceClicked.emit('facade-right')" />
+    <polygon points="660,52 834,75 834,440 660,440" fill="rgba(0,0,0,0.28)" style="pointer-events:none" />
+    @if (activeSurface() === 'facade-right') {
+    <polygon points="660,52 834,75 834,440 660,440" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+      class="selection-march" style="pointer-events:none" />
+    }
+    <!-- Side face floor bands -->
+    <rect x="660" y="149" width="174" height="8" fill="rgba(0,0,0,0.20)" style="pointer-events:none" />
+    <rect x="660" y="246" width="174" height="8" fill="rgba(0,0,0,0.20)" style="pointer-events:none" />
+    <rect x="660" y="343" width="174" height="8" fill="rgba(0,0,0,0.20)" style="pointer-events:none" />
+    <!-- Side windows floor 4 -->
+    <rect x="695" y="74" width="80" height="60" rx="1" fill="#9EC6DC" opacity="0.62" />
+    <rect x="695" y="74" width="80" height="60" fill="url(#glassReflect)" style="pointer-events:none" opacity="0.50" />
+    <rect x="693" y="72" width="84" height="64" rx="1.5" fill="none" stroke="#88A4BE" stroke-width="1.5" />
+    <line x1="735" y1="72" x2="735" y2="136" stroke="#88A4BE" stroke-width="1" />
+    <!-- Side windows floor 3 -->
+    <rect x="695" y="171" width="80" height="56" rx="1" fill="#96C0D6" opacity="0.56" />
+    <rect x="695" y="171" width="80" height="56" fill="url(#glassReflect)" style="pointer-events:none" opacity="0.40" />
+    <rect x="693" y="169" width="84" height="60" rx="1.5" fill="none" stroke="#88A4BE" stroke-width="1.5" />
+    <line x1="735" y1="169" x2="735" y2="229" stroke="#88A4BE" stroke-width="1" />
+    <!-- Side windows floor 2 -->
+    <rect x="695" y="268" width="80" height="56" rx="1" fill="#90BCD2" opacity="0.50" />
+    <rect x="695" y="268" width="80" height="56" fill="url(#glassReflect)" style="pointer-events:none" opacity="0.32" />
+    <rect x="693" y="266" width="84" height="60" rx="1.5" fill="none" stroke="#88A4BE" stroke-width="1.5" />
+    <line x1="735" y1="266" x2="735" y2="326" stroke="#88A4BE" stroke-width="1" />
+    <!-- Side window ground floor -->
+    <rect x="695" y="363" width="80" height="65" rx="1" fill="#8AB8CE" opacity="0.48" />
+    <rect x="695" y="363" width="80" height="65" fill="url(#glassReflect)" style="pointer-events:none" opacity="0.28" />
+    <rect x="693" y="361" width="84" height="69" rx="1.5" fill="none" stroke="#88A4BE" stroke-width="1.5" />
+    <line x1="735" y1="361" x2="735" y2="428" stroke="#88A4BE" stroke-width="1" />
+    <!-- Front face (facade-left) -->
+    <rect x="75" y="52" width="585" height="388" [attr.fill]="fachadaLeft()"
+      class="room-surface cursor-pointer" (click)="surfaceClicked.emit('facade-left')" />
+    <rect x="75" y="52" width="585" height="388" fill="url(#buildingFacade)" style="pointer-events:none" />
+    @if (activeSurface() === 'facade-left') {
+    <rect x="75" y="52" width="585" height="388" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+      class="selection-march" style="pointer-events:none" />
+    }
+    <!-- Floor slab bands on front face -->
+    <rect x="75" y="149" width="585" height="8" fill="rgba(0,0,0,0.12)" style="pointer-events:none" />
+    <line x1="75" y1="149" x2="660" y2="149" stroke="rgba(255,255,255,0.20)" stroke-width="1" />
+    <rect x="75" y="246" width="585" height="8" fill="rgba(0,0,0,0.12)" style="pointer-events:none" />
+    <line x1="75" y1="246" x2="660" y2="246" stroke="rgba(255,255,255,0.20)" stroke-width="1" />
+    <rect x="75" y="343" width="585" height="8" fill="rgba(0,0,0,0.12)" style="pointer-events:none" />
+    <line x1="75" y1="343" x2="660" y2="343" stroke="rgba(255,255,255,0.20)" stroke-width="1" />
+    <!-- Vertical column seams -->
+    <line x1="221" y1="52" x2="221" y2="440" stroke="rgba(0,0,0,0.06)" stroke-width="1" />
+    <line x1="367" y1="52" x2="367" y2="440" stroke="rgba(0,0,0,0.06)" stroke-width="1" />
+    <line x1="513" y1="52" x2="513" y2="440" stroke="rgba(0,0,0,0.06)" stroke-width="1" />
+    <!-- Floor 4 windows (y=70, h=65) -->
+    <rect x="120" y="70" width="95" height="65" rx="1" fill="#A4CEDE" /><rect x="120" y="70" width="95" height="65" fill="url(#glassReflect)" style="pointer-events:none" /><rect x="118" y="68" width="99" height="69" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" /><line x1="168" y1="68" x2="168" y2="137" stroke="#8AAEC4" stroke-width="1" />
+    <rect x="253" y="70" width="95" height="65" rx="1" fill="#AACED0" /><rect x="253" y="70" width="95" height="65" fill="url(#glassReflect)" style="pointer-events:none" /><rect x="251" y="68" width="99" height="69" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" /><line x1="301" y1="68" x2="301" y2="137" stroke="#8AAEC4" stroke-width="1" />
+    <rect x="386" y="70" width="95" height="65" rx="1" fill="#A6CCE0" /><rect x="386" y="70" width="95" height="65" fill="url(#glassReflect)" style="pointer-events:none" /><rect x="384" y="68" width="99" height="69" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" /><line x1="434" y1="68" x2="434" y2="137" stroke="#8AAEC4" stroke-width="1" />
+    <rect x="519" y="70" width="95" height="65" rx="1" fill="#A0CADC" /><rect x="519" y="70" width="95" height="65" fill="url(#glassReflect)" style="pointer-events:none" /><rect x="517" y="68" width="99" height="69" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" /><line x1="567" y1="68" x2="567" y2="137" stroke="#8AAEC4" stroke-width="1" />
+    <!-- Floor 3 balcony glass railing (y=157) -->
+    <rect x="75" y="157" width="585" height="14" rx="1" fill="rgba(186,210,226,0.28)" stroke="rgba(168,194,212,0.68)" stroke-width="1" style="pointer-events:none" />
+    <line x1="99" y1="158" x2="99" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="123" y1="158" x2="123" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="147" y1="158" x2="147" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="171" y1="158" x2="171" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="195" y1="158" x2="195" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="219" y1="158" x2="219" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="243" y1="158" x2="243" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="267" y1="158" x2="267" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="291" y1="158" x2="291" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="315" y1="158" x2="315" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="339" y1="158" x2="339" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="363" y1="158" x2="363" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="387" y1="158" x2="387" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="411" y1="158" x2="411" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="435" y1="158" x2="435" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="459" y1="158" x2="459" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="483" y1="158" x2="483" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="507" y1="158" x2="507" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="531" y1="158" x2="531" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="555" y1="158" x2="555" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="579" y1="158" x2="579" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="603" y1="158" x2="603" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="627" y1="158" x2="627" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" /><line x1="651" y1="158" x2="651" y2="171" stroke="rgba(168,194,212,0.75)" stroke-width="1" />
+    <!-- Floor 3 windows (y=175, h=57) -->
+    <rect x="120" y="175" width="95" height="57" rx="1" fill="#A0CAD8" /><rect x="120" y="175" width="95" height="57" fill="url(#glassReflect)" style="pointer-events:none" /><rect x="118" y="173" width="99" height="61" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" /><line x1="168" y1="173" x2="168" y2="234" stroke="#8AAEC4" stroke-width="1" />
+    <rect x="253" y="175" width="95" height="57" rx="1" fill="#A6CCE0" /><rect x="253" y="175" width="95" height="57" fill="url(#glassReflect)" style="pointer-events:none" /><rect x="251" y="173" width="99" height="61" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" /><line x1="301" y1="173" x2="301" y2="234" stroke="#8AAEC4" stroke-width="1" />
+    <rect x="386" y="175" width="95" height="57" rx="1" fill="#A2C8DC" /><rect x="386" y="175" width="95" height="57" fill="url(#glassReflect)" style="pointer-events:none" /><rect x="384" y="173" width="99" height="61" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" /><line x1="434" y1="173" x2="434" y2="234" stroke="#8AAEC4" stroke-width="1" />
+    <rect x="519" y="175" width="95" height="57" rx="1" fill="#9EC6DA" /><rect x="519" y="175" width="95" height="57" fill="url(#glassReflect)" style="pointer-events:none" /><rect x="517" y="173" width="99" height="61" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" /><line x1="567" y1="173" x2="567" y2="234" stroke="#8AAEC4" stroke-width="1" />
+    <!-- Floor 2 balcony glass railing (y=254) -->
+    <rect x="75" y="254" width="585" height="14" rx="1" fill="rgba(186,210,226,0.26)" stroke="rgba(168,194,212,0.66)" stroke-width="1" style="pointer-events:none" />
+    <line x1="99" y1="255" x2="99" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="123" y1="255" x2="123" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="147" y1="255" x2="147" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="171" y1="255" x2="171" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="195" y1="255" x2="195" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="219" y1="255" x2="219" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="243" y1="255" x2="243" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="267" y1="255" x2="267" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="291" y1="255" x2="291" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="315" y1="255" x2="315" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="339" y1="255" x2="339" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="363" y1="255" x2="363" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="387" y1="255" x2="387" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="411" y1="255" x2="411" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="435" y1="255" x2="435" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="459" y1="255" x2="459" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="483" y1="255" x2="483" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="507" y1="255" x2="507" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="531" y1="255" x2="531" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="555" y1="255" x2="555" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="579" y1="255" x2="579" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="603" y1="255" x2="603" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="627" y1="255" x2="627" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" /><line x1="651" y1="255" x2="651" y2="268" stroke="rgba(168,194,212,0.72)" stroke-width="1" />
+    <!-- Floor 2 windows (y=272, h=57) -->
+    <rect x="120" y="272" width="95" height="57" rx="1" fill="#9CC8D8" /><rect x="120" y="272" width="95" height="57" fill="url(#glassReflect)" style="pointer-events:none" /><rect x="118" y="270" width="99" height="61" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" /><line x1="168" y1="270" x2="168" y2="331" stroke="#8AAEC4" stroke-width="1" />
+    <rect x="253" y="272" width="95" height="57" rx="1" fill="#A2CCDC" /><rect x="253" y="272" width="95" height="57" fill="url(#glassReflect)" style="pointer-events:none" /><rect x="251" y="270" width="99" height="61" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" /><line x1="301" y1="270" x2="301" y2="331" stroke="#8AAEC4" stroke-width="1" />
+    <rect x="386" y="272" width="95" height="57" rx="1" fill="#9EC8DA" /><rect x="386" y="272" width="95" height="57" fill="url(#glassReflect)" style="pointer-events:none" /><rect x="384" y="270" width="99" height="61" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" /><line x1="434" y1="270" x2="434" y2="331" stroke="#8AAEC4" stroke-width="1" />
+    <rect x="519" y="272" width="95" height="57" rx="1" fill="#9AC4D6" /><rect x="519" y="272" width="95" height="57" fill="url(#glassReflect)" style="pointer-events:none" /><rect x="517" y="270" width="99" height="61" rx="2" fill="none" stroke="#8AAEC4" stroke-width="1.5" /><line x1="567" y1="270" x2="567" y2="331" stroke="#8AAEC4" stroke-width="1" />
+    <!-- Ground floor canopy + curtain-wall lobby -->
+    <rect x="75" y="351" width="585" height="10" fill="rgba(192,188,183,0.96)" style="pointer-events:none" />
+    <rect x="75" y="351" width="585" height="3" fill="rgba(255,255,255,0.20)" style="pointer-events:none" />
+    <rect x="80" y="361" width="108" height="79" rx="1" fill="rgba(170,208,230,0.65)" /><rect x="80" y="361" width="108" height="79" fill="url(#glassReflect)" style="pointer-events:none" opacity="0.65" /><rect x="78" y="359" width="112" height="83" rx="1" fill="none" stroke="#88A4BE" stroke-width="1.5" />
+    <rect x="193" y="361" width="108" height="79" rx="1" fill="rgba(162,204,228,0.70)" /><rect x="193" y="361" width="108" height="79" fill="url(#glassReflect)" style="pointer-events:none" opacity="0.55" /><rect x="191" y="359" width="112" height="83" rx="1" fill="none" stroke="#88A4BE" stroke-width="1.5" />
+    <!-- Door panel (centre) -->
+    <rect x="306" y="361" width="108" height="79" rx="1" fill="rgba(158,202,224,0.72)" /><rect x="306" y="361" width="108" height="79" fill="url(#glassReflect)" style="pointer-events:none" opacity="0.60" /><rect x="304" y="359" width="112" height="83" rx="1" fill="none" stroke="#88A4BE" stroke-width="1.5" />
+    <line x1="360" y1="361" x2="360" y2="440" stroke="#88A4BE" stroke-width="1.5" />
+    <rect x="344" y="397" width="13" height="3" rx="1.5" fill="#B09848" /><rect x="362" y="397" width="13" height="3" rx="1.5" fill="#B09848" />
+    <rect x="419" y="361" width="108" height="79" rx="1" fill="rgba(170,208,230,0.65)" /><rect x="419" y="361" width="108" height="79" fill="url(#glassReflect)" style="pointer-events:none" opacity="0.60" /><rect x="417" y="359" width="112" height="83" rx="1" fill="none" stroke="#88A4BE" stroke-width="1.5" />
+    <rect x="532" y="361" width="108" height="79" rx="1" fill="rgba(162,204,228,0.65)" /><rect x="532" y="361" width="108" height="79" fill="url(#glassReflect)" style="pointer-events:none" opacity="0.57" /><rect x="530" y="359" width="112" height="83" rx="1" fill="none" stroke="#88A4BE" stroke-width="1.5" />
+    <!-- Cubierta / parapet (ceiling surface) -->
+    <rect x="75" y="38" width="585" height="14" [attr.fill]="ceiling()"
+      class="room-surface cursor-pointer" (click)="surfaceClicked.emit('ceiling')" />
+    <rect x="75" y="38" width="585" height="14" fill="rgba(0,0,0,0.07)" style="pointer-events:none" />
+    @if (activeSurface() === 'ceiling') {
+    <rect x="75" y="38" width="585" height="14" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+      class="selection-march" style="pointer-events:none" />
+    }
+    <!-- Side parapet -->
+    <polygon points="660,38 834,62 834,75 660,52" fill="rgba(190,186,182,0.92)" style="pointer-events:none" />
+    <polygon points="660,38 834,62 834,75 660,52" fill="rgba(0,0,0,0.14)" style="pointer-events:none" />
+    <!-- Building outline -->
+    <rect x="75" y="52" width="585" height="388" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="1.5" style="pointer-events:none" />
+    <line x1="660" y1="52" x2="660" y2="440" stroke="rgba(0,0,0,0.28)" stroke-width="2" style="pointer-events:none" />
+    <!-- Rooftop AC units -->
+    <rect x="118" y="10" width="80" height="28" rx="1" fill="#8C9296" /><rect x="118" y="10" width="80" height="6" rx="1" fill="#9A9EA4" /><rect x="116" y="8" width="84" height="32" rx="1" fill="none" stroke="#7A7E84" stroke-width="1" />
+    <line x1="130" y1="10" x2="130" y2="28" stroke="rgba(0,0,0,0.12)" stroke-width="0.8" /><line x1="142" y1="10" x2="142" y2="28" stroke="rgba(0,0,0,0.12)" stroke-width="0.8" /><line x1="154" y1="10" x2="154" y2="28" stroke="rgba(0,0,0,0.12)" stroke-width="0.8" /><line x1="166" y1="10" x2="166" y2="28" stroke="rgba(0,0,0,0.12)" stroke-width="0.8" /><line x1="178" y1="10" x2="178" y2="28" stroke="rgba(0,0,0,0.12)" stroke-width="0.8" /><line x1="190" y1="10" x2="190" y2="28" stroke="rgba(0,0,0,0.12)" stroke-width="0.8" />
+    <rect x="358" y="10" width="80" height="28" rx="1" fill="#8C9296" /><rect x="358" y="10" width="80" height="6" rx="1" fill="#9A9EA4" /><rect x="356" y="8" width="84" height="32" rx="1" fill="none" stroke="#7A7E84" stroke-width="1" />
+    <line x1="370" y1="10" x2="370" y2="28" stroke="rgba(0,0,0,0.12)" stroke-width="0.8" /><line x1="382" y1="10" x2="382" y2="28" stroke="rgba(0,0,0,0.12)" stroke-width="0.8" /><line x1="394" y1="10" x2="394" y2="28" stroke="rgba(0,0,0,0.12)" stroke-width="0.8" /><line x1="406" y1="10" x2="406" y2="28" stroke="rgba(0,0,0,0.12)" stroke-width="0.8" />
+    <!-- Antenna -->
+    <line x1="580" y1="38" x2="580" y2="6" stroke="#8A8E96" stroke-width="2" />
+    <line x1="570" y1="16" x2="590" y2="14" stroke="#8A8E96" stroke-width="1.5" />
+    <circle cx="580" cy="5" r="3" fill="#A0A4AC" />
+    <!-- Foundation strip -->
+    <rect x="72" y="437" width="591" height="6" fill="rgba(0,0,0,0.16)" style="pointer-events:none" />
+    <polygon points="660,437 836,440 836,446 660,443" fill="rgba(0,0,0,0.22)" style="pointer-events:none" />
+    <!-- Planters -->
+    <rect x="155" y="424" width="28" height="16" rx="2" fill="#786852" /><rect x="155" y="418" width="28" height="8" rx="2" fill="#48663E" /><ellipse cx="169" cy="412" rx="16" ry="10" fill="#3A6236" /><ellipse cx="165" cy="407" rx="11" ry="8" fill="#487040" />
+    <rect x="557" y="424" width="28" height="16" rx="2" fill="#786852" /><rect x="557" y="418" width="28" height="8" rx="2" fill="#48663E" /><ellipse cx="571" cy="412" rx="16" ry="10" fill="#3A6236" /><ellipse cx="567" cy="407" rx="11" ry="8" fill="#487040" />
+    <!-- Street trees -->
+    <rect x="91" y="404" width="8" height="36" rx="2" fill="#5C4E2E" /><ellipse cx="95" cy="392" rx="26" ry="28" fill="#386030" /><ellipse cx="91" cy="386" rx="19" ry="22" fill="#487040" /><ellipse cx="101" cy="389" rx="16" ry="18" fill="#3C6832" />
+    <rect x="617" y="404" width="8" height="36" rx="2" fill="#5C4E2E" /><ellipse cx="621" cy="392" rx="26" ry="28" fill="#386030" /><ellipse cx="617" cy="386" rx="19" ry="22" fill="#487040" /><ellipse cx="627" cy="389" rx="16" ry="18" fill="#3C6832" />
+    <!-- Street lamp -->
+    <rect x="62" y="388" width="5" height="52" rx="2" fill="#64686E" />
+    <path d="M 64 388 Q 80 370 90 372" fill="none" stroke="#64686E" stroke-width="3" stroke-linecap="round" />
+    <circle cx="91" cy="372" r="6" fill="#EEE070" opacity="0.90" />
+    <circle cx="91" cy="372" r="6" fill="rgba(252,236,90,0.32)" filter="url(#lampGlow)" />
+    }
+
+    }
+
+    <!-- ── Shared interior room base template ── -->
+    <ng-template #interiorRoom let-sunlight="sunlight" let-standardWindow="standardWindow">
+      <!-- Room surfaces -->
+      <polygon points="0,580 900,580 650,380 250,380" [attr.fill]="floor()" class="room-surface cursor-pointer"
+        (click)="surfaceClicked.emit('floor')" />
+      <polygon points="0,580 900,580 650,380 250,380" fill="url(#floorLight)" style="pointer-events:none" />
+      <polygon points="0,0 900,0 650,80 250,80" [attr.fill]="ceiling()" class="room-surface cursor-pointer"
+        (click)="surfaceClicked.emit('ceiling')" />
+      <polygon points="0,0 900,0 650,80 250,80" fill="url(#ceilingGlow)" style="pointer-events:none" />
+      <polygon points="0,0 250,80 250,380 0,580" [attr.fill]="wallLeft()" class="room-surface cursor-pointer"
+        (click)="surfaceClicked.emit('wall-left')" />
+      <polygon points="0,0 250,80 250,380 0,580" fill="url(#wallLeftShadow)" style="pointer-events:none" />
+      <polygon points="900,0 650,80 650,380 900,580" [attr.fill]="wallRight()" class="room-surface cursor-pointer"
+        (click)="surfaceClicked.emit('wall-right')" />
+      <polygon points="900,0 650,80 650,380 900,580" fill="url(#wallRightShadow)" style="pointer-events:none" />
+      <polygon points="250,80 650,80 650,380 250,380" [attr.fill]="wallBack()" class="room-surface cursor-pointer"
+        (click)="surfaceClicked.emit('wall-back')" />
+      <polygon points="250,80 650,80 650,380 250,380" fill="url(#wallBackVignette)" style="pointer-events:none" />
+      <!-- AO strips -->
+      <polygon points="250,380 650,380 650,395 250,395" fill="url(#aoFloor)" style="pointer-events:none" />
+      <polygon points="0,565 250,373 250,390 0,580" fill="url(#aoFloor)" style="pointer-events:none" opacity="0.6" />
+      <polygon points="900,565 650,373 650,390 900,580" fill="url(#aoFloor)" style="pointer-events:none" opacity="0.5" />
+      @if (sunlight) {
+      <polygon points="340,385 560,385 620,480 280,480" fill="url(#sunPatch)" style="pointer-events:none" />
+      }
+      <!-- Selection highlights -->
+      @if (activeSurface() === 'floor') {
+      <polygon points="0,580 900,580 650,380 250,380" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+        class="selection-march" style="pointer-events:none" />
+      }
+      @if (activeSurface() === 'ceiling') {
+      <polygon points="0,0 900,0 650,80 250,80" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+        class="selection-march" style="pointer-events:none" />
+      }
+      @if (activeSurface() === 'wall-left') {
+      <polygon points="0,0 250,80 250,380 0,580" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+        class="selection-march" style="pointer-events:none" />
+      }
+      @if (activeSurface() === 'wall-right') {
+      <polygon points="900,0 650,80 650,380 900,580" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+        class="selection-march" style="pointer-events:none" />
+      }
+      @if (activeSurface() === 'wall-back') {
+      <polygon points="250,80 650,80 650,380 250,380" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+        class="selection-march" style="pointer-events:none" />
+      }
+      <!-- Edges -->
+      <line x1="250" y1="80" x2="250" y2="380" stroke="rgba(0,0,0,0.12)" stroke-width="1" />
+      <line x1="650" y1="80" x2="650" y2="380" stroke="rgba(0,0,0,0.08)" stroke-width="1" />
+      <line x1="250" y1="80" x2="650" y2="80" stroke="rgba(0,0,0,0.06)" stroke-width="0.5" />
+      <line x1="250" y1="380" x2="650" y2="380" stroke="rgba(0,0,0,0.15)" stroke-width="1" />
+      <line x1="250" y1="80" x2="0" y2="0" stroke="rgba(0,0,0,0.04)" stroke-width="0.5" />
+      <line x1="650" y1="80" x2="900" y2="0" stroke="rgba(0,0,0,0.04)" stroke-width="0.5" />
+      <line x1="250" y1="380" x2="0" y2="580" stroke="rgba(0,0,0,0.06)" stroke-width="0.5" />
+      <line x1="650" y1="380" x2="900" y2="580" stroke="rgba(0,0,0,0.06)" stroke-width="0.5" />
+      <!-- Baseboard -->
+      <polygon points="0,569  250,373 250,380 0,580" fill="rgba(255,255,255,0.35)" />
+      <polygon points="900,569 650,373 650,380 900,580" fill="rgba(255,255,255,0.28)" />
+      <rect x="250" y="374" width="400" height="6" fill="rgba(255,255,255,0.32)" />
+      @if (standardWindow) {
+      <!-- Standard window -->
+      <polygon points="335,108 362,108 368,278 327,278" fill="#B0A090" opacity="0.7" />
+      <polygon points="565,108 538,108 532,278 573,278" fill="#B0A090" opacity="0.7" />
+      <rect x="335" y="108" width="230" height="170" rx="2" fill="white" stroke="#A0AABB" stroke-width="2.5" />
+      <rect x="338" y="111" width="108" height="78" fill="#B8D8F0" />
+      <rect x="450" y="111" width="111" height="78" fill="#C4E0F5" />
+      <rect x="338" y="193" width="108" height="81" fill="#CCE8F8" />
+      <rect x="450" y="193" width="111" height="81" fill="#C8E4F5" />
+      <rect x="338" y="111" width="108" height="78" fill="url(#glassReflect)" style="pointer-events:none" />
+      <rect x="450" y="111" width="111" height="78" fill="url(#glassReflect)" style="pointer-events:none" opacity="0.7" />
+      <rect x="338" y="193" width="108" height="81" fill="url(#glassReflect)" style="pointer-events:none" opacity="0.5" />
+      <rect x="450" y="193" width="111" height="81" fill="url(#glassReflect)" style="pointer-events:none" opacity="0.4" />
+      <line x1="449" y1="111" x2="449" y2="278" stroke="#A0AABB" stroke-width="2" />
+      <line x1="338" y1="192" x2="562" y2="192" stroke="#A0AABB" stroke-width="2" />
+      <rect x="327" y="278" width="246" height="8" rx="1.5" fill="#C0B0A0" />
+      }
+      <!-- Ceiling light -->
+      <rect x="420" y="80" width="60" height="4" rx="2" fill="rgba(0,0,0,0.15)" />
+      <line x1="450" y1="84" x2="450" y2="108" stroke="#888" stroke-width="1.2" />
+      <ellipse cx="450" cy="112" rx="34" ry="5" fill="#2A2A2A" />
+      <ellipse cx="450" cy="111" rx="32" ry="4" fill="#3A3A3A" />
+      <ellipse cx="450" cy="113" rx="28" ry="3" fill="#4A4A4A" />
+      <ellipse cx="450" cy="118" rx="22" ry="4" fill="rgba(255,245,220,0.60)" filter="url(#lampGlow)" />
+      <ellipse cx="450" cy="230" rx="120" ry="100" fill="rgba(255,248,230,0.08)" filter="url(#ambientGlow)"
+        style="pointer-events:none" />
+    </ng-template>
+
+  </svg>
+</div>
