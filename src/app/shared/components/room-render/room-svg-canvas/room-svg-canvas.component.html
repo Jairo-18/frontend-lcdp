@@ -600,7 +600,7 @@
     <!-- ─── Roof (ceiling) ─── -->
     <polygon points="85,160 380,48 675,160" [attr.fill]="ceiling()"
       class="room-surface cursor-pointer" (click)="surfaceClicked.emit('ceiling')" />
-    <polygon points="85,160 380,48 675,160" fill="url(#roofTiles)" opacity="0.55" style="pointer-events:none" />
+    <polygon points="85,160 380,48 675,160" fill="url(#roofTiles)" opacity="0.35" style="pointer-events:none" />
     <polygon points="85,160 380,48 675,160" fill="url(#roofHighlight)" style="pointer-events:none" />
     @if (activeSurface() === 'ceiling') {
     <polygon points="85,160 380,48 675,160" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
@@ -627,12 +627,27 @@
     <line x1="82" y1="163" x2="678" y2="163" stroke="rgba(0,0,0,0.15)" stroke-width="1" style="pointer-events:none" />
     <!-- Gutter -->
     <rect x="80" y="163" width="600" height="3" rx="1.5" fill="#8A8884" opacity="0.50" style="pointer-events:none" />
-    <!-- Side roof -->
-    <polygon points="650,160 675,160 840,188 820,185" [attr.fill]="ceiling()"
+    <!-- Side roof (full slope from ridge peak to side wall eave) -->
+    <polygon points="675,160 380,48 820,185" [attr.fill]="ceiling()"
       class="room-surface cursor-pointer" (click)="surfaceClicked.emit('ceiling')" />
-    <polygon points="650,160 675,160 840,188 820,185" fill="url(#roofSide)" opacity="0.60" style="pointer-events:none" />
-    <line x1="675" y1="160" x2="840" y2="188" stroke="rgba(0,0,0,0.12)" stroke-width="1.2" style="pointer-events:none" />
-    <line x1="650" y1="163" x2="822" y2="188" stroke="#5C4836" stroke-width="2" style="pointer-events:none" />
+    <polygon points="675,160 380,48 820,185" fill="url(#roofSide)" opacity="0.35" style="pointer-events:none" />
+    <polygon points="675,160 380,48 820,185" fill="url(#roofHighlight)" opacity="0.3" style="pointer-events:none" />
+    @if (activeSurface() === 'ceiling') {
+    <polygon points="675,160 380,48 820,185" fill="none" stroke="rgba(234,179,8,0.9)" stroke-width="3"
+      class="selection-march" style="pointer-events:none" />
+    }
+    <!-- Side tile rows -->
+    <line x1="670" y1="162" x2="808" y2="183" stroke="rgba(0,0,0,0.06)" stroke-width="0.7" style="pointer-events:none" />
+    <line x1="648" y1="155" x2="792" y2="179" stroke="rgba(0,0,0,0.05)" stroke-width="0.7" style="pointer-events:none" />
+    <line x1="622" y1="147" x2="772" y2="175" stroke="rgba(0,0,0,0.06)" stroke-width="0.7" style="pointer-events:none" />
+    <line x1="592" y1="138" x2="748" y2="170" stroke="rgba(0,0,0,0.05)" stroke-width="0.7" style="pointer-events:none" />
+    <line x1="558" y1="128" x2="718" y2="165" stroke="rgba(0,0,0,0.06)" stroke-width="0.7" style="pointer-events:none" />
+    <line x1="518" y1="117" x2="684" y2="158" stroke="rgba(0,0,0,0.05)" stroke-width="0.7" style="pointer-events:none" />
+    <!-- Ridge line to side -->
+    <line x1="380" y1="48" x2="820" y2="185" stroke="rgba(0,0,0,0.14)" stroke-width="1.2" style="pointer-events:none" />
+    <!-- Side eave fascia -->
+    <line x1="675" y1="160" x2="822" y2="186" stroke="#5C4836" stroke-width="2.5" style="pointer-events:none" />
+    <line x1="675" y1="158" x2="822" y2="184" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" style="pointer-events:none" />
     <!-- Chimney -->
     <rect x="510" y="56" width="30" height="92" rx="1" fill="#8A7A6A" style="pointer-events:none" />
     <rect x="510" y="56" width="30" height="92" fill="url(#buildingFacade)" style="pointer-events:none" opacity="0.5" />
