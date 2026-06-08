@@ -83,6 +83,51 @@
         <stop offset="0%" stop-color="white" stop-opacity="0.09" />
         <stop offset="100%" stop-color="black" stop-opacity="0.07" />
       </linearGradient>
+      <linearGradient id="woodPanelDark" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#5C3D1E" />
+        <stop offset="50%" stop-color="#4A3018" />
+        <stop offset="100%" stop-color="#3D2614" />
+      </linearGradient>
+      <linearGradient id="woodPanelMid" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#7A5530" />
+        <stop offset="100%" stop-color="#5C3D1E" />
+      </linearGradient>
+      <linearGradient id="upholstery" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#6B5D4F" />
+        <stop offset="40%" stop-color="#5A4E42" />
+        <stop offset="100%" stop-color="#4A3E32" />
+      </linearGradient>
+      <linearGradient id="linenDuvet" x1="0" y1="0" x2="0.3" y2="1">
+        <stop offset="0%" stop-color="#AAB8C2" />
+        <stop offset="100%" stop-color="#8A9EAE" />
+      </linearGradient>
+      <linearGradient id="sofaFabric" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#5A6878" />
+        <stop offset="60%" stop-color="#4A5568" />
+        <stop offset="100%" stop-color="#3D4856" />
+      </linearGradient>
+      <linearGradient id="sofaSeat" x1="0.5" y1="0" x2="0.5" y2="1">
+        <stop offset="0%" stop-color="#58687A" />
+        <stop offset="100%" stop-color="#4A5568" />
+      </linearGradient>
+      <linearGradient id="stainlessSteel" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#E0E0DC" />
+        <stop offset="30%" stop-color="#D0D0CC" />
+        <stop offset="70%" stop-color="#C0C0BC" />
+        <stop offset="100%" stop-color="#B0B0AC" />
+      </linearGradient>
+      <linearGradient id="cabinetGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#D4C5A9" />
+        <stop offset="100%" stop-color="#BEB098" />
+      </linearGradient>
+      <linearGradient id="counterGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#E8DCC8" />
+        <stop offset="60%" stop-color="#D8CCBA" />
+        <stop offset="100%" stop-color="#C8B8A4" />
+      </linearGradient>
+      <filter id="furnitureShadow" x="-15%" y="-10%" width="130%" height="140%">
+        <feDropShadow dx="3" dy="5" stdDeviation="7" flood-color="rgba(0,0,0,0.18)" />
+      </filter>
     </defs>
 
     <!-- Shared room base template: surfaces + overlays + highlights + edges + baseboard + light + window -->
@@ -96,51 +141,65 @@
       ════════════════════════════════════════════════════════ -->
     @case ('alcoba') {
     <ng-container *ngTemplateOutlet="interiorRoom; context: { sunlight: true, standardWindow: true }"></ng-container>
-    <!-- Wall art -->
+    <!-- Framed wall mirror -->
     <g filter="url(#softShadow)">
-      <polygon points="28,122 118,137 118,226 28,208" fill="#8A7A6A" />
-      <polygon points="34,127 112,141 112,221 34,203" fill="#F5F0E8" />
-      <polygon points="34,127 112,141 112,172 34,155" fill="#B8D0E4" />
-      <polygon points="34,155 112,172 112,221 34,203" fill="#8BAA80" />
-      <polygon points="34,179 58,166 74,182 90,158 112,172 112,221 34,203" fill="#6A8A65" />
-      <circle cx="90" cy="150" r="9" fill="#E8C870" opacity="0.9" />
-      <circle cx="52" cy="186" r="5" fill="#4A6A45" />
+      <polygon points="28,125 118,140 118,232 28,214" fill="#3D3028" />
+      <polygon points="32,129 114,143 114,228 32,210" fill="#4A3E32" />
+      <polygon points="36,133 110,146 110,224 36,206" fill="#B8C4CC" />
+      <polygon points="36,133 74,140 66,184 36,176" fill="rgba(255,255,255,0.16)" />
+      <polygon points="86,144 110,148 110,198 86,192" fill="rgba(255,255,255,0.09)" />
     </g>
-    <!-- Rug -->
-    <polygon points="458,394 652,394 786,514 444,514" fill="#9B7E5A" opacity="0.22" />
-    <!-- Headboard -->
-    <rect x="472" y="200" width="176" height="112" rx="3" fill="#5C3D1E" />
-    <rect x="469" y="196" width="182" height="13" rx="3" fill="#6B4828" />
-    <rect x="479" y="213" width="74" height="88" rx="2" fill="#4A3018" />
-    <rect x="561" y="213" width="74" height="88" rx="2" fill="#4A3018" />
+    <!-- Area rug -->
+    <polygon points="444,396 666,396 798,516 400,516" fill="#7A6B56" opacity="0.15" />
+    <polygon points="450,400 660,400 790,512 408,512" fill="#8B7C66" opacity="0.08" />
+    <!-- Headboard (upholstered channel-tufted) -->
+    <g filter="url(#furnitureShadow)">
+      <rect x="466" y="174" width="188" height="138" rx="4" fill="#3A2E22" />
+      <rect x="470" y="178" width="180" height="130" rx="3" fill="url(#upholstery)" />
+      <line x1="500" y1="182" x2="500" y2="304" stroke="rgba(0,0,0,0.10)" stroke-width="1.2" />
+      <line x1="530" y1="182" x2="530" y2="304" stroke="rgba(0,0,0,0.10)" stroke-width="1.2" />
+      <line x1="560" y1="182" x2="560" y2="304" stroke="rgba(0,0,0,0.10)" stroke-width="1.2" />
+      <line x1="590" y1="182" x2="590" y2="304" stroke="rgba(0,0,0,0.10)" stroke-width="1.2" />
+      <line x1="620" y1="182" x2="620" y2="304" stroke="rgba(0,0,0,0.10)" stroke-width="1.2" />
+      <line x1="473" y1="218" x2="647" y2="218" stroke="rgba(0,0,0,0.07)" stroke-width="0.8" />
+      <line x1="473" y1="256" x2="647" y2="256" stroke="rgba(0,0,0,0.07)" stroke-width="0.8" />
+    </g>
     <!-- Bed frame -->
-    <polygon points="472,312 490,418 490,505 472,390" fill="#6B4828" />
-    <polygon points="490,418 782,418 782,505 490,505" fill="#7A5530" />
-    <polygon points="648,312 782,418 782,505 648,390" fill="#5C3D1E" />
+    <polygon points="472,312 490,418 490,505 472,390" fill="url(#woodPanelDark)" />
+    <polygon points="490,418 782,418 782,505 490,505" fill="url(#woodPanelMid)" />
+    <polygon points="648,312 782,418 782,505 648,390" fill="#3D2614" />
     <!-- Mattress -->
-    <polygon points="472,312 648,312 782,418 490,418" fill="#EDE5D8" />
-    <polygon points="490,418 782,418 782,424 490,424" fill="#D4C8B4" />
-    <!-- Blanket -->
-    <polygon points="479,354 702,354 782,418 490,418" fill="#C4D4E4" />
-    <polygon points="479,348 702,348 702,356 479,356" fill="#B6C8DC" />
-    <polygon points="490,415 782,415 782,424 490,424" fill="#B0C2D6" />
+    <polygon points="472,310 648,310 782,416 490,416" fill="#E8E0D4" />
+    <polygon points="490,416 782,416 782,424 490,424" fill="#D0C4B2" />
+    <!-- Duvet -->
+    <polygon points="478,350 700,350 782,416 490,416" fill="url(#linenDuvet)" />
+    <polygon points="478,346 700,346 700,352 478,352" fill="#7E929E" />
+    <polygon points="490,412 782,412 782,424 490,424" fill="#7A8E9A" />
+    <polygon points="490,398 782,398 782,416 490,416" fill="rgba(0,0,0,0.03)" />
     <!-- Pillows -->
-    <polygon points="484,310 553,310 550,342 481,342" fill="#F5F0E8" />
-    <polygon points="559,310 643,310 648,342 555,342" fill="#F8F4EC" />
-    <polygon points="485,340 552,340 549,344 483,344" fill="rgba(0,0,0,0.08)" />
-    <polygon points="559,340 643,340 648,344 556,344" fill="rgba(0,0,0,0.08)" />
-    <!-- Bedside table -->
-    <polygon points="410,334 472,334 490,398 402,398" fill="#6B4828" />
-    <polygon points="402,398 490,398 490,456 402,456" fill="#7A5530" />
-    <polygon points="472,334 490,398 490,456 472,390" fill="#5C3D1E" />
-    <line x1="406" y1="427" x2="488" y2="427" stroke="rgba(0,0,0,0.28)" stroke-width="1" />
-    <rect x="430" y="422" width="28" height="4" rx="2" fill="#A08060" />
-    <!-- Bedside lamp -->
-    <ellipse cx="447" cy="362" rx="11" ry="4" fill="#B09060" />
-    <line x1="447" y1="362" x2="447" y2="330" stroke="#C0A070" stroke-width="3" stroke-linecap="round" />
-    <polygon points="424,330 470,330 464,313 430,313" fill="#F0E0BE" />
-    <polygon points="428,328 466,328 461,315 433,315" fill="#E4D0A8" />
-    <ellipse cx="447" cy="340" rx="20" ry="7" fill="rgba(255,220,120,0.15)" />
+    <path d="M 484,308 C 502,304 540,304 552,308 C 554,322 554,336 552,340 C 540,344 502,344 484,340 C 482,328 482,316 484,308 Z" fill="#EDE6DA" />
+    <path d="M 484,308 C 502,304 540,304 552,308 C 536,314 502,312 484,310 Z" fill="rgba(255,255,255,0.12)" />
+    <path d="M 484,336 C 502,340 540,340 552,336 L 552,340 C 540,344 502,344 484,340 Z" fill="rgba(0,0,0,0.05)" />
+    <path d="M 558,308 C 580,304 618,304 642,308 C 644,322 644,336 642,340 C 618,344 580,344 558,340 C 556,328 556,316 558,308 Z" fill="#F0EAE0" />
+    <path d="M 558,308 C 580,304 618,304 642,308 C 625,314 580,312 558,310 Z" fill="rgba(255,255,255,0.12)" />
+    <path d="M 558,336 C 580,340 618,340 642,336 L 642,340 C 618,344 580,344 558,340 Z" fill="rgba(0,0,0,0.05)" />
+    <!-- Nightstand -->
+    <g filter="url(#softShadow)">
+      <polygon points="408,332 472,332 490,398 398,398" fill="#4A3C2E" />
+      <rect x="398" y="398" width="92" height="58" rx="1" fill="url(#woodPanelMid)" />
+      <polygon points="472,332 490,398 490,456 472,392" fill="#3D2614" />
+      <rect x="402" y="402" width="84" height="22" rx="1" fill="#5C4A38" />
+      <rect x="402" y="428" width="84" height="22" rx="1" fill="#5C4A38" />
+      <line x1="434" y1="414" x2="454" y2="414" stroke="#9A8A78" stroke-width="1.2" stroke-linecap="round" />
+      <line x1="434" y1="440" x2="454" y2="440" stroke="#9A8A78" stroke-width="1.2" stroke-linecap="round" />
+    </g>
+    <!-- Table lamp -->
+    <ellipse cx="444" cy="358" rx="12" ry="3.5" fill="#3A3632" />
+    <ellipse cx="444" cy="356" rx="10" ry="2.5" fill="#4A4642" />
+    <line x1="444" y1="356" x2="444" y2="324" stroke="#4A4642" stroke-width="2.5" stroke-linecap="round" />
+    <polygon points="426,324 462,324 458,310 430,310" fill="#E8DCC8" />
+    <polygon points="426,324 444,324 440,310 430,310" fill="rgba(0,0,0,0.05)" />
+    <ellipse cx="444" cy="338" rx="20" ry="6" fill="rgba(255,235,160,0.10)" />
     }
 
     <!-- ═══════════════════════════════════════════════════════
@@ -149,43 +208,70 @@
     @case ('sala') {
     <ng-container *ngTemplateOutlet="interiorRoom; context: { sunlight: true, standardWindow: true }"></ng-container>
     <!-- Area rug -->
-    <polygon points="256,395 600,395 660,510 196,510" fill="#7A5C3C" opacity="0.24" />
-    <!-- TV screen -->
-    <rect x="568" y="190" width="82" height="102" rx="3" fill="#1A1A1A" />
-    <rect x="571" y="193" width="76" height="96" rx="2" fill="#080808" />
-    <rect x="578" y="284" width="62" height="4" rx="1" fill="rgba(255,255,255,0.07)" />
-    <rect x="593" y="291" width="22" height="3" rx="2" fill="#2A2A2A" />
+    <polygon points="240,396 612,396 674,514 178,514" fill="#6A5A46" opacity="0.14" />
+    <polygon points="248,400 604,400 664,510 186,510" fill="#7A6A56" opacity="0.08" />
+    <!-- TV -->
+    <g filter="url(#softShadow)">
+      <rect x="570" y="188" width="78" height="100" rx="2" fill="#0A0A0A" />
+      <rect x="573" y="191" width="72" height="94" rx="1" fill="#1A1A1A" />
+      <rect x="575" y="193" width="68" height="88" rx="1" fill="#080808" />
+      <rect x="575" y="274" width="68" height="3" fill="rgba(255,255,255,0.04)" />
+    </g>
     <!-- Media console -->
-    <polygon points="558,292 648,292 650,304 556,304" fill="#5C3D1E" />
-    <rect x="556" y="304" width="94" height="42" rx="1" fill="#7A5530" />
-    <line x1="560" y1="326" x2="646" y2="326" stroke="rgba(0,0,0,0.22)" stroke-width="1" />
-    <rect x="590" y="322" width="22" height="3" rx="1.5" fill="#A08060" />
+    <polygon points="556,290 650,290 652,304 554,304" fill="#4A3C2E" />
+    <rect x="554" y="304" width="98" height="42" rx="1" fill="url(#woodPanelMid)" />
+    <line x1="558" y1="326" x2="648" y2="326" stroke="rgba(0,0,0,0.18)" stroke-width="0.8" />
+    <line x1="592" y1="320" x2="612" y2="320" stroke="#8A7A68" stroke-width="1.2" stroke-linecap="round" />
     <!-- Sofa backrest -->
-    <rect x="330" y="288" width="204" height="48" rx="3" fill="#4A5568" />
-    <line x1="432" y1="288" x2="432" y2="336" stroke="rgba(0,0,0,0.22)" stroke-width="1.5" />
-    <rect x="340" y="290" width="44" height="44" rx="2" fill="#6B7D90" />
-    <rect x="494" y="290" width="44" height="44" rx="2" fill="#6B7D90" />
+    <rect x="330" y="288" width="204" height="48" rx="3" fill="url(#sofaFabric)" />
+    <line x1="381" y1="291" x2="381" y2="333" stroke="rgba(0,0,0,0.10)" stroke-width="1" />
+    <line x1="432" y1="291" x2="432" y2="333" stroke="rgba(0,0,0,0.10)" stroke-width="1" />
+    <line x1="483" y1="291" x2="483" y2="333" stroke="rgba(0,0,0,0.10)" stroke-width="1" />
+    <rect x="336" y="292" width="42" height="38" rx="2" fill="rgba(255,255,255,0.06)" />
+    <rect x="487" y="292" width="42" height="38" rx="2" fill="rgba(255,255,255,0.06)" />
     <!-- Sofa arms -->
-    <rect x="320" y="283" width="12" height="57" rx="2" fill="#374151" />
-    <rect x="532" y="283" width="12" height="57" rx="2" fill="#374151" />
+    <rect x="320" y="283" width="12" height="57" rx="2" fill="#3D4856" />
+    <rect x="532" y="283" width="12" height="57" rx="2" fill="#3D4856" />
     <!-- Sofa seat -->
-    <polygon points="320,336 544,336 568,410 296,410" fill="#58687A" />
-    <polygon points="296,408 568,408 571,422 293,422" fill="#4A5568" />
+    <polygon points="320,336 544,336 568,410 296,410" fill="url(#sofaSeat)" />
+    <polygon points="296,408 568,408 571,422 293,422" fill="#3D4856" />
     <polygon points="320,336 332,336 308,410 296,410" fill="#2D3748" />
     <polygon points="532,336 544,336 568,410 556,410" fill="#2D3748" />
+    <line x1="380" y1="340" x2="367" y2="410" stroke="rgba(0,0,0,0.08)" stroke-width="1" />
+    <line x1="430" y1="340" x2="424" y2="410" stroke="rgba(0,0,0,0.08)" stroke-width="1" />
+    <line x1="480" y1="340" x2="481" y2="410" stroke="rgba(0,0,0,0.08)" stroke-width="1" />
+    <!-- Throw pillow -->
+    <path d="M 342,310 C 352,306 370,306 378,310 C 380,320 380,328 378,332 C 368,336 350,336 342,332 C 340,324 340,318 342,310 Z" fill="#8A7A5A" opacity="0.85" />
+    <path d="M 342,310 C 352,306 370,306 378,310 C 366,314 352,314 342,312 Z" fill="rgba(255,255,255,0.10)" />
     <!-- Coffee table -->
-    <polygon points="333,436 565,436 590,474 308,474" fill="#9B6914" />
-    <polygon points="308,472 590,472 594,486 304,486" fill="#7A5010" />
-    <line x1="331" y1="472" x2="323" y2="506" stroke="#7A5010" stroke-width="5" stroke-linecap="round" />
-    <line x1="580" y1="472" x2="588" y2="506" stroke="#7A5010" stroke-width="5" stroke-linecap="round" />
-    <polygon points="380,432 438,431 438,438 380,439" fill="#E0C87A" />
-    <polygon points="454,430 502,429 502,436 454,437" fill="#C8B8A0" />
-    <!-- Plant -->
-    <polygon points="90,492 128,492 131,506 87,506" fill="#8B6014" />
-    <ellipse cx="109" cy="506" rx="22" ry="7" fill="#7A5010" />
-    <circle cx="104" cy="474" r="18" fill="#4A7C3F" />
-    <circle cx="118" cy="462" r="13" fill="#3D6B35" />
-    <circle cx="100" cy="466" r="14" fill="#527A45" />
+    <g filter="url(#softShadow)">
+      <polygon points="340,436 560,436 584,470 316,470" fill="#6A5010" />
+      <polygon points="316,468 584,468 588,480 312,480" fill="#5A4210" />
+      <line x1="334" y1="470" x2="328" y2="504" stroke="#5A4210" stroke-width="3.5" stroke-linecap="round" />
+      <line x1="574" y1="470" x2="580" y2="504" stroke="#5A4210" stroke-width="3.5" stroke-linecap="round" />
+      <rect x="380" y="432" width="54" height="4" rx="1" fill="#D0C092" />
+      <rect x="380" y="428" width="44" height="4" rx="1" fill="#C0B082" />
+      <rect x="456" y="430" width="42" height="6" rx="1.5" fill="#A8A098" />
+    </g>
+    <!-- Floor plant -->
+    <g filter="url(#softShadow)">
+      <rect x="92" y="488" width="34" height="22" rx="3" fill="#6B5A48" />
+      <rect x="90" y="486" width="38" height="4" rx="2" fill="#7A6A58" />
+      <path d="M 109,486 Q 104,468 96,452" fill="none" stroke="#3A5828" stroke-width="2.5" stroke-linecap="round" />
+      <path d="M 109,486 Q 116,464 124,448" fill="none" stroke="#3A5828" stroke-width="2.5" stroke-linecap="round" />
+      <path d="M 109,486 Q 98,460 90,442" fill="none" stroke="#385528" stroke-width="2" stroke-linecap="round" />
+      <path d="M 109,486 Q 120,470 128,458" fill="none" stroke="#385528" stroke-width="2" stroke-linecap="round" />
+      <path d="M 109,486 Q 108,472 105,462" fill="none" stroke="#3C5C2E" stroke-width="1.8" stroke-linecap="round" />
+      <path d="M 96,452 C 82,446 76,454 82,462 C 88,458 96,452 96,452 Z" fill="#3D6B35" />
+      <path d="M 96,452 C 92,438 100,432 106,440 C 100,442 96,452 96,452 Z" fill="#4A7C3F" />
+      <path d="M 124,448 C 138,442 142,452 136,460 C 130,454 124,448 124,448 Z" fill="#3A6830" />
+      <path d="M 124,448 C 126,434 118,428 112,436 C 118,440 124,448 124,448 Z" fill="#487840" />
+      <path d="M 90,442 C 76,436 70,446 78,454 C 82,448 90,442 90,442 Z" fill="#366028" />
+      <path d="M 90,442 C 86,428 94,422 100,430 C 94,434 90,442 90,442 Z" fill="#427038" />
+      <path d="M 128,458 C 142,454 144,464 138,470 C 132,466 128,458 128,458 Z" fill="#3C6832" />
+      <path d="M 105,462 C 94,456 86,462 92,470 C 96,466 105,462 105,462 Z" fill="#406A36" />
+      <path d="M 105,462 C 108,450 116,448 118,456 C 114,458 105,462 105,462 Z" fill="#4A7A40" />
+    </g>
     }
 
     <!-- ═══════════════════════════════════════════════════════
@@ -194,29 +280,36 @@
     @case ('cocina') {
     <ng-container *ngTemplateOutlet="interiorRoom; context: { sunlight: false, standardWindow: false }"></ng-container>
     <!-- Upper left cabinet -->
-    <rect x="255" y="90" width="76" height="178" rx="2" fill="#D4C5A9" />
-    <rect x="258" y="94" width="33" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5" />
-    <rect x="295" y="94" width="33" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5" />
-    <rect x="258" y="180" width="33" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5" />
-    <rect x="295" y="180" width="33" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5" />
-    <circle cx="280" cy="135" r="2.5" fill="#A0906A" />
-    <circle cx="316" cy="135" r="2.5" fill="#A0906A" />
-    <circle cx="280" cy="221" r="2.5" fill="#A0906A" />
-    <circle cx="316" cy="221" r="2.5" fill="#A0906A" />
+    <rect x="255" y="90" width="76" height="178" rx="2" fill="url(#cabinetGrad)" />
+    <rect x="258" y="94" width="33" height="82" rx="1" fill="#C8B898" />
+    <rect x="295" y="94" width="33" height="82" rx="1" fill="#C8B898" />
+    <rect x="258" y="180" width="33" height="82" rx="1" fill="#C8B898" />
+    <rect x="295" y="180" width="33" height="82" rx="1" fill="#C8B898" />
+    <line x1="292" y1="94" x2="292" y2="176" stroke="rgba(0,0,0,0.10)" stroke-width="0.5" />
+    <line x1="292" y1="180" x2="292" y2="262" stroke="rgba(0,0,0,0.10)" stroke-width="0.5" />
+    <line x1="278" y1="132" x2="278" y2="142" stroke="#9A8A70" stroke-width="1.5" stroke-linecap="round" />
+    <line x1="316" y1="132" x2="316" y2="142" stroke="#9A8A70" stroke-width="1.5" stroke-linecap="round" />
+    <line x1="278" y1="218" x2="278" y2="228" stroke="#9A8A70" stroke-width="1.5" stroke-linecap="round" />
+    <line x1="316" y1="218" x2="316" y2="228" stroke="#9A8A70" stroke-width="1.5" stroke-linecap="round" />
+    <rect x="255" y="266" width="76" height="4" fill="rgba(0,0,0,0.08)" />
     <!-- Upper right cabinet -->
-    <rect x="569" y="90" width="42" height="178" rx="2" fill="#D4C5A9" />
-    <rect x="572" y="94" width="36" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5" />
-    <rect x="572" y="180" width="36" height="82" rx="1" fill="#C8B898" stroke="#B8A080" stroke-width="0.5" />
-    <circle cx="586" cy="135" r="2.5" fill="#A0906A" />
-    <circle cx="586" cy="221" r="2.5" fill="#A0906A" />
+    <rect x="569" y="90" width="42" height="178" rx="2" fill="url(#cabinetGrad)" />
+    <rect x="572" y="94" width="36" height="82" rx="1" fill="#C8B898" />
+    <rect x="572" y="180" width="36" height="82" rx="1" fill="#C8B898" />
+    <line x1="586" y1="132" x2="586" y2="142" stroke="#9A8A70" stroke-width="1.5" stroke-linecap="round" />
+    <line x1="586" y1="218" x2="586" y2="228" stroke="#9A8A70" stroke-width="1.5" stroke-linecap="round" />
+    <rect x="569" y="266" width="42" height="4" fill="rgba(0,0,0,0.08)" />
     <!-- Range hood -->
-    <polygon points="258,270 332,270 336,288 254,288" fill="#909090" />
-    <polygon points="254,286 336,286 338,292 252,292" fill="#787878" />
-    <line x1="272" y1="272" x2="272" y2="286" stroke="rgba(0,0,0,0.2)" stroke-width="1" />
-    <line x1="286" y1="272" x2="286" y2="286" stroke="rgba(0,0,0,0.2)" stroke-width="1" />
-    <line x1="300" y1="272" x2="300" y2="286" stroke="rgba(0,0,0,0.2)" stroke-width="1" />
-    <line x1="314" y1="272" x2="314" y2="286" stroke="rgba(0,0,0,0.2)" stroke-width="1" />
-    <rect x="284" y="90" width="46" height="180" rx="1" fill="#A0A0A0" opacity="0.5" />
+    <polygon points="258,270 332,270 338,290 252,290" fill="url(#stainlessSteel)" />
+    <polygon points="252,288 338,288 340,294 250,294" fill="#909090" />
+    <rect x="260" y="272" width="68" height="14" rx="1" fill="rgba(0,0,0,0.05)" />
+    <line x1="270" y1="274" x2="270" y2="284" stroke="rgba(0,0,0,0.12)" stroke-width="0.8" />
+    <line x1="280" y1="274" x2="280" y2="284" stroke="rgba(0,0,0,0.12)" stroke-width="0.8" />
+    <line x1="290" y1="274" x2="290" y2="284" stroke="rgba(0,0,0,0.12)" stroke-width="0.8" />
+    <line x1="300" y1="274" x2="300" y2="284" stroke="rgba(0,0,0,0.12)" stroke-width="0.8" />
+    <line x1="310" y1="274" x2="310" y2="284" stroke="rgba(0,0,0,0.12)" stroke-width="0.8" />
+    <line x1="320" y1="274" x2="320" y2="284" stroke="rgba(0,0,0,0.12)" stroke-width="0.8" />
+    <rect x="284" y="90" width="46" height="180" rx="1" fill="#A0A0A0" opacity="0.45" />
     <!-- Kitchen window -->
     <rect x="360" y="112" width="180" height="135" rx="3" fill="white" stroke="#8B9BAF" stroke-width="2.5" />
     <rect x="363" y="115" width="84" height="62" fill="#C5E2F5" />
@@ -227,50 +320,58 @@
     <line x1="363" y1="180" x2="537" y2="180" stroke="#8B9BAF" stroke-width="2" />
     <rect x="354" y="247" width="192" height="8" rx="2" fill="#BCA898" />
     <!-- Lower cabinets left -->
-    <rect x="255" y="316" width="100" height="60" rx="1" fill="#C8B898" />
-    <rect x="258" y="319" width="46" height="28" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
-    <rect x="308" y="319" width="44" height="28" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
-    <rect x="258" y="350" width="46" height="22" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
-    <rect x="308" y="350" width="44" height="22" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
+    <rect x="255" y="316" width="100" height="60" rx="1" fill="url(#cabinetGrad)" />
+    <rect x="258" y="319" width="46" height="28" rx="1" fill="#BCAA88" />
+    <rect x="308" y="319" width="44" height="28" rx="1" fill="#BCAA88" />
+    <rect x="258" y="350" width="46" height="22" rx="1" fill="#BCAA88" />
+    <rect x="308" y="350" width="44" height="22" rx="1" fill="#BCAA88" />
+    <line x1="280" y1="332" x2="280" y2="340" stroke="#9A8A70" stroke-width="1.5" stroke-linecap="round" />
+    <line x1="328" y1="332" x2="328" y2="340" stroke="#9A8A70" stroke-width="1.5" stroke-linecap="round" />
     <!-- Oven/stove -->
-    <rect x="355" y="316" width="190" height="60" rx="1" fill="#7A7A7A" />
-    <rect x="358" y="318" width="184" height="55" rx="2" fill="#3A3A3A" />
-    <rect x="368" y="324" width="164" height="42" rx="2" fill="#2A2A2A" />
-    <line x1="396" y1="321" x2="506" y2="321" stroke="#C0C0C0" stroke-width="3" stroke-linecap="round" />
+    <rect x="355" y="316" width="190" height="60" rx="1" fill="#686868" />
+    <rect x="358" y="318" width="184" height="55" rx="2" fill="#2A2A2A" />
+    <rect x="368" y="324" width="164" height="42" rx="2" fill="#1A1A1A" />
+    <rect x="372" y="328" width="156" height="34" rx="1" fill="#222" />
+    <rect x="372" y="328" width="156" height="34" rx="1" fill="url(#glassReflect)" opacity="0.25" />
+    <line x1="396" y1="320" x2="506" y2="320" stroke="#B0B0B0" stroke-width="2.5" stroke-linecap="round" />
     <!-- Lower cabinets right -->
-    <rect x="545" y="316" width="64" height="60" rx="1" fill="#C8B898" />
-    <rect x="548" y="319" width="28" height="28" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
-    <rect x="579" y="319" width="28" height="28" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
-    <rect x="548" y="350" width="28" height="22" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
-    <rect x="579" y="350" width="28" height="22" rx="1" fill="#BCAA88" stroke="#B0986A" stroke-width="0.5" />
-    <!-- Cabinet handles -->
-    <rect x="274" y="334" width="22" height="3" rx="1.5" fill="#A09070" />
-    <rect x="322" y="334" width="18" height="3" rx="1.5" fill="#A09070" />
-    <rect x="556" y="334" width="14" height="3" rx="1.5" fill="#A09070" />
-    <rect x="584" y="334" width="14" height="3" rx="1.5" fill="#A09070" />
+    <rect x="545" y="316" width="64" height="60" rx="1" fill="url(#cabinetGrad)" />
+    <rect x="548" y="319" width="28" height="28" rx="1" fill="#BCAA88" />
+    <rect x="579" y="319" width="28" height="28" rx="1" fill="#BCAA88" />
+    <rect x="548" y="350" width="28" height="22" rx="1" fill="#BCAA88" />
+    <rect x="579" y="350" width="28" height="22" rx="1" fill="#BCAA88" />
+    <line x1="562" y1="332" x2="562" y2="340" stroke="#9A8A70" stroke-width="1.5" stroke-linecap="round" />
+    <line x1="592" y1="332" x2="592" y2="340" stroke="#9A8A70" stroke-width="1.5" stroke-linecap="round" />
     <!-- Countertop -->
-    <polygon points="244,284 609,284 615,300 238,300" fill="#E8DCC8" />
-    <polygon points="238,298 615,298 621,316 232,316" fill="#C8B898" />
+    <polygon points="244,284 609,284 615,300 238,300" fill="url(#counterGrad)" />
+    <polygon points="238,298 615,298 621,316 232,316" fill="#BEB098" />
+    <line x1="244" y1="285" x2="609" y2="285" stroke="rgba(255,255,255,0.18)" stroke-width="1" />
     <!-- Sink -->
-    <rect x="406" y="286" width="88" height="15" rx="3" fill="#8BAABB" />
-    <rect x="410" y="288" width="80" height="11" rx="2" fill="#7A9AAA" />
+    <rect x="406" y="286" width="88" height="15" rx="3" fill="#7A9AAA" />
+    <rect x="410" y="288" width="80" height="11" rx="2" fill="#6A8A9A" />
+    <rect x="412" y="290" width="76" height="7" rx="1" fill="#5A7A8A" />
     <!-- Faucet -->
     <line x1="450" y1="270" x2="450" y2="286" stroke="#A0A8B0" stroke-width="3" stroke-linecap="round" />
-    <line x1="440" y1="270" x2="460" y2="270" stroke="#A0A8B0" stroke-width="2.5" stroke-linecap="round" />
+    <path d="M 440,270 Q 450,268 460,270" fill="none" stroke="#A0A8B0" stroke-width="2.5" stroke-linecap="round" />
     <!-- Stove burners -->
-    <circle cx="272" cy="288" r="5" fill="#555" />
-    <circle cx="288" cy="288" r="5" fill="#555" />
-    <circle cx="272" cy="297" r="4" fill="#606060" />
-    <circle cx="288" cy="297" r="4" fill="#606060" />
+    <circle cx="272" cy="288" r="5.5" fill="none" stroke="#444" stroke-width="1.5" />
+    <circle cx="272" cy="288" r="2" fill="#4A4A4A" />
+    <circle cx="288" cy="288" r="5.5" fill="none" stroke="#444" stroke-width="1.5" />
+    <circle cx="288" cy="288" r="2" fill="#4A4A4A" />
+    <circle cx="272" cy="298" r="4.5" fill="none" stroke="#484848" stroke-width="1.2" />
+    <circle cx="272" cy="298" r="1.5" fill="#4A4A4A" />
+    <circle cx="288" cy="298" r="4.5" fill="none" stroke="#484848" stroke-width="1.2" />
+    <circle cx="288" cy="298" r="1.5" fill="#4A4A4A" />
     <!-- Refrigerator -->
-    <rect x="613" y="90" width="37" height="290" rx="2" fill="#E8E8E0" />
-    <rect x="615" y="92" width="33" height="286" rx="1" fill="#F0F0E8" />
-    <line x1="613" y1="195" x2="650" y2="195" stroke="#C8C8C0" stroke-width="1.5" />
-    <line x1="619" y1="115" x2="619" y2="175" stroke="#B0B0A8" stroke-width="3" stroke-linecap="round" />
-    <line x1="619" y1="215" x2="619" y2="355" stroke="#B0B0A8" stroke-width="3" stroke-linecap="round" />
-    <polygon points="613,88 650,88 654,95 615,95" fill="#D8D8D0" />
+    <rect x="613" y="90" width="37" height="290" rx="2" fill="url(#stainlessSteel)" />
+    <rect x="615" y="92" width="33" height="100" rx="1" fill="#E4E4E0" />
+    <rect x="615" y="196" width="33" height="180" rx="1" fill="#E0E0DC" />
+    <line x1="613" y1="195" x2="650" y2="195" stroke="#B0B0A8" stroke-width="1.5" />
+    <line x1="620" y1="118" x2="620" y2="172" stroke="#A0A098" stroke-width="2.5" stroke-linecap="round" />
+    <line x1="620" y1="218" x2="620" y2="355" stroke="#A0A098" stroke-width="2.5" stroke-linecap="round" />
+    <polygon points="613,88 650,88 654,95 611,95" fill="#C8C8C0" />
     <!-- Floor mat -->
-    <polygon points="258,388 548,388 590,450 216,450" fill="#8B6A4A" opacity="0.22" />
+    <polygon points="258,390 548,390 586,446 220,446" fill="#7A6B56" opacity="0.12" />
     }
 
     <!-- ═══════════════════════════════════════════════════════
