@@ -65,6 +65,14 @@ export const publicRoutes: Routes = [
             (m) => m.AsesorComponent,
           ),
       },
+      {
+        path: 'calculadora',
+        data: { reuseKey: 'public-calculadora' },
+        loadComponent: () =>
+          import('./pages/calculadora/calculadora.component').then(
+            (m) => m.CalculadoraComponent,
+          ),
+      },
     ],
   },
 ];

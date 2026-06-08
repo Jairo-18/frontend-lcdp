@@ -471,12 +471,17 @@
                     >
                   </button>
                 </div>
-                <!-- Row 2: price -->
-                <div class="pl-7">
+                <!-- Row 2: price + rendimiento -->
+                <div class="pl-7 space-y-2">
                   <app-input-field
                     formControlName="priceSale"
                     placeholder="Precio"
                     [currency]="true"
+                  />
+                  <app-input-field
+                    formControlName="rendimiento"
+                    placeholder="Rendimiento (m² por unidad)"
+                    type="number"
                   />
                 </div>
               </div>

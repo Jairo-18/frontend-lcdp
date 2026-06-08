@@ -15,6 +15,7 @@ export interface CreatePresentationDto {
   unitOfMeasureId: number;
   sku?: string;
   priceSale?: number;
+  rendimiento?: number;
   images?: ImageVariant[];
 }
 
@@ -46,6 +47,7 @@ export interface PresentationFormRaw {
   unitOfMeasureId: string;
   sku: string;
   priceSale: number | null;
+  rendimiento: number | null;
 }
 
 export interface ProductParams extends BasePaginationParams {
@@ -80,6 +82,7 @@ export interface ProductPresentation {
   unitOfMeasure: UnitOfMeasure;
   sku: string | null;
   priceSale: number | null;
+  rendimiento: number | null;
   images: ProductImage[];
 }
 

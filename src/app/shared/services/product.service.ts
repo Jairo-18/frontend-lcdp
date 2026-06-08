@@ -50,6 +50,12 @@ export class ProductService {
       .pipe(map((r) => ({ ...r.data, data: r.data.data.map(resolveProduct) })));
   }
 
+  getCalculadora(): Observable<Product[]> {
+    return this._http
+      .get<ApiResponseInterface<Product[]>>(`${environment.apiUrl}/public/products/calculadora`)
+      .pipe(map((r) => r.data.map(resolveProduct)));
+  }
+
   getPublicOne(id: number): Observable<Product> {
     return this._http
       .get<ApiResponseInterface<Product>>(`${environment.apiUrl}/public/products/${id}`)

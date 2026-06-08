@@ -308,6 +308,7 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
                       String(pres.unitOfMeasureId),
                       pres.sku ?? '',
                       pres.priceSale ?? null,
+                      pres.rendimiento ?? null,
                     ),
                   );
                   this._presImages.set(
@@ -488,12 +489,14 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
     unitOfMeasureId: string,
     sku: string,
     priceSale: number | null,
+    rendimiento: number | null = null,
   ): void {
     this.presentationsArray.push(
       this._fb.nonNullable.group({
         unitOfMeasureId: [unitOfMeasureId, Validators.required],
         sku: [sku],
         priceSale: [priceSale as number | null],
+        rendimiento: [rendimiento as number | null],
       }),
     );
   }
@@ -595,6 +598,7 @@ export class CreateOrEditProductsComponent implements OnInit, OnDestroy {
           unitOfMeasureId: Number(p.unitOfMeasureId),
           sku: p.sku || undefined,
           priceSale: p.priceSale ?? undefined,
+          rendimiento: p.rendimiento ?? undefined,
           images: presImages[i] ?? [],
         }),
       ),
