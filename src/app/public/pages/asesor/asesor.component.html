@@ -24,38 +24,64 @@
 
   <!-- Step indicator -->
   <div class="px-6 md:px-10 pb-6">
-    <div class="flex items-center gap-0 max-w-sm">
-      @for (n of [1, 2, 3]; track n) {
-        <div class="flex items-center gap-0">
-          <div class="flex flex-col items-center gap-1">
-            <div
-              class="w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-bold transition-all"
-              [class]="step() >= n
-                ? 'bg-ink text-white'
-                : 'bg-white border-2 border-rule text-ink-mute'"
-            >
-              @if (step() > n) {
-                <span class="material-symbols-outlined text-[16px] leading-none">check</span>
-              } @else {
-                {{ n }}
-              }
-            </div>
-            <span class="text-[10px] font-semibold whitespace-nowrap"
-              [class]="step() >= n ? 'text-ink' : 'text-ink-mute'">
-              @switch (n) {
-                @case (1) { ¿Qué vas a pintar? }
-                @case (2) { ¿Qué condición tiene? }
-                @case (3) { Recomendación }
-              }
-            </span>
+    <div class="flex flex-wrap items-start gap-y-2 max-w-sm">
+
+      <!-- Paso 1 -->
+      <div class="flex items-center gap-0">
+        <div class="flex flex-col items-center gap-1">
+          <div
+            class="w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-bold transition-all"
+            [class]="step() >= 1 ? 'bg-ink text-white' : 'bg-white border-2 border-rule text-ink-mute'"
+          >
+            @if (step() > 1) {
+              <span class="material-symbols-outlined text-[16px] leading-none">check</span>
+            } @else { 1 }
           </div>
-          @if (n < 3) {
-            <div class="w-12 sm:w-20 h-px mb-5 mx-1 transition-all"
-              [class]="step() > n ? 'bg-ink' : 'bg-rule'">
-            </div>
-          }
+          <span class="text-[10px] font-semibold whitespace-nowrap"
+            [class]="step() >= 1 ? 'text-ink' : 'text-ink-mute'">
+            ¿Qué vas a pintar?
+          </span>
         </div>
-      }
+        <div class="w-12 sm:w-20 h-px mb-5 mx-1 transition-all"
+          [class]="step() > 1 ? 'bg-ink' : 'bg-rule'"></div>
+      </div>
+
+      <!-- Paso 2 (conector oculto en mobile → paso 3 baja a nueva fila) -->
+      <div class="flex items-center gap-0">
+        <div class="flex flex-col items-center gap-1">
+          <div
+            class="w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-bold transition-all"
+            [class]="step() >= 2 ? 'bg-ink text-white' : 'bg-white border-2 border-rule text-ink-mute'"
+          >
+            @if (step() > 2) {
+              <span class="material-symbols-outlined text-[16px] leading-none">check</span>
+            } @else { 2 }
+          </div>
+          <span class="text-[10px] font-semibold whitespace-nowrap"
+            [class]="step() >= 2 ? 'text-ink' : 'text-ink-mute'">
+            ¿Qué condición tiene?
+          </span>
+        </div>
+        <div class="hidden sm:block sm:w-20 h-px mb-5 mx-1 transition-all"
+          [class]="step() > 2 ? 'bg-ink' : 'bg-rule'"></div>
+      </div>
+
+      <!-- Paso 3: w-full en mobile fuerza nueva fila -->
+      <div class="flex items-center gap-0 w-full sm:w-auto">
+        <div class="flex flex-col items-center gap-1">
+          <div
+            class="w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-bold transition-all"
+            [class]="step() >= 3 ? 'bg-ink text-white' : 'bg-white border-2 border-rule text-ink-mute'"
+          >
+            3
+          </div>
+          <span class="text-[10px] font-semibold whitespace-nowrap"
+            [class]="step() >= 3 ? 'text-ink' : 'text-ink-mute'">
+            Recomendación
+          </span>
+        </div>
+      </div>
+
     </div>
   </div>
 

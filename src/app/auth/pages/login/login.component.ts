@@ -37,6 +37,9 @@ export class LoginComponent implements OnInit {
   );
 
   ngOnInit(): void {
+    if (this._authService.wasRemembered()) {
+      this.form.patchValue({ remember: true });
+    }
     this._orgService.bootstrap().subscribe({
       next: ({ org }) => {
         if (org?.logoUrl) this._logoUrl.set(org.logoUrl);

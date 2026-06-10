@@ -125,20 +125,10 @@
         class="hidden"
         (change)="onFaviconSelected($event)"
       />
-      <input
-        #heroVideoInput
-        type="file"
-        accept="video/mp4,video/webm,video/quicktime"
-        class="hidden"
-        (change)="onHeroVideoSelected($event)"
-      />
-      <input
-        #aboutVideoInput
-        type="file"
-        accept="video/mp4,video/webm,video/quicktime"
-        class="hidden"
-        (change)="onAboutVideoSelected($event)"
-      />
+      <input #heroVideoInput   type="file" accept="video/mp4,video/webm,video/quicktime" class="hidden" (change)="onHeroVideoSelected($event)"   />
+      <input #heroImageInput   type="file" accept="image/*" multiple class="hidden" (change)="onHeroImageSelected($event)"   />
+      <input #bannerImageInput type="file" accept="image/*" multiple class="hidden" (change)="onBannerImageSelected($event)" />
+      <input #aboutImageInput  type="file" accept="image/*" multiple class="hidden" (change)="onAboutImageSelected($event)"  />
 
       <!-- ── Identidad visual ── -->
       @if (_tab() === 'branding') {
@@ -264,40 +254,6 @@
               </div>
             </div>
 
-            <!-- Colors -->
-            <div>
-              <p
-                class="text-xs font-semibold text-ink-mute uppercase tracking-wide mb-3"
-              >
-                Paleta de colores
-              </p>
-              <div class="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-5">
-                @for (color of colorFields; track color.key) {
-                  <div>
-                    <label class="block text-sm font-medium text-ink mb-1.5">{{
-                      color.label
-                    }}</label>
-                    <div class="flex gap-2 items-center">
-                      <input
-                        type="color"
-                        [value]="form.get(color.key)?.value || '#000000'"
-                        (input)="
-                          form
-                            .get(color.key)
-                            ?.setValue($any($event.target).value)
-                        "
-                        class="w-9 h-9 rounded-lg border border-rule cursor-pointer p-0.5 bg-white shrink-0"
-                      />
-                      <input
-                        [formControlName]="color.key"
-                        class="w-full rounded-xl border border-rule px-2 py-2 text-xs text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 font-mono"
-                        placeholder="#000000"
-                      />
-                    </div>
-                  </div>
-                }
-              </div>
-            </div>
           </div>
 
           <!-- Preview panel -->
@@ -362,75 +318,6 @@
               </div>
             </div>
 
-            <!-- Colors -->
-            <div>
-              <p class="text-xs text-ink-mute mb-2">Colores</p>
-              <div class="grid grid-cols-5 gap-1 mb-3">
-                @for (color of colorFields; track color.key) {
-                  <div class="text-center">
-                    <div
-                      class="h-7 rounded-lg border border-rule transition-colors"
-                      [style.background-color]="
-                        form.get(color.key)?.value || '#f3f4f6'
-                      "
-                    ></div>
-                    <span
-                      class="text-[10px] text-ink-mute leading-none mt-1 block truncate"
-                      >{{ color.label }}</span
-                    >
-                  </div>
-                }
-              </div>
-              <!-- Mini mockup -->
-              <div
-                class="rounded-xl border border-rule overflow-hidden text-[10px] shadow-sm"
-              >
-                <div
-                  class="px-3 py-2 flex items-center justify-between"
-                  [style.background-color]="
-                    form.get('primaryColor')?.value || '#1a1c2c'
-                  "
-                >
-                  @if (form.get('logoUrl')?.value) {
-                    <img
-                      [src]="form.get('logoUrl')?.value"
-                      alt="logo"
-                      class="h-4 object-contain max-w-[80px]"
-                    />
-                  } @else {
-                    <span class="font-bold text-white">Mi Tienda</span>
-                  }
-                  <span class="text-white/70">Menú</span>
-                </div>
-                <div
-                  class="px-3 py-4 flex flex-col items-center gap-2"
-                  [style.background-color]="
-                    form.get('bgColor')?.value || '#f9fafb'
-                  "
-                >
-                  <span
-                    class="text-[9px] font-medium"
-                    [style.color]="form.get('textColor')?.value || '#1a1c2c'"
-                    >Bienvenido a la tienda</span
-                  >
-                  <span
-                    class="inline-block px-3 py-1 rounded-lg text-[9px] font-semibold text-white"
-                    [style.background-color]="
-                      form.get('accentColor')?.value || '#3b82f6'
-                    "
-                    >Ver catálogo</span
-                  >
-                </div>
-                <div
-                  class="px-3 py-1.5 flex items-center justify-center"
-                  [style.background-color]="
-                    form.get('secondaryColor')?.value || '#374151'
-                  "
-                >
-                  <span class="text-white/60 text-[9px]">Pie de página</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       }
@@ -496,59 +383,116 @@
             }
           </div>
 
-          <!-- About videos -->
+          <!-- Hero images -->
           <div class="bg-white border border-rule rounded-2xl p-6">
             <div class="flex items-start justify-between gap-4 mb-5">
               <div>
-                <h2 class="font-semibold text-ink text-base">Videos de "Sobre nosotros"</h2>
-                <p class="text-xs text-ink-mute mt-0.5">
-                  Slider en la sección quiénes somos. MP4, WebM o MOV · máx. 200 MB · recomendado 10–15 seg.
-                </p>
+                <h2 class="font-semibold text-ink text-base">Imágenes del hero</h2>
+                <p class="text-xs text-ink-mute mt-0.5">Slider de fondo en la página de inicio. Recomendado: horizontal, mín. 1280×720 px. Máx. 3 imágenes.</p>
               </div>
-              <button
-                type="button"
-                (click)="triggerAboutVideoUpload()"
-                [disabled]="_uploadingAboutVideo()"
-                class="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl border border-rule text-sm font-medium text-ink-mute hover:text-ink hover:border-ink/30 transition-colors cursor-pointer bg-white disabled:opacity-50"
-              >
-                @if (_uploadingAboutVideo()) {
-                  <span class="material-symbols-outlined text-[16px] leading-none animate-spin">progress_activity</span>
-                  Procesando…
+              <button type="button" (click)="triggerHeroImageUpload()" [disabled]="_uploadingHeroImage() || _heroImages().length >= 3"
+                class="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl border border-rule text-sm font-medium text-ink-mute hover:text-ink hover:border-ink/30 transition-colors cursor-pointer bg-white disabled:opacity-50">
+                @if (_uploadingHeroImage()) {
+                  <span class="material-symbols-outlined text-[16px] leading-none animate-spin">progress_activity</span> Subiendo…
                 } @else {
-                  <span class="material-symbols-outlined text-[16px] leading-none">add</span>
-                  Agregar video
+                  <span class="material-symbols-outlined text-[16px] leading-none">add_photo_alternate</span> Agregar imagen
                 }
               </button>
             </div>
-
-            @if (_aboutVideos().length) {
-              <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                @for (v of _aboutVideos(); track v.url; let i = $index) {
-                  <div class="relative group rounded-xl overflow-hidden border border-rule bg-black aspect-video">
-                    <img
-                      [src]="v.poster"
-                      alt="Poster about"
-                      class="w-full h-full object-cover opacity-80"
-                    />
-                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <span class="material-symbols-outlined text-white text-[36px] drop-shadow">play_circle</span>
-                    </div>
-                    <button
-                      type="button"
-                      (click)="removeAboutVideo(i)"
-                      class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer border-0"
-                      title="Eliminar"
-                    >
+            @if (_heroImages().length) {
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                @for (img of _heroImages(); track img.md; let i = $index) {
+                  <div class="relative group rounded-xl overflow-hidden border border-rule aspect-video bg-paper-alt">
+                    <img [src]="img.md" alt="Hero image" class="w-full h-full object-cover cursor-zoom-in"
+                      (click)="_previewSvc.open([img.lg])" />
+                    <button type="button" (click)="removeHeroImage(i)"
+                      class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer border-0" title="Eliminar">
                       <span class="material-symbols-outlined text-[14px] leading-none">close</span>
                     </button>
-                    <span class="absolute bottom-1.5 left-1.5 text-[10px] text-white/70 font-mono">{{ i + 1 }}</span>
+                    <span class="absolute bottom-1.5 left-1.5 text-[10px] text-white/70 font-mono bg-black/40 rounded px-1">{{ i + 1 }}</span>
                   </div>
                 }
               </div>
             } @else {
               <div class="h-28 rounded-xl border-2 border-dashed border-rule flex flex-col items-center justify-center gap-1.5 text-ink-mute">
-                <span class="material-symbols-outlined text-[28px] leading-none opacity-20">videocam</span>
-                <span class="text-sm">Sin videos. Agrega el primero.</span>
+                <span class="material-symbols-outlined text-[28px] leading-none opacity-20">image</span>
+                <span class="text-sm">Sin imágenes. Agrega la primera.</span>
+              </div>
+            }
+          </div>
+
+          <!-- Banner images -->
+          <div class="bg-white border border-rule rounded-2xl p-6">
+            <div class="flex items-start justify-between gap-4 mb-5">
+              <div>
+                <h2 class="font-semibold text-ink text-base">Imágenes del banner (WhatsApp)</h2>
+                <p class="text-xs text-ink-mute mt-0.5">Slider de fondo en la sección de contacto. Recomendado: vertical/cuadrado, mín. 800×1000 px. Máx. 3 imágenes.</p>
+              </div>
+              <button type="button" (click)="triggerBannerImageUpload()" [disabled]="_uploadingBannerImage() || _bannerImages().length >= 3"
+                class="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl border border-rule text-sm font-medium text-ink-mute hover:text-ink hover:border-ink/30 transition-colors cursor-pointer bg-white disabled:opacity-50">
+                @if (_uploadingBannerImage()) {
+                  <span class="material-symbols-outlined text-[16px] leading-none animate-spin">progress_activity</span> Subiendo…
+                } @else {
+                  <span class="material-symbols-outlined text-[16px] leading-none">add_photo_alternate</span> Agregar imagen
+                }
+              </button>
+            </div>
+            @if (_bannerImages().length) {
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                @for (img of _bannerImages(); track img.md; let i = $index) {
+                  <div class="relative group rounded-xl overflow-hidden border border-rule aspect-[4/5] bg-paper-alt">
+                    <img [src]="img.md" alt="Banner image" class="w-full h-full object-cover cursor-zoom-in"
+                      (click)="_previewSvc.open([img.lg])" />
+                    <button type="button" (click)="removeBannerImage(i)"
+                      class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer border-0" title="Eliminar">
+                      <span class="material-symbols-outlined text-[14px] leading-none">close</span>
+                    </button>
+                    <span class="absolute bottom-1.5 left-1.5 text-[10px] text-white/70 font-mono bg-black/40 rounded px-1">{{ i + 1 }}</span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="h-28 rounded-xl border-2 border-dashed border-rule flex flex-col items-center justify-center gap-1.5 text-ink-mute">
+                <span class="material-symbols-outlined text-[28px] leading-none opacity-20">image</span>
+                <span class="text-sm">Sin imágenes. Agrega la primera.</span>
+              </div>
+            }
+          </div>
+
+          <!-- About images -->
+          <div class="bg-white border border-rule rounded-2xl p-6">
+            <div class="flex items-start justify-between gap-4 mb-5">
+              <div>
+                <h2 class="font-semibold text-ink text-base">Imágenes de "Sobre nosotros"</h2>
+                <p class="text-xs text-ink-mute mt-0.5">Galería en la página Quiénes somos. Recomendado: cualquier orientación, mín. 800×600 px. Máx. 3 imágenes.</p>
+              </div>
+              <button type="button" (click)="triggerAboutImageUpload()" [disabled]="_uploadingAboutImage() || _aboutImages().length >= 3"
+                class="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl border border-rule text-sm font-medium text-ink-mute hover:text-ink hover:border-ink/30 transition-colors cursor-pointer bg-white disabled:opacity-50">
+                @if (_uploadingAboutImage()) {
+                  <span class="material-symbols-outlined text-[16px] leading-none animate-spin">progress_activity</span> Subiendo…
+                } @else {
+                  <span class="material-symbols-outlined text-[16px] leading-none">add_photo_alternate</span> Agregar imagen
+                }
+              </button>
+            </div>
+            @if (_aboutImages().length) {
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                @for (img of _aboutImages(); track img.md; let i = $index) {
+                  <div class="relative group rounded-xl overflow-hidden border border-rule aspect-video bg-paper-alt">
+                    <img [src]="img.md" alt="About image" class="w-full h-full object-cover cursor-zoom-in"
+                      (click)="_previewSvc.open([img.lg])" />
+                    <button type="button" (click)="removeAboutImage(i)"
+                      class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer border-0" title="Eliminar">
+                      <span class="material-symbols-outlined text-[14px] leading-none">close</span>
+                    </button>
+                    <span class="absolute bottom-1.5 left-1.5 text-[10px] text-white/70 font-mono bg-black/40 rounded px-1">{{ i + 1 }}</span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="h-28 rounded-xl border-2 border-dashed border-rule flex flex-col items-center justify-center gap-1.5 text-ink-mute">
+                <span class="material-symbols-outlined text-[28px] leading-none opacity-20">image</span>
+                <span class="text-sm">Sin imágenes. Agrega la primera.</span>
               </div>
             }
           </div>
@@ -576,6 +520,53 @@
       @if (_tab() === 'contenido') {
         <div class="bg-white border border-rule rounded-2xl p-6 space-y-4">
           <h2 class="font-semibold text-ink text-base mb-1">Contenido</h2>
+
+          <div class="border border-rule rounded-xl p-4 space-y-3 bg-paper-alt/50">
+            <p class="text-xs font-semibold text-ink-mute uppercase tracking-wide">Texto del hero (página de inicio)</p>
+            <app-input-field
+              formControlName="heroLine1"
+              label="Línea 1 del héroe"
+              placeholder="Tu obra empieza con el"
+              hint="Primera línea del titular grande. Ej: «Tu obra empieza con el»"
+            />
+            <app-input-field
+              formControlName="heroLine2"
+              label="Línea 2 del héroe"
+              placeholder="color correcto."
+              hint="Segunda línea en cursiva decorativa. Ej: «color correcto.»"
+            />
+
+            <!-- Paleta de colores -->
+            <div class="pt-1">
+              <p class="text-[11px] font-bold text-ink-mute uppercase tracking-wide mb-2">Paleta de colores</p>
+              <div class="flex flex-wrap gap-2 items-center">
+                @for (color of _heroColors(); track $index; let i = $index) {
+                  <div class="relative group w-8 h-8">
+                    <div class="w-8 h-8 rounded-full border-2 border-white shadow-sm ring-1 ring-rule"
+                      [style.background]="color"></div>
+                    <button type="button" (click)="removeHeroColor(i)"
+                      class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center border-0 cursor-pointer p-0 leading-none">
+                      ×
+                    </button>
+                  </div>
+                }
+                @if (_heroColors().length < 15) {
+                  <label class="w-8 h-8 rounded-full border-2 border-dashed border-rule flex items-center justify-center cursor-pointer hover:border-ink/40 transition-colors relative overflow-hidden">
+                    <span class="material-symbols-outlined text-ink-mute text-[16px] leading-none">add</span>
+                    <input type="color" class="absolute opacity-0 w-full h-full cursor-pointer" (change)="addHeroColor($event)" />
+                  </label>
+                }
+              </div>
+              <p class="text-[11px] text-ink-mute mt-1.5">
+                @if (_heroColors().length === 0) {
+                  Sin colores personalizados — se usa la paleta predeterminada.
+                } @else {
+                  Las letras ciclan por estos {{ _heroColors().length }} colores en orden.
+                }
+              </p>
+            </div>
+          </div>
+
           <app-textarea-field
             formControlName="description"
             label="Descripción general"

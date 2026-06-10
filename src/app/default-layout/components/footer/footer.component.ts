@@ -45,6 +45,8 @@ export class FooterComponent {
   readonly ayudaLinks: FooterLink[] = [
     { label: 'Cómo pedir', route: '/ayuda/como-pedir' },
     { label: 'Garantía', route: '/ayuda/garantia' },
+    { label: '¿Qué pintura?', route: '/asesor' },
+    { label: 'Calculadora', route: '/calculadora' },
   ];
 
   get whatsappHref(): string {

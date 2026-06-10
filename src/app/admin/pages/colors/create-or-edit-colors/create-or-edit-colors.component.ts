@@ -6,12 +6,12 @@ import {
   signal,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { InputFieldComponent } from '@shared/components';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ColorService } from '@shared/services/color.service';
-import { Color, ColorDto, ColorSurface, COLOR_SURFACE_OPTIONS } from '@shared/interfaces/color.interface';
+import { Color, ColorDto, ColorSurface, COLOR_SURFACE_OPTIONS, COLOR_FAMILIES } from '@shared/interfaces/color.interface';
 import { CacheRouteReuseStrategy } from '@shared/strategies/cache-route-reuse.strategy';
 
 @Component({
@@ -33,6 +33,7 @@ export class CreateOrEditColorsComponent implements OnInit, OnDestroy {
   readonly _editingId = signal<number | null>(null);
   readonly _surfaces  = signal<ColorSurface[]>([]);
   readonly SURFACE_OPTIONS = COLOR_SURFACE_OPTIONS;
+  readonly FAMILIES        = COLOR_FAMILIES;
 
   readonly form = this._fb.nonNullable.group({
     name:        ['', [Validators.required, Validators.maxLength(100)]],

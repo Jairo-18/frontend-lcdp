@@ -27,7 +27,7 @@
           label="Nombre"
           placeholder="Blanco Hueso"
           [required]="true"
-          [upperCase]="true"
+          [titleCase]="true"
           [control]="form.get('name')"
         />
 
@@ -36,35 +36,34 @@
           <label class="text-sm font-semibold text-ink">Color <span class="text-red-500">*</span></label>
           <div class="flex items-center gap-3">
             <input type="color"
-              formControlName="hex"
-              class="w-12 h-12 rounded-xl border border-rule cursor-pointer p-1 bg-white"
+              [value]="form.get('hex')?.value || '#000000'"
+              (input)="form.get('hex')?.setValue($any($event.target).value); form.get('hex')?.markAsDirty()"
+              class="w-12 h-12 rounded-xl border border-rule cursor-pointer p-1 bg-white shrink-0"
               title="Seleccionar color" />
-            <div class="flex-1">
-              <app-input-field
-                formControlName="hex"
-                label=""
-                placeholder="#F5F0E8"
-                [required]="true"
-                [mono]="true"
-                [control]="form.get('hex')"
-              />
-            </div>
-            <!-- Preview swatch -->
-            <div class="w-12 h-12 rounded-xl border border-rule shadow-sm flex-shrink-0"
-              [style.background-color]="form.get('hex')?.value">
-            </div>
+            <input
+              formControlName="hex"
+              maxlength="7"
+              class="flex-1 rounded-xl border px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 font-mono transition-colors"
+              [class.border-coral]="form.get('hex')?.invalid && form.get('hex')?.touched"
+              [class.border-rule]="!(form.get('hex')?.invalid && form.get('hex')?.touched)"
+              placeholder="#F5F0E8" />
           </div>
           @if (form.get('hex')?.invalid && form.get('hex')?.touched) {
             <p class="text-xs text-red-500">Ingresa un color válido en formato #RRGGBB</p>
           }
         </div>
 
-        <app-input-field
-          formControlName="colorFamily"
-          label="Familia de color"
-          placeholder="Blancos"
-          [control]="form.get('colorFamily')"
-        />
+        <!-- Familia de color -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-semibold text-ink">Familia de color</label>
+          <select formControlName="colorFamily"
+            class="w-full rounded-xl border border-rule px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-black/10 transition-colors cursor-pointer">
+            <option value="">Sin familia</option>
+            @for (family of FAMILIES; track family) {
+              <option [value]="family">{{ family }}</option>
+            }
+          </select>
+        </div>
 
         <app-input-field
           formControlName="code"

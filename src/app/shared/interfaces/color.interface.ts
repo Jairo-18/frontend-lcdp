@@ -2,6 +2,20 @@ import { BasePaginationParams } from './pagination.interface';
 
 export type ColorSurface = 'piso' | 'pared' | 'techo';
 
+export const COLOR_FAMILIES: string[] = [
+  'Amarillos',
+  'Azules',
+  'Blancos',
+  'Grises',
+  'Morados',
+  'Naranjas',
+  'Negros',
+  'Neutros',
+  'Rojos',
+  'Rosas',
+  'Verdes',
+];
+
 export const COLOR_SURFACE_OPTIONS: { value: ColorSurface; label: string }[] = [
   { value: 'piso',  label: 'Pisos'   },
   { value: 'pared', label: 'Paredes' },

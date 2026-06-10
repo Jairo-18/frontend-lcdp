@@ -110,6 +110,17 @@ export class AuthService {
     return !!this.getAccessToken();
   }
 
+  wasRemembered(): boolean {
+    if (!isPlatformBrowser(this._platformId)) return false;
+    const raw: string | null = localStorage.getItem(this._sessionKey);
+    if (!raw) return false;
+    try {
+      return (JSON.parse(raw) as StoredSession)._remember === true;
+    } catch {
+      return false;
+    }
+  }
+
   getCurrentUser(): LoginUser | null {
     return this._getSession()?.user ?? null;
   }

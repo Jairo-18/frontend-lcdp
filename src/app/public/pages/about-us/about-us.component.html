@@ -13,6 +13,27 @@
 
   @if (org(); as o) {
 
+    <!-- Slider de imágenes (si existen) -->
+    @if (aboutImages().length && _currentAboutImage()) {
+      <section class="px-6 md:px-10 pt-6 pb-2">
+        <div class="relative rounded-2xl overflow-hidden">
+          @for (_ of [1]; track _aboutImageIndex()) {
+            <img [src]="_currentAboutImage()!.lg" [alt]="org()?.aboutTitle || 'Sobre nosotros'"
+              class="w-full h-64 sm:h-[420px] object-cover" />
+          }
+          @if (aboutImages().length > 1) {
+            <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
+              @for (img of aboutImages(); track img.md; let i = $index) {
+                <button type="button" (click)="goToAboutImage(i)"
+                  class="rounded-full border-0 cursor-pointer transition-all p-0"
+                  [class]="_aboutImageIndex() === i ? 'w-5 h-2 bg-white' : 'w-2 h-2 bg-white/40 hover:bg-white/70'"></button>
+              }
+            </div>
+          }
+        </div>
+      </section>
+    }
+
     <!-- Hero -->
     <section class="px-6 md:px-10 pt-8 pb-14">
       <div class="mx-auto">

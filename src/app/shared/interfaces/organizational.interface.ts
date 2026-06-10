@@ -2,7 +2,7 @@ import { Category } from './category.interface';
 import { UnitOfMeasure } from './product.interface';
 import { Brand } from './brand.interface';
 import { TaxType } from './tax-type.interface';
-import { VideoVariant } from './image-variant.interface';
+import { ImageVariant, VideoVariant } from './image-variant.interface';
 
 export interface Organizational {
   id: string;
@@ -41,6 +41,12 @@ export interface Organizational {
   howToOrderVideoUrl?: string;
   heroVideos?: VideoVariant[];
   aboutVideos?: VideoVariant[];
+  heroImages?: ImageVariant[];
+  aboutImages?: ImageVariant[];
+  bannerImages?: ImageVariant[];
+  heroLine1?: string;
+  heroLine2?: string;
+  heroColors?: string[];
   status?: boolean;
 }
 
