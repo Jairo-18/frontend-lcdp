@@ -67,7 +67,7 @@
   @if (_hasImages() && _currentImage()) {
   <div class="w-full max-w-sm relative">
     <img [src]="_currentImage()!.md" alt="Asesor de La Casa del Pintor"
-      class="w-full rounded-2xl shadow-xl object-cover aspect-[4/5]" />
+      class="w-full rounded-2xl shadow-xl object-cover" />
     @if (_bannerImages().length > 1) {
     <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
       @for (img of _bannerImages(); track img.md; let i = $index) {
