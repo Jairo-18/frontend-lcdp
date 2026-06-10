@@ -426,7 +426,7 @@
             <div class="flex items-start justify-between gap-4 mb-5">
               <div>
                 <h2 class="font-semibold text-ink text-base">Imágenes del banner (WhatsApp)</h2>
-                <p class="text-xs text-ink-mute mt-0.5">Slider de fondo en la sección de contacto. Recomendado: vertical/cuadrado, mín. 800×1000 px. Máx. 3 imágenes.</p>
+                <p class="text-xs text-ink-mute mt-0.5">Slider de fondo en la sección de contacto. Recomendado: horizontal, mín. 1280×720 px. Máx. 3 imágenes.</p>
               </div>
               <button type="button" (click)="triggerBannerImageUpload()" [disabled]="_uploadingBannerImage() || _bannerImages().length >= 3"
                 class="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl border border-rule text-sm font-medium text-ink-mute hover:text-ink hover:border-ink/30 transition-colors cursor-pointer bg-white disabled:opacity-50">
@@ -440,7 +440,7 @@
             @if (_bannerImages().length) {
               <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 @for (img of _bannerImages(); track img.md; let i = $index) {
-                  <div class="relative group rounded-xl overflow-hidden border border-rule aspect-[4/5] bg-paper-alt">
+                  <div class="relative group rounded-xl overflow-hidden border border-rule aspect-video bg-paper-alt">
                     <img [src]="img.md" alt="Banner image" class="w-full h-full object-cover cursor-zoom-in"
                       (click)="_previewSvc.open([img.lg])" />
                     <button type="button" (click)="removeBannerImage(i)"
@@ -464,7 +464,7 @@
             <div class="flex items-start justify-between gap-4 mb-5">
               <div>
                 <h2 class="font-semibold text-ink text-base">Imágenes de "Sobre nosotros"</h2>
-                <p class="text-xs text-ink-mute mt-0.5">Galería en la página Quiénes somos. Recomendado: cualquier orientación, mín. 800×600 px. Máx. 3 imágenes.</p>
+                <p class="text-xs text-ink-mute mt-0.5">Imagen lateral en la página Quiénes somos. Recomendado: horizontal, mín. 1280×720 px. Máx. 3 imágenes.</p>
               </div>
               <button type="button" (click)="triggerAboutImageUpload()" [disabled]="_uploadingAboutImage() || _aboutImages().length >= 3"
                 class="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl border border-rule text-sm font-medium text-ink-mute hover:text-ink hover:border-ink/30 transition-colors cursor-pointer bg-white disabled:opacity-50">

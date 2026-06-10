@@ -7,7 +7,7 @@
   @if (_hasImages() && _currentImage()) {
   @for (_ of [1]; track _imageIndex()) {
   <img [src]="_currentImage()!.lg" alt="" aria-hidden="true"
-    class="absolute inset-0 w-full h-full object-cover object-top z-0" />
+    class="absolute inset-0 w-full h-full object-fill object-top z-0" />
   }
   } @else {
   <img src="assets/images/carlos.jpeg" alt="" aria-hidden="true"
