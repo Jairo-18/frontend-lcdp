@@ -80,5 +80,6 @@ export class NavBarMobileComponent implements OnInit, OnDestroy {
   private _setBodyScroll(enabled: boolean): void {
     if (!isPlatformBrowser(this._platformId)) return;
     document.body.style.overflow = enabled ? '' : 'hidden';
+    document.documentElement.style.overflow = enabled ? '' : 'hidden';
   }
 }

@@ -33,7 +33,7 @@
     [isOpen]="_isSidebarOpen()" (close)="closeSidebar()" (exitAdmin)="_authService.logout()" />
 
   <!-- ── Main content ── -->
-  <main class="flex-1 overflow-auto pt-[52px] min-[900px]:pt-0">
+  <main class="flex-1 overflow-auto pt-[52px] min-[900px]:pt-0" [class.overflow-hidden]="_isSidebarOpen()">
     <router-outlet />
   </main>
 </div>

@@ -56,9 +56,9 @@
             <tr class="border-b border-rule text-left">
               <th class="px-6 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Color</th>
               <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Nombre</th>
-              <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Familia</th>
-              <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Código</th>
-              <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Superficies</th>
+              <th class="hidden sm:table-cell px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Familia</th>
+              <th class="hidden sm:table-cell px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Código</th>
+              <th class="hidden md:table-cell px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Superficies</th>
               <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide">Estado</th>
               <th class="px-4 py-3 font-semibold text-ink-mute text-xs uppercase tracking-wide text-right">Acciones</th>
             </tr>
@@ -75,9 +75,19 @@
                   </div>
                 </td>
 
-                <td class="px-4 py-3 font-medium text-ink">{{ color.name }}</td>
+                <td class="px-4 py-3 font-medium text-ink">
+                  {{ color.name }}
+                  <div class="sm:hidden mt-0.5 flex flex-wrap gap-x-2 gap-y-0.5">
+                    @if (color.colorFamily) {
+                      <span class="text-[11px] text-ink-mute">{{ color.colorFamily }}</span>
+                    }
+                    @if (color.code) {
+                      <span class="text-[11px] font-mono text-ink-mute">{{ color.code }}</span>
+                    }
+                  </div>
+                </td>
 
-                <td class="px-4 py-3">
+                <td class="hidden sm:table-cell px-4 py-3">
                   @if (color.colorFamily) {
                     <span class="inline-block px-2 py-0.5 rounded-md bg-[rgba(26,28,44,0.06)] text-xs text-ink-mute">{{ color.colorFamily }}</span>
                   } @else {
@@ -85,7 +95,7 @@
                   }
                 </td>
 
-                <td class="px-4 py-3">
+                <td class="hidden sm:table-cell px-4 py-3">
                   @if (color.code) {
                     <span class="inline-block px-2 py-0.5 rounded-md bg-[rgba(26,28,44,0.06)] text-xs font-mono text-ink-mute">{{ color.code }}</span>
                   } @else {
@@ -93,7 +103,7 @@
                   }
                 </td>
 
-                <td class="px-4 py-3">
+                <td class="hidden md:table-cell px-4 py-3">
                   @if (color.surfaces && color.surfaces.length > 0) {
                     <div class="flex flex-wrap gap-1">
                       @for (s of color.surfaces; track s) {

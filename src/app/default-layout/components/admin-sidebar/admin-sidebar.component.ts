@@ -35,6 +35,7 @@ export class AdminSidebarComponent implements OnDestroy {
     this._isOpen = value;
     if (isPlatformBrowser(this._platformId)) {
       document.body.style.overflow = value ? 'hidden' : '';
+      document.documentElement.style.overflow = value ? 'hidden' : '';
     }
   }
   get isOpen(): boolean { return this._isOpen; }
@@ -60,6 +61,7 @@ export class AdminSidebarComponent implements OnDestroy {
   ngOnDestroy(): void {
     if (isPlatformBrowser(this._platformId)) {
       document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     }
   }
 }

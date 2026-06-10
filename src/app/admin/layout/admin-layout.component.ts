@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal, WritableSignal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs';
 import { AdminSidebarComponent } from '../../default-layout/components/admin-sidebar/admin-sidebar.component';
 import { ImagePreviewComponent } from '@shared/components';
 import { ImageEditorComponent } from '@shared/components/image-editor/image-editor.component';
@@ -15,6 +16,7 @@ import { OrganizationalService } from '@shared/services/organizational.service';
 export class AdminLayoutComponent implements OnInit {
   protected readonly _authService: AuthService = inject(AuthService);
   private readonly _orgService: OrganizationalService = inject(OrganizationalService);
+  private readonly _router: Router = inject(Router);
 
   readonly _isSidebarOpen: WritableSignal<boolean> = signal(false);
   readonly _logoUrl: WritableSignal<string> = signal('');
@@ -36,6 +38,9 @@ export class AdminLayoutComponent implements OnInit {
     this._orgService.bootstrap().subscribe({
       next: ({ org }) => this._logoUrl.set(org?.logoUrl ?? ''),
     });
+    this._router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe((): void => this.closeSidebar());
   }
 
   toggleSidebar(): void {
